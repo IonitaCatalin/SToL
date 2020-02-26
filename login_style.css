@@ -9,13 +9,14 @@ body {
     /* background-position: center; */
     font-family: sans-serif;
 }
-.login_form .first_inline
-{
+
+.login_form .first_inline {
     display: inline-block;
 }
+
 .login_form {
     width: 360px;
-    height: 380px;
+    height: 340px;
     background: #fff;
     color: #000;
     top: 50%;
@@ -27,14 +28,15 @@ body {
     padding: 30px 30px 30px 30px;
     opacity:0.5;
 }
-.login_form .first_inline
-{
+
+.login_form .first_inline {
     display: inline-block;
 }
-.login_form:hover
-{
+
+.login_form:hover {
     opacity:1;
 }
+
 h1 {
     margin: 0;
     padding: 0 0 20px;
@@ -42,7 +44,7 @@ h1 {
     font-size: 22px;
 }
 
-.login_form p{
+.login_form p {
     margin: 0;
     padding: 0;
     font-weight: bold;
@@ -50,12 +52,12 @@ h1 {
     text-align: center;
 }
 
-.login_form input{
+.login_form input {
     width: 100%;
     margin-bottom: 20px;
 }
 
-.login_form input[type="text"], input[type="password"]{
+.login_form input[type="text"], input[type="password"] {
     border: none;
     border-bottom: 1px solid lightgray;
     background: transparent;
@@ -65,7 +67,7 @@ h1 {
     font-size: 16px;
 }
 
-.login_form input[type="submit"]{
+.login_form input[type="submit"] {
     border: none;
     outline: none;
     height: 40px;
@@ -78,7 +80,7 @@ h1 {
 }
 
 
-.login_form input[type="submit"]:hover{
+.login_form input[type="submit"]:hover {
     cursor: pointer;
     background: #99c2ff;
     color: #000;
@@ -90,25 +92,23 @@ h1 {
     
 }
 
-.login_form a{
+.login_form a {
     text-decoration: none;
     font-size: 12px;
     line-height: 20px;
     color: darkgrey;
-    
 }
 
-.login_form a:hover{
+.login_form a:hover {
     color: #3385ff;
 }
-.login_form .username_input,.password_input
-{
+
+.login_form .username_input,.password_input {
     display:grid;
     grid-template-columns: 0.1fr 1fr;
     grid-gap:5px;
-
 }
-.login_form .username_input img,.password_input img
-{
+
+.login_form .username_input img,.password_input img {
     margin-top:9px;
 }
