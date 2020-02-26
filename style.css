@@ -1,7 +1,79 @@
-.wrapper
+.body
+{
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+.body-container
 {
     display:grid;
+    grid-template-columns:0.3fr 2fr 0.5fr;
+    grid-template-rows:0.5fr 2fr 2fr 0.5fr;
+    grid-template-areas:"header header header"
+                        "nav main info"
+                        "nav main info"
+                        "footer footer footer";
+    height:98vh;
+    width:98wh;
+    grid-gap:5px;
+
+
+}
+.body-container .nav-left-bar
+{
+    display:grid;
+    grid-template-rows: repeat(5,0.1fr);
+    grid-area:nav;
+    border-radius:25px;
+    background-color:blue;
+}
+.body-container .header-bar
+{
+    grid-area:header;
+    background-color:cyan;
+    border-radius: 25px ;
+}
+.body-container .footer-bar
+{
+    display:grid;
+    grid-template-columns: 1fr;
+    grid-area:footer;
+    background-color: tomato;
+    border-radius:25px;
+}
+.body-container .main
+{
+    grid-area:main;
+    background-color:cornflowerblue;
+    border-radius:25px;
+}
+.body-container .nav-left-bar #upload-btn
+{
+   margin-top:20px;
+   margin-bottom:80px;
+   background-color:red;
+   align-self: center;
+   justify-self: center;
+    
+}
+.body-container .nav-left-bar #favorite-btn,#recent-btn,#recycle-btn
+{
+   background-color:red;
+   justify-self:center;
+   align-self: center;
     
 }
 
+.body-container .footer-bar p
+{
+    align-self: center;
+    justify-self: center;
 
+}
+.body-container .info-section
+{
+    grid-area:info;
+    background-color:green;
+    border-radius: 25px;
+}
