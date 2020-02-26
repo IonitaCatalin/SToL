@@ -101,3 +101,14 @@ h1 {
 .login_form a:hover{
     color: #3385ff;
 }
+.login_form .username_input,.password_input
+{
+    display:grid;
+    grid-template-columns: 0.1fr 1fr;
+    grid-gap:5px;
+
+}
+.login_form .username_input img,.password_input img
+{
+    margin-top:9px;
+}
