@@ -1,0 +1,173 @@
+html, body {
+	margin: 0;
+	height: 100%;
+}
+
+body {
+	color: black;
+	font-family: 'Arimo' ;
+	font-size: 1.2em;
+}
+
+.grid-wrapper {
+	width: 100%;
+	margin:0;
+	height: 100%;
+	background-color: orange;
+	display: grid;
+	grid-template-rows: 50px 35px auto /* 35px */;
+	grid-template-columns: 200px auto;
+	/* grid-gap:5px; */
+}
+
+header {
+	grid-column: 1/3;
+	grid-row: 1/2;
+	background-color: #3576AE;
+	padding: 4px;
+	color: white;
+}
+
+header h1 {
+	font-size: 30px;
+	padding: 0px;
+	margin: 0px 0px 0px 15px;
+	display: inline-block;
+}
+
+header img {
+	width: 45px;
+	height: 45px;
+	display: inline-block;
+	border-radius: 25%;
+	float: right;
+}
+
+
+.bara_utilitati {
+	grid-column: 2/3;
+	grid-row: 2/3;
+	background-color: #f2f2f2;
+	vertical-align: center;
+	padding-top: 5px;
+}
+
+.bara_utilitati span {
+	display: inline-block;
+	margin-left: 20px;
+}
+
+footer {
+	display: none;
+}
+
+
+aside {
+	grid-column: 1/2;
+	grid-row: 2/4;
+	background-color: cadetblue;
+	padding-top: 100px;
+	display: flex;
+	flex-direction: column;
+	border-right: 1px solid gray;
+	color: #306a9c;
+}
+
+.optiune {
+	margin-bottom: 10px;
+	background-color: white;
+	text-align: left;
+	vertical-align: baseline;
+	padding-left: 10px;
+}
+
+article {
+	grid-column: 2/3;
+	grid-row: 3/4;
+	background-color: lightgreen;
+	padding: 30px 0 0 30px;
+}
+
+article h1 {
+	margin: 0 0 20px 0;
+	display: block;
+	background-color: red;
+	font-weight: normal;
+}
+
+.container_fisiere {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+}
+
+.folder {
+	margin-right: 10px;
+	width: 150px;
+    height: 170px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 100px;
+    border: 1px solid red;
+}
+
+.fisier {
+	margin-right: 10px;
+	width: 150px;
+    height: 170px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 100px;
+    border: 1px solid red;
+}
+
+
+@media only screen and (max-width: 850px) {
+	.grid-wrapper{
+		display: flex;
+		flex-direction: column;
+	}
+
+	header {
+		order: 1;
+	}
+
+	.bara_utilitati {
+		order: 2;
+	}
+	aside {
+		order: 3;
+		padding: 0;
+		margin: 0;
+		display:flex;
+    	flex-direction: row;
+    	flex-wrap: wrap;
+    	justify-content: space-around;
+    	align-content: flex-start;
+    	align-items: flex-start;
+	}
+
+	.optiune {
+		padding: 0px;
+		margin: 0px;
+		background-color: cadetblue;
+		color: white;
+	}
+
+	article {
+		order: 4;
+		padding: 5px;
+		height: 100%;
+	}
+
+	.container_fisiere{
+		order: 5;
+	}
+
+	footer {
+		order: 6;
+	}
+}
