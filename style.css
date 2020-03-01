@@ -179,7 +179,60 @@ article h1 {
     flex-basis: 100px;
     border: 1px solid grey;
 }
+.backdrop
+{
+	display:none;
+	position:fixed;
+	background:rgba(0,0,0,0.3);
+	top:0;
+	height:100vh;
+	width:100vw;
+	z-index:1;
+	font-family: 'Roboto';
 
+}
+.upload-modal
+{
+	display:none;
+	position:fixed;
+	background:white;
+	padding:10px;
+	top:calc(50% - 250px);
+	left:calc(50% - 250px);
+	z-index:1;
+	grid-template-columns: auto auto;
+	grid-template-rows: auto auto auto;
+	grid-template-areas: "header header"
+						"up-area up-area"
+						"up-area up-area"
+						"select-btn-area close-btn-area";
+	grid-row-gap: 15px;
+	
+}
+.upload-modal p
+{
+	grid-area:header;
+}
+.file-drag-area
+{
+	grid-area:up-area;
+	border-style: dotted;
+	border-color:grey;
+	border-width:2px;
+	width:580px;
+	height:300px;
+	display:grid;
+}
+.file-drag-area p
+{
+	opacity:0.5;
+	justify-self: left;
+}
+.modal-btn-upload
+{
+	grid-area:select-btn-area;
+	width:50px;
+}
 @media only screen and (max-width: 850px) {
 	.grid-wrapper{
 		display: flex;

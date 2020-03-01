@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>Stol(Universal Storage Manager)</title>
+		<link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
 		<link href="https://fonts.googleapis.com/css?family=Arimo&display=swap" rel="stylesheet">
 		<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 		<link rel="stylesheet" type="text/css" href="style.css">
@@ -19,6 +20,15 @@
 				<!--<span> Download </span>-->
 				<button class="btn btn-upload">Upload<i class="ri-file-upload-line"></i></button>
 				<!--<span> Upload </span>-->
+			</div>
+			<div class="backdrop">
+				<div class="upload-modal">
+					<p>Select or Drag any file to upload</p>
+					<div class="file-drag-area">
+						<p>Drag here any file you want to upload</p>	
+					</div>
+					<button class="btn modal-btn-upload">Select</button>
+				  </div>
 			</div>
 			<aside>
 				<div class="navbar_option"><p>Files</p></div>
@@ -56,5 +66,6 @@
 				Footer
 			</footer>
 		</div>
+		<script src="scripts/upload_content.js"></script>
 	</body>
 </html>

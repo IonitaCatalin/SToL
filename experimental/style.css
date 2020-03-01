@@ -6,8 +6,11 @@
 .body-container
 {
     display:grid;
-    grid-template-columns:0.3fr 2fr 0.5fr;
+   /* grid-template-columns:0.3fr 2fr 0.5fr;
     grid-template-rows:0.3fr 2fr 2fr 0.5fr;
+    */
+    grid-auto-columns: auto auto;
+    grid-auto-rows:auto auto auto auto;
     grid-template-areas:"header header header"
                         "nav main info"
                         "nav main info"
