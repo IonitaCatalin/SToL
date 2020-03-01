@@ -204,6 +204,7 @@ article h1 {
     	align-content: flex-start;
 		align-items: flex-start;
 		box-shadow: inset -12px -8px 40px #464646;
+		background-color: rgb(50, 115, 220);
 	}
 
 	.navbar_option {
@@ -211,8 +212,17 @@ article h1 {
 		text-align: center;
 		padding: 0px;
 		margin: 0px;
-		background-color: cadetblue;
-		color: white;
+		background-color: lightskyblue;
+		color: black;
+	}
+
+	#storage-info-box {
+    	height: auto;
+	}
+	
+	.storage-text {
+		margin: 10px;
+		padding: 5px;
 	}
 
 	article {
