@@ -1,0 +1,81 @@
+.body
+{
+    background-color:rgb(239,239,246);
+    height:100%;
+}
+.body-container
+{
+    display:grid;
+    grid-template-columns:0.3fr 2fr 0.5fr;
+    grid-template-rows:0.3fr 2fr 2fr 0.5fr;
+    grid-template-areas:"header header header"
+                        "nav main info"
+                        "nav main info"
+                        "nav footer footer";
+    height:98vh;
+    width:98wh;
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-radius:25px;
+
+}
+.nav-left-bar
+{
+    display:grid;
+    grid-template-rows: repeat(5,0.1fr);
+    grid-area:nav;
+    background-color: rgb(55,59,95);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-bottom-left-radius: 25px;
+
+}
+.header-bar
+{
+    grid-area:header;
+    border-top-left-radius: 25px;
+    border-bottom: 4px inset;
+
+}
+.footer-bar
+{
+    display:grid;
+    grid-template-columns: 1fr;
+    grid-area:footer;
+    border-bottom-right-radius: 25px;
+}
+.main
+{
+    grid-area:main;
+    border-right: 3px inset;
+    border-bottom: 3px inset;
+}
+.nav-left-bar #upload-btn
+{
+   align-self: center;
+   justify-self: center;
+   padding-left:35px;
+   background-size: 23px;
+}
+.nav-left-bar #favorite-btn,#recent-btn,#recycle-btn
+{
+   justify-self:center;
+   align-self: center;
+    
+}
+.footer-bar p
+{
+    align-self: center;
+    justify-self: center;
+
+}
+.info-section
+{
+    grid-area:info;
+    border-bottom: 2px inset;
+    
+}
+.header-bar img
+{
+    padding-left:20px;
+    width:360px;
+    height:120px;
+}

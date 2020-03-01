@@ -1,35 +1,47 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Stol(Univeral Storage Tool)</title>
-    <meta charset="UTF-8">
-    <meta name="description" content="Stol(Universal Storage Tool)">
-    <meta name="keywords" content="Stol,Storage_Manager,Storage,Tool">
-    <meta name="author" content="co-authored by Ionita Mihail-Catalin,Georgica Marius">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="style.css" >
-</head>
-<body>
-    <div class="body-container">
-        <div class="nav-left-bar">
-           <a href="#" id="upload-btn">Incarca fisier</a>
-           <a href="#" id="favorite-btn">Favorite</a>
-           <a href="#" id="recent-btn">Fisiere recente</a>
-           <a href="#" id="recycle-btn">Cos de gunoi</a>
-        </div>
-        <div class="header-bar">
-            <img src="images/logo.png" alt="Stol Logo">
-        </div>
-        <div class="footer-bar">
-            <p>Stol@2020</p>
-        </div>
-        <div class="main">
-
-        </div>
-        <div class="info-section">
-            
-        </div>
-    </div>
-</body>
-
+	<head>
+		<meta charset="utf-8" />
+		<title>Stol(Universal Storage Manager)</title>
+		<link href="https://fonts.googleapis.com/css?family=Arimo&display=swap" rel="stylesheet">
+		<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+	<body>
+		<div class="grid-wrapper">
+			<header>
+				<div>
+					<h1>Stol - Universal Storage Tool</h1>
+					<img src="images/avatar.png" alt="avatar">
+			</header>
+			<div class="user-bar">
+				<!--<span> Download </span>-->
+				<button class="btn btn-upload">Upload<i class="ri-file-upload-line"></i></button>
+				<!--<span> Upload </span>-->
+			</div>
+			<aside>
+				<div class="navbar_option"><p>Files</p></div>
+				<div class="navbar_option"><p>Recent</p></div>
+				<div class="navbar_option"><p>Trash</p></div>
+			</aside>
+			<article>
+				<h1>Files</h1>
+				<hr>
+				<div class="main-container ">
+					<img class="folder" src="icons/folder.svg">
+					<img class="folder" src="icons/folder.svg">
+					<img class="folder" src="icons/folder.svg">
+					<img class="fisier" src="icons/file-text.svg">
+					<img class="fisier" src="icons/file-text.svg">
+					<img class="fisier" src="icons/file-text.svg">
+					<img class="fisier" src="icons/file-text.svg">
+					<img class="fisier" src="icons/file-text.svg">
+					<img class="fisier" src="icons/file-text.svg">
+				</div>
+			</article>
+			<footer>
+				Footer
+			</footer>
+		</div>
+	</body>
 </html>
