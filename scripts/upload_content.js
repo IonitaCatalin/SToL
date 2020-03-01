@@ -15,8 +15,7 @@ function openModal(){
 function closeModal()
 {
     backdrop.style.display='none';
-    modal.style.display='none';
-   
+    modal.style.display='none';   
 }
 
 uploadButton.onclick=openModal;

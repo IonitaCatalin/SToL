@@ -8,27 +8,31 @@
     <meta name="keywords" content="Stol,Storage_Manager">
     <meta name="author" content="co-authored by Ionita Mihail-Catalin,Georgica Marius">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="login_style.css">
+    <link rel="stylesheet" type="text/css" href="register_style.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
     <div class="login_form">
         <h1>Stol</h1>
         <form>
+            <div class="email_input">
+            	<!--<p>Email</p>-->
+                <i class="ri-mail-line"></i>
+                <input type="text" name="email" placeholder="Enter Email">
+            </div>
             <div class="username_input">
                 <i class="ri-user-smile-line"></i>
                 <!--<p>Username</p> -->
                 <input type="text" name="usrname" placeholder="Enter Username">
             </div>
+           
             <div class="password_input">
             	<!--<p>Password</p>-->
                 <i class="ri-lock-line"></i>
                 <input type="password" name="passwd" placeholder="Enter Password">
             </div>
             <div>
-	        	<input type="submit" name="login" value="Login">
-	        	<a href="#">Lost your password?</a><br>
-	        	<a href="register.html">Don't have an account?</a>
+	        	<input type="submit" name="register" value="Register">
         	</div>
         </form>
     </div>

@@ -6,17 +6,13 @@ body {
     background-image: url("images/login_background.jpg");
     background-repeat: no-repeat;
     background-size: all;
-    /* background-position: center; */
-    font-family: sans-serif;
-}
 
-.login_form .first_inline {
-    display: inline-block;
+    font-family: sans-serif;
 }
 
 .login_form {
     width: 360px;
-    height: 340px;
+    height: 360px;
     background: #fff;
     color: #000;
     top: 50%;
@@ -26,10 +22,6 @@ body {
     box-sizing: border-box;
     padding: 30px 30px 30px 30px;
     opacity:0.5;
-}
-
-.login_form .first_inline {
-    display: inline-block;
 }
 
 .login_form:hover {
@@ -73,9 +65,10 @@ h1 {
     width: 120px;
     float: right;
     background: #0066ff;
-    color: #fff;
+    color: white;
     font-size: 18px;
     border-radius: 15px;
+    margin-top: 20px;
 }
 
 
@@ -87,8 +80,7 @@ h1 {
     background-repeat: no-repeat;
     background-position: center;
     font-size: 0px;
-
-    
+   
 }
 
 .login_form a {
@@ -102,13 +94,14 @@ h1 {
     color: #3385ff;
 }
 
-.login_form .username_input,.password_input {
+.login_form .username_input,.password_input,.email_input {
     display:grid;
     grid-template-columns: 0.1fr 1fr;
     grid-gap:5px;
 }
 
-.login_form .username_input i,.password_input i {
+
+.login_form .username_input i,.password_input i,.email_input i {
     margin-top:9px;
     font-size:35px;
 }
