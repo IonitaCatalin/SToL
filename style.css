@@ -72,12 +72,15 @@ header img {
 } 
 */
 .ri-file-upload-line {
+	position:relative;
+	top:2px
+	
 
 }
 .ri-check-line
 {
-	padding-left:3px;
-	justify-self: center;
+	position:relative;
+	top:2px
 }
 
 footer {
@@ -94,13 +97,25 @@ aside {
 	border-right: 1px solid gray;
 	color: #306a9c;
 }
-
+/*
 .navbar_option {
 	margin-bottom: 10px;
 	background-color: white;
 	text-align: left;
 	vertical-align: baseline;
 	padding-left: 10px;
+}
+*/
+.navbar_files,.navbar_recent,.navbar_trash
+{
+	margin-bottom: 10px;
+	background-color: white;
+	text-align: left;
+	vertical-align: baseline;
+	padding-left: 10px;
+	outline:none;
+	border:none;
+	height:50px;
 }
 
 #storage-info-box {
@@ -300,10 +315,9 @@ article h1 {
     	justify-content: space-around;
     	align-content: flex-start;
 		align-items: flex-start;
-		box-shadow: inset -12px -8px 40px #464646;
 		background-color: rgb(50, 115, 220);
 	}
-
+/*
 	.navbar_option {
 		width: 20%;
 		text-align: center;
@@ -312,7 +326,17 @@ article h1 {
 		background-color: lightskyblue;
 		color: black;
 	}
-
+	*/
+	.navbar_files,.navbar_recent,.navbar_trash
+	{
+		width: 20%;
+		text-align: center;
+		padding: 0px;
+		margin: 0px;
+		background-color: white;
+		color: black;
+		outline:none;
+	}
 	#storage-info-box {
     	height: auto;
 	}
