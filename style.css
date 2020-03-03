@@ -38,7 +38,6 @@ header h1 {
 header img {
 	width: 45px;
 	height: 45px;
-	display: inline-block;
 	border-radius: 50%;
 	float: right;
 }
@@ -71,23 +70,24 @@ header img {
 	margin-left: 20px;
 } 
 */
-.ri-file-upload-line {
+/*
+.ri-file-upload-line,.ri-check-line,.ri-file-line,.ri-time-line,.ri-delete-bin-line {
 	position:relative;
-	top:2px
-	
-
+	top:2px;
+	font-size:20px;
 }
-.ri-check-line
+*/
+.ri
 {
-	position:relative;
-	top:2px
+	position:absolute;
+	font-size:20px;
 }
 
 footer {
 	display: none;
 }
 
-aside {
+nav {
 	grid-column: 1/2;
 	grid-row: 2/4;
 	background-color: rgb(81,88,187);
@@ -106,17 +106,20 @@ aside {
 	padding-left: 10px;
 }
 */
-.navbar_files,.navbar_recent,.navbar_trash
+.navbar-buttons *
 {
-	margin-bottom: 10px;
-	background-color: white;
+	display:grid;
+	position:relative;
 	text-align: left;
-	vertical-align: baseline;
-	padding-left: 10px;
 	outline:none;
 	border:none;
 	height:50px;
+	width:100%;
+	margin-bottom: 10px;
+	background-color: white;
+	vertical-align: baseline;
 }
+
 
 #storage-info-box {
 	background-color: white;
@@ -233,7 +236,7 @@ article h1 {
 {
 	grid-area:header;
 }
-.file-drag-area
+#file-drag-area
 {
 	grid-area:up-area;
 	border-style: dotted;
@@ -244,7 +247,7 @@ article h1 {
 	display:grid;
 }
 
-.modal-btn-upload
+#modal-btn-select
 {
 	display:inline-block;
 	grid-area:select-btn;
@@ -254,7 +257,7 @@ article h1 {
   	padding: 15px 32px;
   	text-align: center;
   	text-decoration: none;
-	font-size: 16px;
+	font-size: .9em;
 	outline:0px;  
 }
 .file-drag-area
@@ -305,9 +308,9 @@ article h1 {
 	.user-bar {
 		order: 2;
 	}
-	aside {
+	nav {
 		order: 3;
-		padding: 0;
+		padding:0px;
 		margin: 0;
 		display:flex;
     	flex-direction: row;
@@ -315,7 +318,7 @@ article h1 {
     	justify-content: space-around;
     	align-content: flex-start;
 		align-items: flex-start;
-		background-color: rgb(50, 115, 220);
+		background-color: rgb(81,88,187)
 	}
 /*
 	.navbar_option {
@@ -327,12 +330,11 @@ article h1 {
 		color: black;
 	}
 	*/
-	.navbar_files,.navbar_recent,.navbar_trash
+	.navbar-buttons *
 	{
-		width: 20%;
-		text-align: center;
-		padding: 0px;
-		margin: 0px;
+		display:inline-grid;
+		margin-top:10px;
+		width:30%;
 		background-color: white;
 		color: black;
 		outline:none;

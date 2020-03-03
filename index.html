@@ -26,19 +26,19 @@
 				<div class="upload-modal">
 					<p>Select or Drag any file to upload</p>
 					<span class="modal-btn-close">&times;</span>
-					<div class="file-drag-area">
+					<div id="file-drag-area">
 						  <p>Drag here any file you want to upload or click for choosing file</p>
 						  <input type="file" id="file-selector">	
 					</div>
-					<button class="btn modal-btn-upload">Select<i class="ri-check-line"></i></button>
+					<button id="modal-btn-select">Select<i class="ri-check-line"></i></button>
 				  </div>
 			</div>
-			<aside>
-
-				<button class="btn navbar_files">Files</button>
-				<button class="btn navbar_recent">Recent</button>
-				<button class="btn navbar_trash">Trash</button>
-
+			<nav>
+				<div class="navbar-buttons">
+					<button id="navbar-files"></i>Files</button>
+					<button id="navbar-recent"></i>Recent</button>
+					<button id="navbar-trash "></i>Trash</button>
+				</div>
 				<div id="storage-info-box">
 					<div class="storage-text">Google Drive: 10/15GB</div>
 					<div class="quota_background"><div id="quota_g_drive"></div></div>
@@ -50,7 +50,7 @@
 					<div class="quota_background"><div id="quota_dropbox"></div></div>
 				</div>
 
-			</aside>
+			</nav>
 			<article>
 				<h1>Files</h1>
 				<hr>
