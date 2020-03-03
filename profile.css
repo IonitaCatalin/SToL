@@ -1,0 +1,64 @@
+html, body {
+	margin: 0;
+	height: 100%;
+}
+
+body {
+	color: black;
+	font-family: 'Arimo' ;
+	font-size: 1.2em;
+}
+
+.grid-wrapper {
+	width: 100%;
+	margin:0;
+	height: 100%;
+	background-color: orange;
+	display: grid;
+	grid-template-rows: 12% auto /* 35px */;
+	grid-template-columns: 100%;
+	/* grid-gap:5px; */
+}
+
+header {
+	grid-column: 1/2;
+	grid-row: 1/2;
+	background-color: rgb(9,74,178);
+	color: white;
+	text-align: center;
+}
+
+header h1 {
+	margin: 13px 0 0 0;
+}
+
+article {
+	grid-column: 1/2;
+	grid-row: 2/3;
+	background-color:cadetblue;
+}
+
+.profile {
+	background-color: red;
+	width: 90%;
+	height: 50%;
+	margin: 2% auto 0 auto;
+	border: 1px solid white;
+	border-radius: 15px;
+	display: grid;
+	grid-template-rows: ???
+	grid-template-columns: ???
+}
+
+.edit_profile {
+	background-color: green;
+	width: 90%;
+	height: 43%;
+	margin: 2% auto 0 auto;
+	border: 1px solid white;
+	border-radius: 15px;
+}
+
+footer {
+	display: none;
+}
