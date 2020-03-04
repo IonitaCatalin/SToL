@@ -25,10 +25,19 @@
 			<div class="backdrop">
 				<div class="upload-modal">
 					<p>Select or Drag any file to upload</p>
-					<span class="modal-btn-close">&times;</span>
-					<div id="file-drag-area">
+					<div id="modal-storage">
+						<input type="radio" id="male" name="gender" value="male">
+						<label for="male">Redundant</label><br>
+						<input type="radio" id="female" name="gender" value="female">
+						<label for="female">Fragmented</label><br>
+					</div>
+					<span id="modal-btn-close">&times;</span>
+					<div id="modal-file-drop">
 						  <p>Drag here any file you want to upload or click for choosing file</p>
-						  <input type="file" id="file-selector">	
+						  <input type="file" id="file-selector" multiple accept="image/*" onchange="handleFiles(this.files)">
+						  <div class="drop-file-preview">
+
+						  </div>	
 					</div>
 					<button id="modal-btn-select">Select<i class="ri-check-line"></i></button>
 				  </div>
