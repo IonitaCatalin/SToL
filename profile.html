@@ -14,13 +14,67 @@
 			</header>
 
 			<article>
-				<div class="profile">
-					<p>Profile</p>
+				<div class="rows_group">
+					<div class="generic_row">
+						<div id="text_profile"><h2>Profile<h2></div>
+						<img id="avatar" src="images/avatar.png" alt="avatar">
+					</div>
+					<div class="generic_row">
+						<div id="text_name">Name:</div>
+						<div id="actual_name">Name Surname</div>
+					</div>
+					<div class="generic_row">
+						<div id="text_email">Email:</div>
+						<div id="actual_email">example@大声笑您翻译了此.com</div>
+					</div>
 				</div>
 
-				<div class="edit_profile">
-					<p>Change account details</p>
+				<div class="rows_group">
+					<div class="generic_row">
+						<div id="text_edit_profile"><h2>Change account details</h2></div>
+					</div>
+					<div class="generic_row">
+						<div id="text_change_name">Change name:</div>
+						<div id="input_edit_name"><input type="text"></div>
+					</div>
+					<div class="generic_row">
+						<div id="text_change_password">Change password:</div>
+						<div id="input_edit_password">
+							<label for="old_password">Old password:</label>
+							<input type="password" name="old_password"><br>
+							<label for="old_password">New password:</label>
+							<input type="password" name="new_password">
+						</div>
+					</div>
+					<div class="generic_row">
+						<div id="text_g_drive">Google Drive:</div>
+						<div id="status_g_drive">
+							Logged In <button class="button_log_out">Disconnect</button>
+						</div>
+					</div>
+					<div class="generic_row">
+						<div id="text_one_drive">MS One Drive:</div>
+						<div id="status_one_drive">
+							<label for="one_drive_email">Email:</label>
+							<input type="Email" name="one_drive_email"><br>
+							<label for="one_drive_password">Password:</label>
+							<input type="password" name="one_drive_password">
+						</div>
+					</div>
+					<div class="generic_row">
+						<div id="text_dropbox">DropBox:</div>
+						<div id="status_dropbox">
+							<label for="dropbox_email">Email:</label>
+							<input type="Email" name="dropbox_email"><br>
+							<label for="dropbox_password">Password:</label>
+							<input type="password" name="dropbox_password">
+						</div>
+					</div>
+					<div class="generic_row">
+						<button id="save_changes_button">Save Changes</button>
+					</div>
 				</div>
+
 			</article>
 
 			<footer>
