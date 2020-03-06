@@ -15,11 +15,11 @@ uploadButton.onclick=function(){
 closeModalButton.onclick=function(){
     backdrop.style.display='none';
     modal.style.display='none';
-}
-// dragArea.onclick=function(){
-//     document.getElementById('file-selector').click();
-// }
+    const parent=document.getElementById('modal-file-drop');
+    while(parent.firstChild)
+            parent.firstChild.remove();
 
+}
 
 dropArea.addEventListener('dragenter',preventDefaults,false);
 dropArea.addEventListener('dragover',preventDefaults,false);
@@ -39,6 +39,8 @@ function handleDrop(e)
     let dt=e.dataTransfer;
     let files=dt.files;
     handleFiles(files);
+    document.getElementById('info-text').style.display="none";
+
 }
 
 function handleFiles(files)
@@ -49,15 +51,34 @@ function handleFiles(files)
 
 function previewFile(file)
 {
+    // let reader=new FileReader();
+    // reader.readAsDataURL(file);
+    // reader.onloadend=function(){
+    //     var div=document.createElement('div');
+    //     var img=document.createElement('img');
+    //     var fileName=document.createTextNode(reader.result);
+    //     div.appendChild(img);
+    //     div.appendChild(fileName);
+    //     img.src=reader.result;
+    //     img.style.height='90px';
+    //     div.style='inline-block';
+    //     img.style.width='90px';
+    //     document.getElementById('modal-file-drop').appendChild(div);
+        
+    // }
     let reader=new FileReader();
+    reader.fileName=file.name;
     reader.readAsDataURL(file);
     reader.onloadend=function(){
-        let img=document.createElement('img');
-        img.src=reader.result;
-        document.getElementById('modal-file-drop').appendChild(img);
-        img.width=50;
-        img.height=50;
-        
+        var div=document.createElement('div');
+        var fileName=document.createTextNode(reader.fileName);
+        var previewImage=document.createElement('img');
+        div.style.backgroundColor="rgb(220,220,220)";
+        div.style.height="80px";
+        div.style.width="100%";
+        div.style.padding="0px "
+        div.appendChild(fileName);
+        document.getElementById('modal-file-drop').appendChild(div);
     }
 }
 

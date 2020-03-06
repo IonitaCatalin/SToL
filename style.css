@@ -65,6 +65,10 @@ header img {
 	background-color:rgb(234,234,234);
 }
 
+.navbar-buttons *:hover
+{
+	background-color:rgb(234,234,234);
+}
 /* .user-bar span {
 	display: inline-block;
 	margin-left: 20px;
@@ -245,13 +249,22 @@ article h1 {
 #modal-file-drop
 {
 	grid-area:up-area;
+	background-color:rgb(234,234,234);
 	border-style: dotted;
 	border-color:grey;
 	border-width:2px;
-	border-radius:25px;
 	width:580px;
 	height:300px;
 	display:grid;
+	grid-template-columns: 1frs;
+	grid-gap:20px;
+	overflow:scroll;
+	overflow-x:hidden;
+	justify-items: center;
+}
+#modal-file-drop p
+{
+	text-align: center;
 }
 
 #modal-btn-select
@@ -294,7 +307,7 @@ article h1 {
 	margin-left:300px;
 	margin-top:-5px;
 }
-.modal-btn-upload:hover
+#modal-btn-select:hover
 {
 	background-color: rgb(50, 115, 220);
 }
