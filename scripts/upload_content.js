@@ -5,6 +5,7 @@ let uploadButton = document.querySelector('.btn-upload');
 let closeModalButton = document.querySelector('#modal-btn-close');
 let mainContainer = document.querySelector('.grid-wrapper');
 let dropArea=document.querySelector('#modal-file-drop');
+let fileSelector=document.querySelector('#file-selector');  
 
 let isOpened=false;
 
@@ -18,7 +19,14 @@ closeModalButton.onclick=function(){
     const parent=document.getElementById('modal-file-drop');
     while(parent.firstChild)
             parent.firstChild.remove();
-
+}
+dropArea.onclick=function(){
+    fileSelector.click();
+    fileSelector.onchange=function(event){
+        var files=fileSelector.files;
+        document.getElementById('info-text').style.display="none";
+        handleFiles(files);
+    }
 }
 
 dropArea.addEventListener('dragenter',preventDefaults,false);
@@ -51,33 +59,38 @@ function handleFiles(files)
 
 function previewFile(file)
 {
-    // let reader=new FileReader();
-    // reader.readAsDataURL(file);
-    // reader.onloadend=function(){
-    //     var div=document.createElement('div');
-    //     var img=document.createElement('img');
-    //     var fileName=document.createTextNode(reader.result);
-    //     div.appendChild(img);
-    //     div.appendChild(fileName);
-    //     img.src=reader.result;
-    //     img.style.height='90px';
-    //     div.style='inline-block';
-    //     img.style.width='90px';
-    //     document.getElementById('modal-file-drop').appendChild(div);
-        
-    // }
     let reader=new FileReader();
     reader.fileName=file.name;
+    reader.fileSize=file.size;
     reader.readAsDataURL(file);
     reader.onloadend=function(){
         var div=document.createElement('div');
-        var fileName=document.createTextNode(reader.fileName);
+        var infoDiv=document.createElement('div');
+        var extension=document.createElement('p');
+        var fileName=document.createElement('p');
+        var fileSize=document.createElement('p');
+        infoDiv.style.display="inline-block";
+        extension.textContent="Extension:"+reader.fileName.split('.').pop();
+        fileName.textContent="Name:"+reader.fileName;
+        fileSize.textContent="Size:"+Math.ceil(reader.fileSize/(3*1024))+"MB";
+        [fileName,fileSize,extension].forEach(function(arg){
+            arg.style.margin="auto";
+        })
+        infoDiv.appendChild(fileName);
+        infoDiv.appendChild(fileSize);
+        infoDiv.appendChild(extension);
         var previewImage=document.createElement('img');
         div.style.backgroundColor="rgb(220,220,220)";
         div.style.height="80px";
         div.style.width="100%";
-        div.style.padding="0px "
-        div.appendChild(fileName);
+        div.style.padding="0px"
+        div.style.display="grid";
+        div.style.gridTemplateColumns="0.3fr 1fr";
+        previewImage.src=reader.result;
+        previewImage.style.height="100%";
+        previewImage.style.width="100px";
+        div.appendChild(previewImage);
+        div.appendChild(infoDiv);
         document.getElementById('modal-file-drop').appendChild(div);
     }
 }
