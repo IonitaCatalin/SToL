@@ -39,15 +39,16 @@ header img {
 	border-radius: 50%;
 	float: right;
 }
-
-.user-bar {
-	grid-column: 2/3;
-	grid-row: 2/3;
+.user-bar
+{
+	grid-template-columns: auto auto auto;
 	background-color: rgb(239,239,246);
-	vertical-align: center;
 }
-
-.btn-upload {
+.search-container
+{
+	display:inline-block;
+}
+#btn-upload {
   	background-color: rgb(239,239,246);;
   	border: none;
   	color: black;
@@ -58,20 +59,29 @@ header img {
 	display:inline-block;
 	outline:0px;  
 }
+#btn-new-folder
+{
+	background-color: rgb(239,239,246);;
+  	border: none;
+  	color: black;
+  	padding: 8px 25px;
+  	text-align: center;
+  	text-decoration: none;
+  	font-size: 18px;
+	display:inline-block;
+	outline:0px;  
+}
 
-.btn-upload:hover {
+#btn-upload:hover {
+	background-color:rgb(234,234,234);
+}
+#btn-new-folder:hover {
 	background-color:rgb(234,234,234);
 }
 
 .navbar-buttons *:hover
 {
 	background-color:rgb(234,234,234);
-}
-.ri-check-line
-{
-	top:2px;
-	position:relative;
-	font-size:20px;
 }
 
 footer {
@@ -299,6 +309,10 @@ article h1 {
 	outline:none;
 
 }
+#btn-disconn:hover
+{
+	background-color:rgb(50, 115, 220);
+}
 #modal-btn-upload:hover
 {
 	background-color: rgb(50, 115, 220);
@@ -306,6 +320,9 @@ article h1 {
 .ri
 {
 	font-size: 1em;
+	position: relative;
+	top:1px;
+	left:1px;
 }
 #file-selector
 {
@@ -352,11 +369,15 @@ article h1 {
 	#btn-disconn
 	{
 		width:85%;
-		margin-top:15px;
+		margin-left:50px;
 		margin-bottom: 15px;
 		height:40px;
 		border-radius: 0px;
 		margin-top:5px;
+	}
+	#btn-disconn:hover
+	{
+		background-color:rgb(50, 115, 220);
 	}
 	#storage-info-box {
     	height: auto;
@@ -410,6 +431,7 @@ article h1 {
 	{
 		grid-area:list;
 		display:block;
+		overflow-y: scroll;
 	}
 	.upload-modal p
 	{

@@ -1,11 +1,12 @@
 
 let backdrop = document.querySelector('.backdrop');
 let modal = document.querySelector('.upload-modal');
-let uploadButton = document.querySelector('.btn-upload');
+let uploadButton = document.querySelector('#btn-upload');
 let closeModalButton = document.querySelector('#modal-btn-close');
 let dropArea=document.querySelector('#modal-file-drop');
 let fileSelector=document.querySelector('#file-selector');  
 let chooseFilesButton=document.querySelector('#modal-btn-files');
+let addFolder=document.querySelector('#btn-new-folder');
 
 let isOpened=false;
 
@@ -26,6 +27,12 @@ closeModalButton.onclick=function(){
     {
         parentReducedView.firstChild.remove();
     }
+}
+addFolder.onclick=function(){
+    var element=document.createElement('img');
+    element.src='icons/folder.svg';
+    element.className='folder';
+    document.querySelector('.main-container').appendChild(element);
 }
 chooseFilesButton.onclick=function()
 {
