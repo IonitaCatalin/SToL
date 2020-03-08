@@ -18,9 +18,7 @@
 				</div>
 			</header>
 			<div class="user-bar">
-				<!--<span> Download </span>-->
-				<button class="btn btn-upload">Upload<i class="ri-file-upload-line"></i></button>
-				<!--<span> Upload </span>-->
+				<button class="btn-upload">Upload<i class="ri ri-file-upload-line"></i></button>
 			</div>
 			<div class="backdrop">
 				<div class="upload-modal">
@@ -33,12 +31,14 @@
 					</div>
 					<span id="modal-btn-close">&times;</span>
 					<div id="modal-file-drop">
-						  <p id="info-text">Drag here any files you want to upload or click for choosing files</p>
 							<input type="file" id="file-selector" multiple accept="image/*" onchange="handleFiles(this.files)">
 							<div class="drop-file-preview">
 						  </div>	
 					</div>
-					<button id="modal-btn-select">Select<i class="ri-check-line"></i></button>
+					<div id="modal-up-list">
+					</div>
+					<button id="modal-btn-files">Select Files</button>
+					<button id="modal-btn-upload">Upload<i class="ri ri-check-line"></i></button>
 				  </div>
 			</div>
 			<nav>
@@ -46,6 +46,7 @@
 					<button id="navbar-files"></i>Files</button>
 					<button id="navbar-recent"></i>Recent</button>
 					<button id="navbar-trash "></i>Trash</button>
+					
 				</div>
 				<div id="storage-info-box">
 					<div class="storage-text">Google Drive: 10/15GB</div>
@@ -56,6 +57,9 @@
 
 					<div class="storage-text">DropBox: 7/10GB</div>
 					<div class="quota_background"><div id="quota_dropbox"></div></div>
+
+					<button id="btn-disconn">Logout</button>
+
 				</div>
 
 			</nav>
