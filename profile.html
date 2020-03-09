@@ -17,7 +17,11 @@
 				<div class="rows_group">
 					<div class="generic_row">
 						<div id="text_profile"><h2>Profile<h2></div>
-						<img id="avatar" src="images/avatar.png" alt="avatar">
+						<div id="text_change_picture">Click the picture to change</div>
+						<label id="change_avatar_container" for="image">
+							<input type="file" name="image" id="image" style="display:none;"/>
+							<img id="avatar" src="images/avatar.png" alt="avatar">
+					    </label>
 					</div>
 					<div class="generic_row">
 						<div id="text_name">Name:</div>
@@ -35,7 +39,10 @@
 					</div>
 					<div class="generic_row">
 						<div id="text_change_name">Change name:</div>
-						<div id="input_edit_name"><input type="text"></div>
+						<div id="input_edit_name">
+							<label for="new_name">New name:</label>
+							<input type="text" name="new_name">
+						</div>
 					</div>
 					<div class="generic_row">
 						<div id="text_change_password">Change password:</div>
@@ -71,6 +78,7 @@
 						</div>
 					</div>
 					<div class="generic_row">
+						<a id="cancel_changes_button" href="index.html">Go Back</a>
 						<button id="save_changes_button">Save Changes</button>
 					</div>
 				</div>
