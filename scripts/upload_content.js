@@ -73,47 +73,39 @@ function handleDrop(e)
 function handleFiles(files)
 {
     files=[...files];
-    files.forEach(previewFile);
+    files.forEach(previewFileOnUp);
 }
 
-function previewFile(file)
+function previewFileOnUp(file)
 {
-    let reader=new FileReader();
+    var reader=new FileReader();
     reader.fileName=file.name;
     reader.fileSize=file.size;
     reader.readAsDataURL(file);
     reader.onloadend=function(){
+        
         var div=document.createElement('div');
-        div.className="up-elem";
-        var infoDiv=document.createElement('div');
+        var aboutFile=document.createElement('div');
+        aboutFile.className="up-elem-meta";
+        div.className="up-elem-list";
         var extension=document.createElement('p');
-        var fileName=document.createElement('p');
-        var fileSize=document.createElement('p');
-        infoDiv.style.display="inline-block";
+        var name=document.createElement('p');
+        var size=document.createElement('p');
+        var previewImg=document.createElement('img');
         extension.textContent="Extension:."+reader.fileName.split('.').pop();
-        fileName.textContent="Name:"+reader.fileName;
-        fileSize.textContent="Size:"+Math.ceil(reader.fileSize/1024)+"KB";
-        [fileName,fileSize,extension].forEach(function(arg){
-            arg.style.margin="auto";
-        })
-        infoDiv.appendChild(fileName);
-        infoDiv.appendChild(fileSize);
-        infoDiv.appendChild(extension);
-        var previewImage=document.createElement('img');
-        div.style.backgroundColor="rgb(220,220,220)";
-        div.style.height="80px";
-        div.style.width="100%";
-        div.style.padding="0px"
-        div.style.display="grid";
-        div.style.gridTemplateColumns="0.3fr 1fr";
-        previewImage.src=reader.result;
-        previewImage.style.height="100%";
-        previewImage.style.width="100px";
-        previewImage.style.borderRadius="15px";
-        div.appendChild(previewImage);
-        div.appendChild(infoDiv);
-
+        name.textContent="Name:"+reader.fileName;
+        size.textContent="Size:"+Math.ceil(reader.fileSize/1024)+"KB";
+        aboutFile.appendChild(name);
+        aboutFile.appendChild(size);
+        aboutFile.appendChild(extension);
+        previewImg.src=reader.result;
+        div.appendChild(previewImg );
+        div.appendChild(aboutFile);
         document.getElementById('modal-file-drop').appendChild(div);
+        /*
+            Clonam elementul la adaugare intrucat nu putem adauga acealasi element 
+            de multiple ori intr-o ierarhie copilNod-parinteNod
+        */
         document.getElementById('modal-up-list').appendChild(div.cloneNode(true));
     }
 }

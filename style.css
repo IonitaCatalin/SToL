@@ -14,9 +14,8 @@ body {
 	margin:0;
 	height: 100%;
 	display: grid;
-	grid-template-rows: 50px 35px auto /* 35px */;
+	grid-template-rows: 50px 35px auto;
 	grid-template-columns: 200px auto;
-	/* grid-gap:5px; */
 }
 
 header {
@@ -47,11 +46,10 @@ header img {
 }
 
 .search-container {
-	margin: 0;
-	padding: 0;
-	grid-column: 1/2;
+	margin: 0px;
+	padding:0;
+	grid-column:1/2;
 	grid-row: 2/3;
-	background-color: red;
 }
 
 #search-box {
@@ -79,7 +77,7 @@ header img {
 	background-color:rgb(234,234,234);
 }
 
-.navbar-buttons * :hover {
+.navbar-buttons *:hover {
 	background-color:rgb(234,234,234);
 }
 
@@ -321,6 +319,52 @@ article h1 {
 
 #file-selector {
 	display:none;
+}
+.up-elem-list
+{
+	    display:grid;
+		height:80px;
+		width:100%;
+		padding:0;
+		background-color: rgb(220,220,220);
+		grid-template-columns: 0.3fr 1fr;
+}
+.up-elem-list img
+{
+	height:100%;
+	width:100px;
+}	
+.up-elem-meta
+{
+	display: inline-block;
+}
+.up-elem-meta p
+{
+	margin:auto;
+}
+.contxt-menu
+{
+	display:none;
+	width: 120px;
+	position:absolute;
+	background-color:white;
+	box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+}
+.contxt-options
+{
+	list-style: none;
+    padding: 10px 0;
+}
+.contxt-option
+{
+	  font-weight: 500;
+      font-size: 14px;
+      padding: 10px 40px 10px 20px;
+      cursor: pointer;
+}
+.contxt-option:hover
+{
+	background: rgba(0, 0, 0, 0.2);
 }
 
 @media only screen and (max-width: 850px) {

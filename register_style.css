@@ -58,7 +58,7 @@ h1 {
     font-size: 16px;
 }
 
-.login_form input[type="submit"] {
+/* .login_form input[type="submit"] {
     border: none;
     outline: none;
     height: 40px;
@@ -81,6 +81,29 @@ h1 {
     background-position: center;
     font-size: 0px;
    
+} */
+
+#btn-register
+{
+    border: none;
+    outline: none;
+    height: 40px;
+    width: 120px;
+    float: right;
+    background: #0066ff;
+    color: white;
+    font-size: 18px;
+    border-radius: 15px;
+    margin-top: 20px;
+}
+#btn-register:hover
+{
+    cursor: pointer;
+    background: #99c2ff;
+    background-image: url("images/arrow-right.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    font-size: 0px;
 }
 
 .login_form a {

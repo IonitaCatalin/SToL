@@ -14,7 +14,7 @@
 <body>
     <div class="login_form">
         <h1>Stol</h1>
-        <form>
+        <form action="/index.html" method="get">
             <div class="username_input">
                 <i class="ri-user-smile-line"></i>
                 <!--<p>Username</p> -->
@@ -26,7 +26,8 @@
                 <input type="password" name="passwd" placeholder="Enter Password">
             </div>
             <div>
-	        	<input type="submit" name="login" value="Login">
+               <!-- <input type="submit" name="login" value="Login">-->
+                <button id="btn-login" onclick="location.href='index.html';">Login</button>
 	        	<a href="#">Lost your password?</a><br>
 	        	<a href="register.html">Don't have an account?</a>
         	</div>
