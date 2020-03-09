@@ -18,6 +18,7 @@ body {
 	grid-template-columns: 200px auto;
 	/* grid-gap:5px; */
 }
+
 header {
 	grid-column: 1/3;
 	grid-row: 1/2;
@@ -39,29 +40,31 @@ header img {
 	border-radius: 50%;
 	float: right;
 }
-.user-bar
-{
-	grid-template-columns: auto auto auto;
-	background-color: rgb(239,239,246);
+
+.user-bar {
+	/* grid-template-columns: auto auto auto; */ /* nu pare a fi folosit */
+ 	background-color: rgb(239,239,246);
 }
-.search-container
-{
+
+.search-container {
+	margin: 0;
+	padding: 0;
+	grid-column: 1/2;
+	grid-row: 2/3;
+	background-color: red;
+}
+
+#search-box {
+	margin: 0;
 	display:inline-block;
+	width: 100%;
+	height: 100%;
+	font-size: 1em;
+	outline: none;
 }
-#btn-upload {
-  	background-color: rgb(239,239,246);;
-  	border: none;
-  	color: black;
-  	padding: 8px 25px;
-  	text-align: center;
-  	text-decoration: none;
-  	font-size: 18px;
-	display:inline-block;
-	outline:0px;  
-}
-#btn-new-folder
-{
-	background-color: rgb(239,239,246);;
+
+.btn-user-bar {
+  	background-color: rgb(239,239,246);
   	border: none;
   	color: black;
   	padding: 8px 25px;
@@ -72,15 +75,11 @@ header img {
 	outline:0px;  
 }
 
-#btn-upload:hover {
-	background-color:rgb(234,234,234);
-}
-#btn-new-folder:hover {
+.btn-user-bar:hover {
 	background-color:rgb(234,234,234);
 }
 
-.navbar-buttons *:hover
-{
+.navbar-buttons * :hover {
 	background-color:rgb(234,234,234);
 }
 
@@ -90,7 +89,7 @@ footer {
 
 nav {
 	grid-column: 1/2;
-	grid-row: 2/4;
+	grid-row: 3/4;
 	background-color: rgb(81,88,187);
 	padding-top: 100px;
 	display: flex;
@@ -99,8 +98,7 @@ nav {
 	color: #306a9c;
 }
 
-.navbar-buttons *
-{
+.navbar-buttons * {
 	display:grid;
 	position:relative;
 	text-align: left;
@@ -114,7 +112,7 @@ nav {
 }
 
 #storage-info-box {
-	position:relative;
+	position: relative;
 	background-color: white;
 	margin: auto 0 0 0;
 	height: 250px;
@@ -164,7 +162,6 @@ article h1 {
 	margin: 0 0 20px 0;
 	display: block;
 	font-weight: normal;
-
 }
 
 .main-container {
@@ -195,8 +192,8 @@ article h1 {
     flex-basis: 100px;
     border: 1px solid grey;
 }
-.backdrop
-{
+
+.backdrop {
 	display:none;
 	position:fixed;
 	background:rgba(0,0,0,0.3);
@@ -204,10 +201,9 @@ article h1 {
 	height:100vh;
 	width:100vw;
 	z-index:1;
-
 }
-.upload-modal
-{
+
+.upload-modal {
 	display:none;
 	position:absolute;
 	left:calc(50% - 300px);
@@ -218,31 +214,29 @@ article h1 {
 	z-index:1;
 	grid-template-columns: auto auto auto;
 	grid-template-rows: auto auto auto auto auto;
-	grid-template-areas: "header header close-btn"
-						"radial-btn . ."
-						"info-text . ."
-						"up-area up-area up-area"
-						"up-area up-area up-area"
-						"select-btn . ."
-						"list-up list-up list-up";
+	grid-template-areas:	"header header close-btn"
+							"radial-btn . ."
+							"info-text . ."
+							"up-area up-area up-area"
+							"up-area up-area up-area"
+							"select-btn . ."
+							"list-up list-up list-up";
 	grid-row-gap: 15px;
-	
 }
-#modal-up-list
-{
+
+#modal-up-list {
 	display: none;
 }
-#modal-storage
-{
-	grid-area:radial-btn;
 
+#modal-storage {
+	grid-area:radial-btn;
 }
-.upload-modal p
-{
+
+.upload-modal p {
 	grid-area:header;
 }
-#modal-file-drop
-{
+
+#modal-file-drop {
 	grid-area:up-area;
 	display:grid;
 	background-color:rgb(234,234,234);
@@ -252,23 +246,23 @@ article h1 {
 	width:580px;
 	height:300px;
 	display:grid;
-	grid-template-columns: 1fr ;
+	grid-template-columns: 1fr;
 	grid-gap:20px;
 	overflow:scroll;
 	overflow-x:hidden;
 	justify-items: center;
 }
-#info-text
-{
+
+#info-text {
 	text-align: center;
-	grid-area:info-text
+	grid-area: info-text;
 }
-#modal-btn-files
-{
+
+#modal-btn-files {
 	display:none;
 }
-#modal-btn-upload
-{
+
+#modal-btn-upload {
 	display:inline-block;
 	grid-area:select-btn;
 	background-color:rgb(9,74,178); /* Green */
@@ -279,24 +273,25 @@ article h1 {
   	text-decoration: none;
 	outline:0px;  
 }
-.modal-file-drop
-{
+
+.modal-file-drop {
 	display:grid;
 }
-.modal-file-drop p
-{
+
+.modal-file-drop p {
 	opacity:0.5;
 	justify-self: left;
 }
 
-#modal-btn-close
-{
+#modal-btn-close {
 	grid-area:close-btn;
 	margin-left:300px;
 	margin-top:-5px;
+	margin-right: 5px;
+	font-size: 1.4em;
 }
-#btn-disconn
-{
+
+#btn-disconn {
 	width:50%;
 	height:20%;
 	margin-left:50px;
@@ -307,27 +302,27 @@ article h1 {
 	background-color: rgb(9,74,178);
 	color: white;
 	outline:none;
-
 }
-#btn-disconn:hover
-{
+
+#btn-disconn:hover {
 	background-color:rgb(50, 115, 220);
 }
-#modal-btn-upload:hover
-{
+
+#modal-btn-upload:hover {
 	background-color: rgb(50, 115, 220);
 }
-.ri
-{
+
+.ri {
 	font-size: 1em;
 	position: relative;
 	top:1px;
 	left:1px;
 }
-#file-selector
-{
+
+#file-selector {
 	display:none;
 }
+
 @media only screen and (max-width: 850px) {
 	.grid-wrapper{
 		display: flex;
@@ -341,8 +336,14 @@ article h1 {
 	.user-bar {
 		order: 2;
 	}
-	nav {
+
+	.search-container {
 		order: 3;
+		margin-bottom: 7px;
+	}
+
+	nav {
+		order: 4;
 		padding:15px;
 		margin: 3px;
 		display:flex;
@@ -354,20 +355,20 @@ article h1 {
 		background-color: rgb(81,88,187)
 
 	}
-	nav *
-	{
+
+	nav * {
 		flex:1 0 60%;
 	}
-	.navbar-buttons *
-	{
+	
+	.navbar-buttons * {
 		width:100%;
 		background-color: white;
 		color: black;
 		outline:none;
 		text-align: center;
 	}
-	#btn-disconn
-	{
+
+	#btn-disconn {
 		width:85%;
 		margin-left:50px;
 		margin-bottom: 15px;
@@ -375,10 +376,7 @@ article h1 {
 		border-radius: 0px;
 		margin-top:5px;
 	}
-	#btn-disconn:hover
-	{
-		background-color:rgb(50, 115, 220);
-	}
+
 	#storage-info-box {
     	height: auto;
 	}
@@ -389,25 +387,24 @@ article h1 {
 	}
 
 	article {
-		order: 4;
+		order: 5;
 		padding: 5px;
 		height: 100%;
 	}
 
-	.main-container{
-		order: 5;
-	}
-
-	footer {
+	.main-container {
 		order: 6;
 	}
 
-	#modal-file-drop
-	{
+	footer {
+		order: 7;
+	}
+
+	#modal-file-drop {
 		display:none;
 	}
-	#modal-btn-files
-	{
+
+	#modal-btn-files {
 		display:block;
 		grid-area:select;
 		background-color:rgb(9,74,178); /* Green */
@@ -418,34 +415,37 @@ article h1 {
 		outline:0px;
 		margin-left:5px;
 	}
-	#modal-btn-upload
-	{
+
+	#modal-btn-upload {
 		grid-area:upload;
 		margin-right: 5px;
 	}
-	#modal-btn-close
-	{
+
+	#modal-btn-close {
 		grid-area:close;
+		margin: 0px 0 7px auto;
 	}
-	#modal-up-list
-	{
+
+	#modal-up-list {
 		grid-area:list;
 		display:block;
 		overflow-y: scroll;
 	}
-	.upload-modal p
-	{
+
+	.upload-modal p	{
 		grid-area:text;
 	}
-	.upload-modal
-	{
-		grid-template-columns: 1fr auto auto;
+
+	.upload-modal {
+		grid-template-columns: 1fr 33% 33%;
 		grid-template-rows: auto auto auto auto auto;
 		grid-template-areas: "text text close"
-							"radial-btn radial-btn ."
-							"upload . select"
-							"list list list";
+							 "radial-btn radial-btn ."
+							 "upload . select"
+							 "list list list";
+		position:static;
 		top:10px;
-		left:50px;
+		width:85%;
+		margin: 10px auto auto auto;
 	}
 }

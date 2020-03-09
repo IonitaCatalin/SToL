@@ -17,30 +17,33 @@
 					<img src="images/avatar.png" alt="avatar">
 				</div>
 			</header>
+			<div class="search-container">
+				<input type="text" id="search-box" placeholder="Search...">
+			</div>
 			<div class="user-bar">
-				<button id="btn-upload">Upload<i class="ri ri-file-upload-line"></i></button>
-				<button id="btn-new-folder">New folder<i class="ri ri-add-fill"></i></button>
+				<button id="btn-upload" class="btn-user-bar">Upload<i class="ri ri-file-upload-line"></i></button>
+				<button id="btn-new-folder" class="btn-user-bar">New folder<i class="ri ri-add-fill"></i></button>
 			</div>
 			<div class="backdrop">
 				<div class="upload-modal">
 					<p>Select or Drag any files to upload</p>
 					<div id="modal-storage">
-						<input type="radio" id="male" name="gender" value="male">
+						<input type="radio" id="redundant" name="storage-type" value="redundant">
 						<label for="male">Redundant</label><br>
-						<input type="radio" id="female" name="gender" value="female">
+						<input type="radio" id="fragmented" name="storage-type" value="fragmented">
 						<label for="female">Fragmented</label><br>
 					</div>
 					<span id="modal-btn-close">&times;</span>
 					<div id="modal-file-drop">
-							<input type="file" id="file-selector" multiple accept="image/*" onchange="handleFiles(this.files)">
-							<div class="drop-file-preview">
-						  </div>	
+						<input type="file" id="file-selector" multiple accept="image/*" onchange="handleFiles(this.files)">
+						<div class="drop-file-preview">
+						</div>	
 					</div>
 					<div id="modal-up-list">
 					</div>
 					<button id="modal-btn-files">Select Files</button>
 					<button id="modal-btn-upload">Upload<i class="ri ri-check-line"></i></button>
-				  </div>
+				</div>
 			</div>
 			<nav>
 				<div class="navbar-buttons">
