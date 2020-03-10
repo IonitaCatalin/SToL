@@ -28,12 +28,12 @@ closeModalButton.onclick=function(){
         parentReducedView.firstChild.remove();
     }
 }
-addFolder.onclick=function(){
-    var element=document.createElement('img');
-    element.src='icons/folder.svg';
-    element.className='folder';
-    document.querySelector('.main-container').appendChild(element);
-}
+// addFolder.onclick=function(){
+//     var element=document.createElement('img');
+//     element.src='images/folder.svg';
+//     element.className='folder';
+//     document.querySelector('.main-container').appendChild(element);
+// }
 chooseFilesButton.onclick=function()
 {
     fileSelector.click();
