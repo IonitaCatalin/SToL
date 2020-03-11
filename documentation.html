@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Stol Documentation</title>
+		<base href="documentation.html">
+		<link rel="stylesheet" href="documentation.css">
+	</head>
+	<body>
+		<!-- article pare ca trebuie sa cuprinda tot(diverse sectiuni cu rol specific ?) -->
+		<article resource="#" typeof="schema:ScholarlyArticle">
+
+			<header>
+				<h1 property="schema:name">Stol-Universal Storage Tool</h1>
+				<p role="doc-subtitle" property="schema:alternateName">
+	      			The Future of Managing Online Storage
+	    		</p>
+	    	</header>
+	    	<meta property="schema:accessibilityFeature" content="alternativeText">
+	    	<meta property="schema:accessibilityHazard" content="noFlashingHazard">
+	    	<meta property="schema:accessMode" content="textual">
+
+
+			<!-- The following element must be a div with the role of contentinfo containing author and affiliation information ???? -->
+			<div role="contentinfo">
+				<span typeof="schema:author">
+					<span typeof="schema:Person">
+						<a href="#refAutor1">
+							<span property="schema:name">Autor1,</span>
+						</a>
+					</span>
+				</span>
+				<span typeof="schema:author">
+					<span typeof="schema:Person">
+						<a href="#refAutor2">
+							<span property="schema:name">Autor2,</span>
+						</a>
+					</span>
+				</span>
+				<span typeof="schema:Organization" resource="https://www.info.uaic.ro/">
+					<a href="https://www.info.uaic.ro/">
+    					<span property="schema:name">Facultatea de Informatica Iasi</span>
+  					</a>
+				</span>
+			</div>
+
+
+			<!-- model general pt o sectiune -->
+			<section>
+				<h2>Titlu sectiune</h2>
+				<p>un paragraf de continut</p>
+
+				<!-- model general pt inserarea unei imagini -->
+				<figure typeof="sa:image">
+					<img src="" alt="descriere">
+					<figcaption>fig caption: acelasi lucru ca in img alt</figcaption>
+				</figure>
+
+				<!-- model general pt inserarea unui tabel -->
+				<figure typeof="sa:table">
+					<table>
+						<caption>Table Caption</caption>
+						<tr>
+  							<th>Name</th>
+  							<th>Favorite Color</th>
+ 						</tr>
+ 						<tr>
+  							<td>Bob</td>
+  							<td>Yellow</td>
+ 						</tr>
+					</table>
+				</figure>
+
+				<!-- model general pt inserarea de cod -->
+				<figure typeof="schema:SoftwareSourceCode">
+					<pre>
+						<code>cod aici</code>
+						<figcaption>descriere cod?</figcaption>
+					</pre>
+				</figure>
+			</section>
+
+
+			<!-- sectiunea pt autori -->
+			<section typeof="sa:AuthorsList">
+				<h2>Authors</h2>
+				<ul>
+					<li typeof="sa:ContributorRole" property="schema:author" id="refAutor1">
+	      				<span typeof="schema:Person" resource="https://github.com/GeorgicaMarius">
+	        				<meta property="schema:givenName" content="Marius">
+	        				<meta property="schema:familyName" content="Georgica">
+	        				<span property="schema:name">Georgica Marius</span>
+	      				</span>
+	      				<a href="#refFii" property="sa:roleAffiliation" resource="https://www.info.uaic.ro/">UAIC Fii</a>
+      					<ul>
+							<li property="schema:roleContactPoint" typeof="schema:ContactPoint">
+							  	<a href="mailto:ce@deUnde.com" property="schema:email">ce@deUnde.com</a>
+							</li>
+        				</ul>
+    				</li>
+					<li typeof="sa:ContributorRole" property="schema:author" id="refAutor2">
+	      				<span typeof="schema:Person" resource="https://github.com/IonitaCatalin">
+	        				<meta property="schema:givenName" content="Catalin">
+	        				<meta property="schema:additionalName" content="Mihail">
+	        				<meta property="schema:familyName" content="Ionita">
+	        				<span property="schema:name">Ionita Mihail Catalin</span>
+	      				</span>
+	      				<a href="#refFii" property="sa:roleAffiliation" resource="https://www.info.uaic.ro/">UAIC Fii</a>
+      					<ul>
+							<li property="schema:roleContactPoint" typeof="schema:ContactPoint">
+							  	<a href="mailto:ce@deUnde.com" property="schema:email">ce@deUnde.com</a>
+							</li>
+        				</ul>
+    				</li>
+				</ul>
+			</section>
+
+
+			<!-- affiliations section -->
+			<section typeof="sa:Affiliations">
+  				<h2>Affiliations</h2>
+			  	<ul>
+				    <li id="refFii">
+				      	<span typeof="schema:Organization" resource="https://www.info.uaic.ro/">
+				        	<span property="schema:name">info.uaic.ro</span>,
+				        	<span property="schema:parentOrganization">
+				          		<span typeof="schema:Organization">
+				            	<span property="schema:name">Facultatea de Informatica</span>
+				            	—
+				            	<span property="schema:location" typeof="schema:Place">
+				              		<span property="schema:address" typeof="schema:PostalAddress">
+				                		<span property="schema:addressLocality">Iasi</span>,
+				                		<span property="schema:addressRegion">Iasi</span>,
+				                		<span property="schema:addressCountry">Romania</span>
+				              		</span>
+				            	</span>
+				          		</span>
+				        	</span>
+				      	</span>
+				    </li>
+			  	</ul>
+			</section>
+
+
+			<!-- references section -->
+			<section>
+				<h2>References</h2>
+				<ol>
+					<li typeof="schema:WebPage" role="doc-biblioentry" resource="https://www.flaticon.com/" property="schema:citation" id="sursa-img-folder"> 
+						<cite property="schema:name">
+   							<a href="https://www.flaticon.com/free-icon/folder_716784?term=folder&page=5&position=73">File Icons</a>
+ 						</cite>, by <span property="schema:author" typeof="schema:Organization">
+   										<span property="schema:name">DinosoftLabs</span>
+ 									</span>; published in <time property="schema:datePublished" datatype="xsd:gYear" datetime="2019">2019</time>
+ 									<span property="schema:potentialAction" typeof="schema:ReadAction">
+   										<meta property="schema:actionStatus" content="CompletedActionStatus">
+    										(accessed on
+   										<time property="schema:endTime" datatype="xsd:date" datetime="2016-02-01">03 Mar 2020</time>)
+ 									</span>.
+					</li>
+				</ol>
+			</section>
+
+		</article>
+		<footer>
+			
+		</footer>
+	</body>
+</html>
