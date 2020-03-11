@@ -21,8 +21,10 @@
 			</header>
 			
 			<div class="user-bar">
+				<button id="btn-back" class="btn-user-bar">Back<i class="ri-arrow-go-back-line"></i></button>
 				<button id="btn-upload" class="btn-user-bar">Upload<i class="ri ri-file-upload-line"></i></button>
 				<button id="btn-new-folder" class="btn-user-bar">New folder<i class="ri ri-add-fill"></i></button>
+				
 				<div class="search-container">
 					<input type="text" id="search-box" placeholder="Search...">
 				</div>
@@ -70,7 +72,7 @@
 				</div>
 
 			</nav>
-			<article class="file-wrapper">
+			<article class="container-wrapper">
 				<h1>Files</h1>
 				<hr>
 				<div class="contxt-menu">
@@ -82,7 +84,7 @@
 					</ul>
 				</div>
 				<div class="main-container ">
-					<div class="folder">
+					<!-- <div class="folder">
 						<img src="images/folder.svg">
 						<p>Photos</p>
 					</div>
@@ -137,14 +139,15 @@
 					<div class="text-file">
 						<img src="images/text-file.svg">
 						<p>Test.txt</p>
-					</div>
+					</div> -->
 				</div>
 			</article>
 			<footer>
 				Footer
 			</footer>
 		</div>
-		<script src="scripts/upload_content.js"></script>
-		<script src="scripts/context_menu.js"></script>
+		<script async src="scripts/upload_content.js"></script>
+		<script async src="scripts/context_menu.js"></script>
+		<script async src="scripts/load_storage.js"></script>
 	</body>
 </html>

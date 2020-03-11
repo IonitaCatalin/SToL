@@ -1,0 +1,27 @@
+[
+    {
+      "type": "folder",
+      "name": "root",
+      "path": "/",
+      "children": [
+        {
+          "type": "folder",
+          "name": "folder1",
+          "path": "/"
+          
+        }
+        ,
+        {
+            "type":"folder",
+            "name":"folder2",
+            "path":"/"
+        }
+        ,
+        {
+            "type":"text-file",
+            "name":"fisier1",
+            "path":"/"
+        }
+      ]
+    }
+  ]

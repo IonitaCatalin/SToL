@@ -1,5 +1,5 @@
 const contxtMenu=document.querySelector('.contxt-menu');
-const mainContainer=document.querySelector('.file-wrapper');
+const mainContainer=document.querySelector('.container-wrapper');
 let isMenuVisible=false;
 
 document.querySelector('.main-container').addEventListener('contextmenu',e=>{
@@ -14,7 +14,6 @@ const toggleMenu = command=>{
 const setPosition = ({top,left})=>{
       contxtMenu.style.left=left+'px';
       contxtMenu.style.top=top+'px';
-      console.log(contxtMenu.style.left);
       toggleMenu("show");
 };
 
