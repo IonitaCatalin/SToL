@@ -28,12 +28,19 @@ closeModalButton.onclick=function(){
         parentReducedView.firstChild.remove();
     }
 }
-// addFolder.onclick=function(){
-//     var element=document.createElement('img');
-//     element.src='images/folder.svg';
-//     element.className='folder';
-//     document.querySelector('.main-container').appendChild(element);
-// }
+
+ addFolder.onclick=function(){
+     var container=document.createElement('div');
+     container.className='empty-folder';
+     var img=document.createElement('img');
+     img.src='images/empty-folder.svg';
+     var text=document.createElement('p');
+     text.innerHTML = 'New Folder';
+     container.appendChild(img);
+     container.appendChild(text);
+     document.querySelector('.main-container').appendChild(container);
+ }
+
 chooseFilesButton.onclick=function()
 {
     fileSelector.click();
