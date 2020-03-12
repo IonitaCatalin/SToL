@@ -2,10 +2,10 @@
     {
       "type": "folder",
       "name": "Downloads",
-      "path":/",
+      "path":"/",
       "children": [
         {
-          "type": "file-text",
+          "type": "text-file",
           "name": "database_export_log",
           "path": "/Downloads"
           

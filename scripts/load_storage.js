@@ -1,8 +1,18 @@
 
-//Fisier JSON convertit in js object ,continutlu poate fi gasit in root.js
-var data;
+/*
+
+    Folosim un GET pentru a obtine un .JSON de la server respectiv root.json 
+    care este oarecum mounting-point-ul
+    Am folosit Live Server pentru VSCode ca si sustitut de server
+    Fisierele sunt generate pe baza root.json in fisierul proiectului
+
+*/
+
+var backBtn=document.querySelector('#btn-back');
+
 function loadJSON(name,callback)
 {
+    console.log(name);
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType('application/json');
     xobj.open('GET',name+'.json',true);
@@ -14,17 +24,44 @@ function loadJSON(name,callback)
     }
     xobj.send(null);
 }
-
+function loadComponents(item)
+{
+    loadJSON(item.getElementsByTagName('P')[0].textContent.toLowerCase(),function(response){
+        let data=JSON.parse(response);
+        document.querySelector('.main-container').innerHTML='';
+        renderComponents(data);
+    })
+}
+function applyListeners(folders)
+{
+    folders.forEach(item =>{
+        item.addEventListener('dblclick',event =>{
+            loadComponents(item);
+        });
+    })
+}
 window.onload=function(){  
     loadJSON('root',function(response){
-    data=JSON.parse(response);
-    renderRootComponents(data)
+    let data=JSON.parse(response);
+    document.querySelector('.main-container').innerHTML='';
+    renderComponents(data);
+    applyListeners(document.querySelectorAll('.folder'));
 })
 }
-function renderRootComponents(data)
+backBtn.onclick=function(){  
+    loadJSON('root',function(response){
+    let data=JSON.parse(response);
+    document.querySelector('.main-container').innerHTML='';
+    renderComponents(data);
+    applyListeners(document.querySelectorAll('.folder'));
+})
+}
+
+
+
+function renderComponents(data)
 {
     let container=document.querySelector('.main-container');
-    console.log(data[0]['children']);
     data[0]['children'].forEach(function(element){
         let component=document.createElement('div');
         let graphics=document.createElement('img');
