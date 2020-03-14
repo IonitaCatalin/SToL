@@ -54,18 +54,20 @@
 					<li>3. Login - Cum se intra in cont</li>
 					<li>4. Pagina de management a fisierelor
 						<ol>
-							<li>4.1 Bara utilizator</li>
-							<li>4.2 Bara de acces rapid</li>
-							<li>4.3 Fereastra cu fisiere</li>
-							<li>4.4 Cutia cu statistici despre depozitare</li>
-							<li>4.5 Iesirea din cont</li>
+							<li>4.1 Privire de ansamblu</li>
+							<li>4.2 Bara utilizator</li>
+							<li>4.3 Bara de navigare</li>
+							<li>4.4 Fereastra cu fisiere</li>
+							<li>4.5 Cutia cu statistici despre depozitare</li>
+							<li>4.6 Acces la pagina de Profil si Logout</li>
 						</ol>
 					</li>
 					<li>5. Pagina de profil
 						<ol>
-							<li>5.1 Informatii utilizator</li>
-							<li>5.2 Cum se pot atasa sau renunta la servicii</li>
-							<li>5.3 Cum se pot schimba datele de cont</li>
+							<li>5.1 Privire de ansamblu</li>
+							<li>5.2 Informatii utilizator</li>
+							<li>5.3 Schimbare nume si parola</li>
+							<li>5.4 Adaugare sau eliminare Servicii</li>
 						</ol>
 					</li>
 				</ol>
@@ -91,13 +93,247 @@
 					</ul>
 				</p>
 				<figure typeof="sa:image">
-					<img src="register_form_guide.png" alt="Register form window">
-					<figcaption>Captura de ecran a ecranului de inregistrare cu campuri pentru date obligatorii.</figcaption>
+					<img src="register_form_guide.png" alt="Register form window.">
+					<figcaption>Captura de ecran a formularului de inregistrare cu campuri pentru date obligatorii.</figcaption>
 				</figure>
 				<p>
 					Dupa furnizarea datelor necesare, finalizarea realizarii contului se face prin apasarea butonului "Register".
 				</p>
 			</section>
+
+			<section>
+				<h2>3. Login - Cum se intra in cont</h2>
+				<p>
+					Prin intermediul procesului de autentificare, utilizatorul va obtine acces la fisierele proprii precum si la datele personale ori serviciile asocite.
+				</p>
+				<p>
+					Pentru a putea intra in contul deja existent, utilizatorul trebuie sa furnizeze urmatoarele informatii:
+					<ul>
+						<li>Username: Numele folosit pentru a identifica clientul.</li>
+						<li>Password: Parola folosita in momentul crearii contului</li>
+					</ul>
+				</p>
+				<figure typeof="sa:image">
+					<img src="login_form_guide.png" alt="Login form window.">
+					<figcaption>Captura de ecran a formularului pentru autentificare.</figcaption>
+				</figure>
+				<p>	Dupa furnizarea datelor necesare, finalizarea procesului de autentificare se realizeaza prin apasarea butonului "Login" iar utilizatorul va fi redirectionat spre pagina principala de management al fisierelor</p>
+				<p>Daca utilizatorul nu dispune de un cont deja existent, prin apasarea link-ului "Don't have an account?" va fi redirectionat spre pagina de Register unde isi va putea crea unul.</p>
+				<p>Daca utilizatorul nu isi mai aminteste parola, prin apasarea prin apasarea link-ului "Lost your password?"  ?????????????????????????????????????????</p>
+			</section>
+
+			<section>
+				<h2>4. Pagina de management a fisierelor</h2>
+
+				<section>
+					<h3>4.1 Privire de ansamblu</h3>
+					<p>
+						Pagina de management a fisierelor a fisierelor poate fi considerata pagina principala. De aici utilizatorul are acces la propriile fisiere, la butoane pentru actiuni rapide, la search, la statistici despre stocare si acces la pagina de profil.
+					</p>
+					<figure typeof="sa:image">
+						<img src="main_page_guide.png" alt="Main page window">
+						<figcaption>Captura de ecran a paginii principale de management al fisierelor.</figcaption>
+					</figure>
+					<p>
+						Principalele componente ale paginii principale sunt:
+						<ul>
+							<li>Bara utilizator</li>
+							<li>Bara de navigare</li>
+							<li>Fereastra cu fisiere</li>
+							<li>Cutia cu statistici despre depozitare</li>
+							<li>Acces la pagina de Profil si Logout</li>
+						</ul>
+					</p>
+				</section>
+
+				<section>
+					<h3>4.2 Bara utilizator</h3>
+					<p>
+						Ofera acces la 4 functionalitati rapide:
+						<ul>
+							<li>Butonul Back: permite revenirea cu un pas inapoi atunci cand, spre exemplu, vedem continutul unui folder.</li>
+							<li>Butonul Upload: permite deschiderea meniului pentru incarcarea unui fisier</li>
+							<li>Butonul "New folder": acces rapid la crearea unui dosar nou gol</li>
+							<li>Bara de search: permite filtrarea rezultatelor afisate dupa nume</li>
+						</ul>
+					</p>
+					<figure typeof="sa:image">
+						<img src="user_bar_guide.png" alt="User bar.">
+						<figcaption>Captura de ecran a barei utilizator ce ofera functionalitati rapide.</figcaption>
+					</figure>
+				</section>
+
+				<section>
+					<h3>4.3 Bara de navigare</h3>
+					<p>
+						Bara de navigare contine butoane ce permit schimbarea categoriilor de fisiere afisate in Fereastra cu fisere
+						<ul>
+							<li>Butonul Files: Vor fi afisate fisierele de la toate serviciile atasate contului curent fara o ordine prestabilita</li>
+							<li>Butonul Recent: Vor fi afisate doar fisierele care au fost accesate intr-un interval recent de timp</li>
+							<li>Butonul Trash: Vor fi afisate doar fisierele ce au fost anterior marcate ca pentru stergere.</li>
+						</ul>
+					</p>
+					<figure typeof="sa:image">
+						<img id="nav_bar_img" src="nav_bar_guide.png" alt="nav bar window">
+						<figcaption>Captura de ecran a barei de navigare, permite comutarea intre categorii de fisiere.</figcaption>
+					</figure>
+				</section>
+				
+				<section>
+					<h3>4.4 Fereastra cu fisiere</h3>
+					<p>
+						Ofera o reprezentare grafica a fisierelor disponibile pe serviciile de stocare asociate contului curent.
+					</p>
+					<p>
+						Functionalitati:
+						<ul>
+							<li>Fisiere de tip dosar</li>
+							<li>Fisiere de tip text</li>
+							<li>Orice fisiere cu reprezentare binara</li>
+							<li>Click dreapta invoca meniul contextual</li>
+							<li>Dublu click stanga pe un folder permite vizualizarea continutului</li>
+						</ul>
+					</p>
+					<figure typeof="sa:image">
+						<img src="file_view_guide.png" alt="file managing window">
+						<figcaption>Captura de ecran a ferestrei cu fisiere</figcaption>
+					</figure>
+				</section>
+
+
+				<section>
+					<h3>4.5 Cutia cu statistici despre depozitare</h3>
+					<p>
+						Cutia cu statistici despre depozitare ofera informatii cu privire la
+						<ul>
+							<li>Numele Serviciului de stocare in cloud, doar daca este asociat contului</li>
+							<li>Spatiul total de stocare disponibil pe serviciul respectiv</li>
+							<li>Spatiul total folosit deja pentru stocarea fisierelor proprii</li>
+							<li>O reprezentare grafica 
+								<ul>
+									<li>Bara gri: reprezinta spatiul total de stocare</li>
+									<li>Bara albastra: reprezinta spatiul total deja folosit, raportat la spatiul de stocare</li>
+								</ul>
+							</li>
+						</ul>
+					</p>
+					<figure typeof="sa:image">
+						<img id="storage_box_img" src="storage_box_guide.png" alt="ceva">
+						<figcaption>Captura de ecran a cutiei cu statistici despre depozitare</figcaption>
+					</figure>
+				</section>
+			
+
+				<section>
+					<h3>4.6 Acces la pagina de Profil si Logout</h3>
+					<p>Accesul la pagina de profil se realizeaza prin click stanga pe Avatar.</p>
+					<figure typeof="sa:image">
+						<img id="profile_access_img" src="profile_access_guide.png" alt="ceva">
+						<figcaption>Captura de ecran: Accesare pagina profil din coltul dreapta sus </figcaption>
+					</figure>
+					<p>Pentru iesire din cont si revenire la pagina de login se va folosi butonul "Logout".</p>
+					<figure typeof="sa:image">
+						<img id="logout_access_img" src="logout_access_guide.png" alt="ceva">
+						<figcaption>Captura de ecran: Butonul Logout din coltul stanga jos </figcaption>
+					</figure>
+				</section>
+
+				<!-- template -->
+				<section>
+					<h3>4.X </h3>
+					<p>
+
+					</p>
+					<figure typeof="sa:image">
+						<img src="_guide.png" alt="ceva">
+						<figcaption>Captura de ecran a </figcaption>
+					</figure>
+				</section>
+
+			</section>
+
+
+			<section>
+				<h2>5. Pagina de Profil</h2>
+				
+				<section>
+					<h3>5.1 Privire de ansamblu</h3>
+					<p>
+						Pagina de Profil permite utilizatorului sa vizualizeze datele personale precum si sa intreprinde numeroase actiuni cu acestea.
+					</p>
+					<p>
+						Principalele facilitati ale paginii de profil:
+						<ul>
+							<li>Vizualizarea informatii utilizator</li>
+							<li>Schimbarea fotografiei de avatar</li>
+							<li>Schimbarea numelui si a parolei</li>
+							<li>Conectarea la un serviciu de stocare in cloud</li>
+							<li>Disocierea cu un serviciu de stocare in cloud</li>
+						</ul>
+					</p>
+					<figure typeof="sa:image">
+						<img src="profile_page_guide.png" alt="profile page overview">
+						<figcaption>Captura de ecran a paginii de profil</figcaption>
+					</figure>
+					<p>Salvarea modificarilor facute se poate realiza prin apasarea butonului "Save Changes".</p>
+					<p>Revenirea inapoi la pagina de management a fisierelor are loc prin apasarea butonului "Go Back".</p>
+				</section>
+
+				
+				<section>
+					<h3>5.2 Informatii utilizator</h3>
+					<p>
+						In spatiul rezervat pentru informatii utilizatorul poate vedea date despre cont precum:
+						<ul>
+							<li>Name: Username-ul de cont folosit la crearea acestuia</li>
+							<li>Email: Adresa de email folosita la crearea contului</li>
+						</ul>
+						Utilizatorul isi poate schimba fotografia de profil din click stanga pe avatar si select o noua fotografie din computerul propriu
+					</p>
+					<figure typeof="sa:image">
+						<img src="profile_view_information_guide.png" alt="ceva">
+						<figcaption>Captura de ecran a spatiului rezervat pentru detalii cont si schimbare avatar.</figcaption>
+					</figure>
+				</section>
+
+
+				<section>
+					<h3>5.3 Schimbare nume si parola</h3>
+					<p>
+						Pagina de profil faciliteaza utilizatorului optiunea de a-si schimba datele credentiale, prin completarea campurilor astfel:
+						<ul>
+							<li>New name: Se va introduce noul nume de utilizator dorit</li>
+							<li>Old password: Se va introduce vechea parola pentru verificarea identitatii.</li>
+							<li>New password: Parola noua ce se doreste a fi folosita in continuare</li>
+						</ul>
+					</p>
+					<figure typeof="sa:image">
+						<img src="change_name_password_guide.png" alt="ceva">
+						<figcaption>Captura de ecran a spatiului rezervat pentru schimbarea datelor de cont.</figcaption>
+					</figure>
+				</section>
+
+				<section>
+					<h3>5.4 Adaugare sau eliminare Servicii</h3>
+					<p>
+						Pagina de profil faciliteaza utilizatorului optiunea de a asocia servicii de stocare in cloud precum Google Drive, Microsoft OneDrive si DropBox.
+					</p>
+					<p>
+						Pentru a asocia un serviciu, pentru fiecare in parte se vor completa urmatoarele campuri:
+						<ul>
+							<li>Email: email-ul folosit pentru acel serviciu.</li>
+							<li>Password: Parola asociata email-ului corespunzator</li>
+						</ul>
+						Pentru a disasocia un serviciu de la contul curent, se va folosi butonul "Logout" in dreptul numelui acestuia.
+					</p>
+					<figure typeof="sa:image">
+						<img src="services_authentication_guide.png" alt="ceva">
+						<figcaption>Captura de ecran a spatiului rezervat pentru schimbarea conectarea sau renuntarea la servicii.</figcaption>
+					</figure>
+				</section>
+
+			</section>
+
 
 			<!-- model general pt o sectiune -->
 			<section>

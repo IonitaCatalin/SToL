@@ -21,6 +21,10 @@ ul > li {
 img {
   width: 100%;
 }
+
+#nav_bar_img, #storage_box_img, #profile_access_img, #logout_access_img{
+  width: auto;
+}
 /*
   XXX
   figure styles

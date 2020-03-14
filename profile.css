@@ -121,6 +121,9 @@ article {
 a:visited {
   	color: inherit; /* link-urile nu isi mai schimba culoarea dupa click */
 }
+a:link {
+	color: black;
+}
 
 #cancel_changes_button, #save_changes_button {
 	background-color: orange;
