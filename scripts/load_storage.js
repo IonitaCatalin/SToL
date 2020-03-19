@@ -8,7 +8,7 @@
 
 */
 
-var backBtn=document.querySelector('#btn-back');
+const backBtn=document.querySelector('#btn-back');
 
 function loadJSON(name,callback)
 {

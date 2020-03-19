@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<title>Stol(Universal Storage Manager)</title>
@@ -8,6 +8,7 @@
 		<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 		<link rel="icon" href="images/favicon.ico" type="image/ico"/>
 		<link rel="stylesheet" type="text/css" href="style.css">
+
 	</head>
 	<body>
 		<div class="grid-wrapper">
@@ -34,9 +35,9 @@
 					<p>Select or Drag any files to upload</p>
 					<div id="modal-storage">
 						<input type="radio" id="redundant" name="storage-type" value="redundant">
-						<label for="male">Redundant</label><br>
+						<label for="redundant">Redundant</label><br>
 						<input type="radio" id="fragmented" name="storage-type" value="fragmented">
-						<label for="female">Fragmented</label><br>
+						<label for="fragmented">Fragmented</label><br>
 					</div>
 					<span id="modal-btn-close">&times;</span>
 					<div id="modal-file-drop">
@@ -52,16 +53,16 @@
 			</div>
 			<nav>
 				<div class="navbar-buttons">
-					<button id="navbar-files"></i>Files</button>
-					<button id="navbar-recent"></i>Recent</button>
-					<button id="navbar-trash "></i>Trash</button>
+					<button id="navbar-files">Files</button>
+					<button id="navbar-recent">Recent</button>
+					<button id="navbar-trash">Trash</button>
 					
 				</div>
 				<div id="storage-info-box">
 					<div class="storage-text">Google Drive: 10/15GB</div>
 					<div class="quota_background"><div id="quota_g_drive"></div></div>
 
-					<div class="storage-text">MS One Drive: 1/5GB</div>
+					<div class="storage-text">MS One Drive: 1/50GB</div>
 					<div class="quota_background"><div id="quota_one_drive"></div></div>
 
 					<div class="storage-text">DropBox: 7/10GB</div>
@@ -73,7 +74,7 @@
 
 			</nav>
 			<article class="container-wrapper">
-				<h1>Files</h1>
+				<h2>Files</h2>
 				<hr>
 				<div class="contxt-menu">
 					<ul class="contxt-options">
