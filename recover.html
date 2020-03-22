@@ -8,28 +8,23 @@
     <meta name="keywords" content="Stol,Storage_Manager">
     <meta name="author" content="co-authored by Ionita Mihail-Catalin,Georgica Marius">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="login_style.css">
+    <link rel="stylesheet" type="text/css" href="recover.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
     <div class="login_form">
         <h1>Stol</h1>
         <form action="/index.html" method="get">
+            <p> We will need your Email in order to recover your account's password.
+            <p> Please enter your Email below.
             <div class="username_input">
-                <i class="ri-user-smile-line"></i>
+                <i class="ri-mail-line"></i>
                 <!--<p>Username</p> -->
-                <input type="text" name="usrname" placeholder="Enter Username">
-            </div>
-            <div class="password_input">
-            	<!--<p>Password</p>-->
-                <i class="ri-lock-line"></i>
-                <input type="password" name="passwd" placeholder="Enter Password">
+                <input type="text" name="usrname" placeholder="Enter your Email">
             </div>
             <div>
                <!-- <input type="submit" name="login" value="Login">-->
-                <button id="btn-login" onclick="location.href='index.html';">Login</button>
-	        	<a href="recover.html">Lost your password?</a><br>
-	        	<a href="register.html">Don't have an account?</a>
+                <button id="btn-recover" onclick="location.href='index.html';">Recover</button>
         	</div>
         </form>
     </div>
