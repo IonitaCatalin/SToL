@@ -3,14 +3,18 @@ body {
     padding: 0;
     width: 100%;
     height: 100%;
-    background-image: url("images/login_background.jpg");
+    background-image: url("../../images/login_background.jpg");
     background-repeat: no-repeat;
     font-family: sans-serif;
 }
 
+.login_form .first_inline {
+    display: inline-block;
+}
+
 .login_form {
     width: 360px;
-    height: 360px;
+    height: 340px;
     background: #fff;
     color: #000;
     top: 50%;
@@ -19,11 +23,11 @@ body {
     transform: translate(-50%, -50%);
     box-sizing: border-box;
     padding: 30px 30px 30px 30px;
-    opacity:0.5;
+    opacity:0.9;
 }
 
-.login_form:hover {
-    opacity:1;
+.login_form .first_inline {
+    display: inline-block;
 }
 
 h1 {
@@ -63,25 +67,21 @@ h1 {
     width: 120px;
     float: right;
     background: #0066ff;
-    color: white;
+    color: #fff;
     font-size: 18px;
     border-radius: 15px;
-    margin-top: 20px;
 }
-
-
 .login_form input[type="submit"]:hover {
     cursor: pointer;
     background: #99c2ff;
-    color: #000;
-    background-image: url("icons/arrow-right.png");
+    color:blue;
+    background-image: url("images/arrow-right.png");
     background-repeat: no-repeat;
     background-position: center;
-    font-size: 0px;
-   
+    font-size: 0px;   
 } */
 
-#btn-register
+.btn
 {
     border: none;
     outline: none;
@@ -89,38 +89,15 @@ h1 {
     width: 120px;
     float: right;
     background: #0066ff;
-    color: white;
+    color: #fff;
     font-size: 18px;
     border-radius: 15px;
-    margin-top: 20px;
 }
-#btn-back
-{
-    border: none;
-    outline: none;
-    height: 40px;
-    width: 120px;
-    float: right;
-    background: #0066ff;
-    color: white;
-    font-size: 18px;
-    border-radius: 15px;
-    margin-top: 20px;
-    margin-right:60px;
-}
-#btn-back:hover
+.btn:hover
 {
     cursor: pointer;
-    color:white;
     background: #99c2ff;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-#btn-register:hover
-{
-    cursor: pointer;
     color:white;
-    background: #99c2ff;
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -136,14 +113,13 @@ h1 {
     color: #3385ff;
 }
 
-.login_form .username_input,.password_input,.email_input {
+.login_form .username_input,.password_input {
     display:grid;
     grid-template-columns: 0.1fr 1fr;
     grid-gap:5px;
 }
 
-
-.login_form .username_input i,.password_input i,.email_input i {
+.login_form .username_input i,.password_input i {
     margin-top:9px;
     font-size:35px;
 }

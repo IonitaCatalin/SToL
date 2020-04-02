@@ -1,3 +1,0 @@
-- de adaugat buton "Back" la pagina de register care sa duca inapoi la pagina de Login
-- butonul "Lost your password?" din pagina de login -- ce va face??
-- de adaugat functionalitate pentru butonul "Lost your password?" in pagina Login

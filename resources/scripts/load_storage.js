@@ -72,13 +72,13 @@ function renderComponents(data)
             case 'folder':
             {
                 component.className='folder';
-                graphics.src='images/folder.svg';
+                graphics.src='../../images/folder.svg';
                 break;
             }
             case 'text-file':
             {
                 component.className='text-file';
-                graphics.src='images/text-file.svg';
+                graphics.src='../../images/text-file.svg';
                 break;
             }
         }

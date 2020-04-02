@@ -1,4 +1,3 @@
-
 let backdrop = document.querySelector('.backdrop');
 let modal = document.querySelector('.upload-modal');
 let uploadButton = document.querySelector('#btn-upload');
@@ -11,12 +10,18 @@ let addFolder=document.querySelector('#btn-new-folder');
 let isOpened=false;
 
 uploadButton.onclick=function(){
-    backdrop.style.display = 'block'; 
-    modal.style.display = 'grid'
+   // backdrop.style.display = 'block'; 
+    backdrop.style.opacity="1";
+    backdrop.style.visibility='visible';
+    modal.style.opacity='1';
+    modal.style.visibility='visible';
 }
 closeModalButton.onclick=function(){
-    backdrop.style.display='none';
-    modal.style.display='none';
+  //  backdrop.style.display='none';
+    backdrop.style.opacity='0';
+    backdrop.style.visibility='hidden';
+    modal.style.opacity='0';
+    modal.style.visibility='hidden';
     const parent=document.getElementById('modal-file-drop');
     while(parent.firstChild)
     {
@@ -116,9 +121,3 @@ function previewFileOnUp(file)
         document.getElementById('modal-up-list').appendChild(div.cloneNode(true));
     }
 }
-
-
-
-
-
-

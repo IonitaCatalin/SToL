@@ -7,7 +7,7 @@
 		<link href="https://fonts.googleapis.com/css?family=Arimo&display=swap" rel="stylesheet">
 		<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 		<link rel="icon" href="images/favicon.ico" type="image/ico"/>
-		<link rel="stylesheet" type="text/css" href="style.css">
+		<link rel="stylesheet" type="text/css" href="resources/css/style.css">
 
 	</head>
 	<body>
@@ -31,7 +31,7 @@
 				</div>
 			</div>
 			<div class="backdrop">
-				<div class="upload-modal">
+				<div class="upload-modal" role="dialog">
 					<p>Select or Drag any files to upload</p>
 					<div id="modal-storage">
 						<input type="radio" id="redundant" name="storage-type" value="redundant">
@@ -69,7 +69,6 @@
 					<div class="quota_background"><div id="quota_dropbox"></div></div>
 
 					<button onclick="location.href='login.html' " id="btn-disconn">Logout</button>
-
 				</div>
 
 			</nav>
@@ -84,16 +83,16 @@
 						<li class="contxt-option">Delete</li>
 					</ul>
 				</div>
-				<div class="main-container ">
-					
+
+				<div class="main-container ">	
 				</div>
 			</article>
 			<footer>
 				Footer
 			</footer>
 		</div>
-		<script async src="scripts/upload_content.js"></script>
-		<script async src="scripts/context_menu.js"></script>
-		<script async src="scripts/load_storage.js"></script>
+		<script async src="resources/scripts/upload_content.js"></script>
+		<script async src="resources/scripts/context_menu.js"></script>
+		<script async src="resources/scripts/load_storage.js"></script>
 	</body>
 </html>
