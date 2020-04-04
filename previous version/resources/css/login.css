@@ -91,10 +91,12 @@ h1 {
     background: #0066ff;
     color: #fff;
     font-size: 18px;
-    border-radius: 15px;
+    transition: .2s ease-in;
 }
+
 .btn:hover
 {
+    transform: translateY(-5px);
     cursor: pointer;
     background: #99c2ff;
     color:white;

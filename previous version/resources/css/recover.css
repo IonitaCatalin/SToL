@@ -94,18 +94,32 @@ h1 {
     background: #0066ff;
     color: #fff;
     font-size: 18px;
-    border-radius: 15px;
     margin-top:50px;
+    transition: .2s ease-in;
 }
-.btn-recover:hover
+.btn:hover
 {
     cursor: pointer;
     background: #99c2ff;
-    color:blue;
+    color:white;
     background-image: url("images/arrow-right.png");
     background-repeat: no-repeat;
     background-position: center;
-    font-size: 0px; 
+    transform:translateY(-5px);
+}
+.btn-back
+{
+    border: none;
+    outline: none;
+    height: 40px;
+    width: 120px;
+    float: right;
+    background: #0066ff;
+    color: white;
+    font-size: 18px;
+    margin-top: 50px;
+    margin-right:60px;
+    transition: .2s ease-in;
 }
 
 .login_form a {

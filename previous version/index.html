@@ -58,6 +58,17 @@
 					<button id="navbar-trash">Trash</button>
 					
 				</div>
+				<div class="navbar-collapsible">
+					<input type="checkbox" id="collapsible" class="toggle"/>
+					<label for="collapsible" class="col-toggle"><i class="ri-col ri-menu-line"></i></label>
+					<div class="collapsible-content">
+						<button class="col-btn"><i class="ri-col ri-file-line"></i></button>
+						<button class="col-btn"><i class="ri-col ri-star-line"></i></button>
+						<button class="col-btn"><i class="ri-col ri-delete-bin-line"></i></button>
+						<button class="col-btn"><i class="ri-col ri-logout-box-line"></i></button>
+						
+					</div>
+				</div>
 				<div id="storage-info-box">
 					<div class="storage-text">Google Drive: 10/15GB</div>
 					<div class="quota_background"><div id="quota_g_drive"></div></div>
@@ -76,15 +87,20 @@
 				<h2>Files</h2>
 				<hr>
 				<div class="contxt-menu">
-					<ul class="contxt-options">
-						<li class="contxt-option">New Folder</li>
-						<li class="contxt-option">Delete</li>
-						<li class="contxt-option">Delete</li>
-						<li class="contxt-option">Delete</li>
-					</ul>
+					<div class="contxt-options">
+						<button class="contxt-option"><i class="ri-folder-add-line"></i>New Folder</button>
+						<button class="contxt-option"><i class="ri-refresh-line"></i>Refresh</button>
+						<button class="contxt-option"><i class="ri-file-upload-line"></i>Upload</button>
+					</div>
+					
+				<div class="contxt-component">
+					<button class="contxt-option"><i class="ri-folder-add-line"></i>New Folder</button>
+						<button class="contxt-option"><i class="ri-refresh-line"></i>Refresh</button>
+						<button class="contxt-option"><i class="ri-file-upload-line"></i>Upload</button>
+						<button class="contxt-option"><i class="ri-file-upload-line"></i></button>
 				</div>
-
-				<div class="main-container ">	
+				</div>
+				<div class="main-container">	
 				</div>
 			</article>
 			<footer>
@@ -94,5 +110,6 @@
 		<script async src="resources/scripts/upload_content.js"></script>
 		<script async src="resources/scripts/context_menu.js"></script>
 		<script async src="resources/scripts/load_storage.js"></script>
+		<script async src="resources/scripts/collapsible_menu.js"></script>
 	</body>
 </html>

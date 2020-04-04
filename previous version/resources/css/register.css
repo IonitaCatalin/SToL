@@ -88,8 +88,8 @@ h1 {
     background: #0066ff;
     color: white;
     font-size: 18px;
-    border-radius: 15px;
     margin-top: 20px;
+    transition: .2s ease-in;
 }
 .btn-back
 {
@@ -101,9 +101,9 @@ h1 {
     background: #0066ff;
     color: white;
     font-size: 18px;
-    border-radius: 15px;
     margin-top: 20px;
     margin-right:60px;
+    transition: .2s ease-in;
 }
 .btn:hover
 {
@@ -112,6 +112,7 @@ h1 {
     background: #99c2ff;
     background-repeat: no-repeat;
     background-position: center;
+    transform: translateY(-5px);
 }
 
 .login_form a {
