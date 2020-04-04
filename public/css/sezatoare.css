@@ -1,0 +1,59 @@
+body{
+    margin:auto;
+    font-family: 'Roboto', sans-serif;
+    max-width:800px;
+}
+nav{
+    background-color:#369;
+    color:white;
+    padding:10px;
+}
+h1{
+    margin:0;
+}
+.mesaj, .mesajul_meu{
+    border:1px solid black;
+    margin:3px;
+    float:left;
+    clear:both;
+    padding:5px;
+    border-radius:10px;
+    background-color:darkslategray;
+    color:white;
+}
+.mesajul_meu{
+    float:right;
+    background-color:lightgreen;
+    color:brown
+}
+
+.buton_tip_emoji{
+    background:none;
+    border: 0;
+    float:right;
+}
+.formularTrimitereMesaj{
+    clear:both;
+    display:grid;
+    grid-template-columns: 1fr 100px;
+    grid-template-rows: 100%; 
+}
+input[type=text] { 
+    grid-column-start: 1;  
+    width:100%; 
+    padding: 10px;
+    margin: 5px 0;
+    display: inline-block;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;    
+}
+input[type=submit] {
+    grid-column-start: 2;
+    padding: 10px;
+    margin: 5px 0 5px 10px;
+    display: inline-block;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;    
+  }  

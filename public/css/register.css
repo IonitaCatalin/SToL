@@ -1,0 +1,139 @@
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../images/login_background.jpg");
+    background-repeat: no-repeat;
+    font-family: sans-serif;
+}
+
+.login_form {
+    width: 360px;
+    height: 360px;
+    background: #fff;
+    color: #000;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    padding: 30px 30px 30px 30px;
+    opacity:0.9;
+}
+
+
+h1 {
+    margin: 0;
+    padding: 0 0 20px;
+    text-align: center;
+    font-size: 22px;
+}
+
+.login_form p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+
+.login_form input[type="text"], input[type="email"], input[type="password"] {
+    width: 100%;
+    margin-bottom: 20px;
+    border: none;
+    border-bottom: 1px solid lightgray;
+    background: transparent;
+    outline: none;
+    height: 40px;
+    color: #000;
+    font-size: 16px;
+}
+
+/* .login_form input[type="submit"] {
+    border: none;
+    outline: none;
+    height: 40px;
+    width: 120px;
+    float: right;
+    background: #0066ff;
+    color: white;
+    font-size: 18px;
+    border-radius: 15px;
+    margin-top: 20px;
+}
+
+
+.login_form input[type="submit"]:hover {
+    cursor: pointer;
+    background: #99c2ff;
+    color: #000;
+    background-image: url("icons/arrow-right.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    font-size: 0px;
+   
+} */
+
+.btn-register
+{
+    border: none;
+    outline: none;
+    height: 40px;
+    width: 120px;
+    background: #0066ff;
+    color: white;
+    font-size: 18px;
+    border-radius: 15px;
+    margin-top: 20px;
+    float: right;
+    display: inline-block;
+}
+
+.btn-back
+{
+    border: none;
+    outline: none;
+    height: 40px;
+    width: 120px;
+    background: #0066ff;
+    color: white;
+    font-size: 18px;
+    border-radius: 15px;
+    margin-top: 20px;
+    float: left;
+    display: inline-block;
+}
+
+.btn:hover
+{
+    cursor: pointer;
+    color:white;
+    background: #99c2ff;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.login_form a {
+    text-decoration: none;
+    font-size: 12px;
+    line-height: 20px;
+    color: darkgrey;
+}
+
+.login_form a:hover {
+    color: #3385ff;
+}
+
+.login_form .username_input,.password_input,.email_input {
+    display:grid;
+    grid-template-columns: 0.1fr 1fr;
+    grid-gap:5px;
+}
+
+
+.login_form .username_input i,.password_input i,.email_input i {
+    margin-top:9px;
+    font-size:35px;
+}

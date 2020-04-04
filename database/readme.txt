@@ -1,0 +1,1 @@
+foloseste un database user cu numele si parola: stoluser

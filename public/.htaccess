@@ -1,0 +1,13 @@
+# ar trebui sa permita /index in loc de /index.php
+Options -MultiViews
+RewriteEngine On
+
+# calea catre index.php din folderul public ??
+RewriteBase /ProiectTW/public/
+
+# directory and file checking ??
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# trimite url-ul curent ca input string catre index.php, $1 inseamna URI-ul
+RewriteRule ^(.+)$ index.php?url=$1 [QSA,L]
