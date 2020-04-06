@@ -22,7 +22,7 @@ const setPosition = (context, { top, left }) => {
   
 };
 
-container.addEventListener('click', e => {
+container.addEventListener('click', event => {
   if (isGeneralContextVisible) {
     toggleGeneralMenu('none');
     generalContxtMenu.style.opacity = '0';
@@ -34,26 +34,28 @@ container.addEventListener('click', e => {
   }
 });
 
-container.addEventListener('contextmenu', e => {
-  e.preventDefault();
+container.addEventListener('contextmenu', event => {
+  event.preventDefault();
   if(!isGeneralContextVisible)
   {
     if(!isComponentContextVisible)
-    {
-      
+    {  
       toggleGeneralMenu('show');
-      setPosition(generalContxtMenu, { top: e.pageY, left: e.pageX });
+      setPosition(generalContxtMenu, { top: event.pageY, left: event.pageX });
     }
   }
   return false;
 });
-componentsContainer.addEventListener('contextmenu',e=>{
-    e.preventDefault();
+componentsContainer.addEventListener('contextmenu',event=>{
+    event.preventDefault();
     if(!isComponentContextVisible)
     {
-      toggleComponentMenu('show');
-      setPosition(componentContxtMenu,{top:e.pageY,left:e.pageX});
-      console.log(e.pageX+' '+e.pageY);
+      if(!isGeneralContextVisible)
+      {
+        toggleComponentMenu('show');
+        setPosition(componentContxtMenu,{top:event.pageY,left:event.pageX});
+        console.log(event.pageX+' '+event.pageY);
+      }
     }
     return false;
 });

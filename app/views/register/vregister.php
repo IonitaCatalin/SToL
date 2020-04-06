@@ -1,21 +1,21 @@
 <?php
 	class VRegister {
-		private $sablon;
-		private $inputValid;
+		private $template;
+		private $valid_input;
 
 		public function __construct() {
-			$this->sablon = 'sregister.tpl';
+			$this->template = 'sregister.php';
 		}
 
-		public function incarcaDatele($msg) {
-			$this->inputValid = $msg;
+		public function loadDataIntoView($msg) {
+			$this->valid_input = $msg;
 			//print_r($msg);
 		}
 
-		public function oferaVizualizare() {
-			$inputValid = $this->inputValid; //variabila locala ia valoarea celei globale
+		public function offerView() {
+			$valid_input = $this->valid_input; //variabila locala ia valoarea celei globale
 			ob_start();
-			include($this->sablon);
+			include($this->template);
 			$output = ob_get_contents();
 			ob_end_clean();
 			return $output;

@@ -29,19 +29,22 @@
                 <i class="ri-lock-line"></i>
                 <input type="password" name="password" placeholder="Enter Password">
             </div>
-            
             <?php
-            if($inputValid == 'incomplet')
-                echo '<p style="color: red; font-size: 1.1em;"> Nu ati completat toate campurile</p>';
-
-            if($inputValid == 'succes')
-                echo '<p style="color: green; font-size: 1.1em;"> Contul s-a creat cu succes</p>';
-
+            switch($valid_input)
+            {
+                case 'no_errors':{
+                    echo '<p style="color: green; font-size: 1.0em;">Your account was created succesfully!</p>';
+                    break;
+                }
+                case 'incomplete_fields_error':{
+                    echo '<p style="color: red; font-size: 1.0em;"> You have to fill all the fields</p>';
+                    break;
+                }
+            }
             ?>
 
             <button class="btn btn-back" type="button" onclick="location.href='clogin';">Back</button>
-            <input type="hidden" name="actiune" value="register">
-            <input class="btn btn-register" type="submit" value="Register" />
+            <input class="btn btn-register" type="submit" name="submit_register" value="Register" />
 
         </form>
     </div>
