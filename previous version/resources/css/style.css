@@ -419,19 +419,27 @@ article h1 {
 	margin:auto;
 }
 
-.contxt-menu {
+.contxt-general {
 	display: none;
 	opacity:0;
 	width: 160px;
+	z-index:100;
 	position:absolute;
 	background-color:white;
 	box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
-	transition: opacity 0.s ease-in-out	
+	transition: opacity 0.3s ease-in-out	;
+	
 }
 .contxt-component
 {
-	display:none;
+	display: none;
 	opacity:0;
+	width: 160px;
+	z-index:100;
+	position:absolute;
+	background-color:white;
+	box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+	transition: opacity 0.3s ease-in-out	;
 }
 .contxt-options {
 	padding: 10px 0;

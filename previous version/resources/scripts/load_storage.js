@@ -62,7 +62,6 @@ function renderComponents(data)
     let container=document.querySelector('.main-container');
     data[0]['children'].forEach(function(element){
         let component=document.createElement('div');
-
         let graphics=document.createElement('img');
         let title=document.createElement('p');
         title.textContent=element['name'];

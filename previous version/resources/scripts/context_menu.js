@@ -1,72 +1,59 @@
-const contxtMenu=document.querySelector('.contxt-menu');
-const componentContxtMenu=document.querySelector('contxt-component');
-const mainContainer=document.querySelector('.container-wrapper');
-var isContextVisible=false;
-var isComponentContextVisible=false;
+const generalContxtMenu = document.querySelector('.contxt-general');
+const componentContxtMenu = document.querySelector('.contxt-component');
+const container = document.querySelector('.container-wrapper');
+const componentsContainer=document.querySelector('.main-container');
+var isGeneralContextVisible = false;
+var isComponentContextVisible = false;
 
-function waitForElementToDisplay(selector, time) {
-  if(document.querySelector(selector)!=null) {
-      return;
+
+const toggleGeneralMenu = status => {
+  generalContxtMenu.style.display = status === 'show' ? 'block' : 'none';
+  isGeneralContextVisible = !isGeneralContextVisible;
+};
+const toggleComponentMenu = status => {
+  componentContxtMenu.style.display = status === 'show' ? 'block' : 'none';
+  isComponentContextVisible = !isComponentContextVisible;
+};
+
+const setPosition = (context, { top, left }) => {
+  context.style.left = left + 'px';
+  context.style.top = top + 'px';
+  context.style.opacity = '1';
+  
+};
+
+container.addEventListener('click', e => {
+  if (isGeneralContextVisible) {
+    toggleGeneralMenu('none');
+    generalContxtMenu.style.opacity = '0';
   }
-  else {
-      setTimeout(function() {
-          waitForElementToDisplay(selector, time);
-      }, time);
-  }
-}
-
-function bindEventListenerToCompContext(selector)
-{
-  waitForElementToDisplay(selector,800);
-  let component=document.querySelector(selector);
-  component.addEventListener('contextmenu',e=>{
-      e.preventDefault();
-      setPosition({top:e.pageY,left:e.pageX});
-      toggleComponentMenu("show");
-      return false;
-  });
-}
-
-document.querySelector('.main-container').addEventListener('contextmenu',e=>{
-  e.preventDefault();
-})
-
-const toggleMenu = command=>{
-    contxtMenu.style.display = command === 'show' ? 'block' : 'none';
-    isContextVisible=!isContextVisible;
-};
-const toggleComponentMenu=command=>{
-  toggleMenu('none');
-  componentContxtMenu.style.display=command === 'show' ? 'block' : 'none';
-  isComponentContextVisible=!isComponentContextVisible;
-
-};
-
-const setPosition = ({top,left})=>{
-      contxtMenu.style.left=left+'px';
-      contxtMenu.style.top=top+'px';
-      contxtMenu.style.opacity='1';
-      toggleMenu('show');
-};
-
-mainContainer.addEventListener('click',e=>{
-  if(isContextVisible)
+  if(isComponentContextVisible)
   {
-    toggleMenu('none');
-    contxtMenu.style.opacity='0';
+    toggleComponentMenu('none');
+    componentContxtMenu.style.opacity='0';
   }
-    
 });
 
-mainContainer.addEventListener('contextmenu',e=>{
+container.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  if(!isGeneralContextVisible)
+  {
+    if(!isComponentContextVisible)
+    {
+      
+      toggleGeneralMenu('show');
+      setPosition(generalContxtMenu, { top: e.pageY, left: e.pageX });
+    }
+  }
+  return false;
+});
+componentsContainer.addEventListener('contextmenu',e=>{
     e.preventDefault();
-    setPosition({top:e.pageY,left:e.pageX});
+    if(!isComponentContextVisible)
+    {
+      toggleComponentMenu('show');
+      setPosition(componentContxtMenu,{top:e.pageY,left:e.pageX});
+      console.log(e.pageX+' '+e.pageY);
+    }
     return false;
 });
-
-bindEventListenerToCompContext('.file');
-
-
-
-
-

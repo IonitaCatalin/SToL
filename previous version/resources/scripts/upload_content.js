@@ -1,11 +1,11 @@
-let backdrop = document.querySelector('.backdrop');
-let modal = document.querySelector('.upload-modal');
-let uploadButton = document.querySelector('#btn-upload');
-let closeModalButton = document.querySelector('#modal-btn-close');
-let dropArea=document.querySelector('#modal-file-drop');
-let fileSelector=document.querySelector('#file-selector');  
-let chooseFilesButton=document.querySelector('#modal-btn-files');
-let addFolder=document.querySelector('#btn-new-folder');
+var  backdrop = document.querySelector('.backdrop');
+var modal = document.querySelector('.upload-modal');
+var  uploadButton = document.querySelector('#btn-upload');
+var closeModalButton = document.querySelector('#modal-btn-close');
+var dropArea=document.querySelector('#modal-file-drop');
+var fileSelector=document.querySelector('#file-selector');  
+var chooseFilesButton=document.querySelector('#modal-btn-files');
+var addFolder=document.querySelector('#btn-new-folder');
 
 let isOpened=false;
 
@@ -35,11 +35,11 @@ closeModalButton.onclick=function(){
 }
 
  addFolder.onclick=function(){
-     var container=document.createElement('div');
+     let container=document.createElement('div');
      container.className='empty-folder';
-     var img=document.createElement('img');
+     let img=document.createElement('img');
      img.src='images/empty-folder.svg';
-     var text=document.createElement('p');
+     let text=document.createElement('p');
      text.innerHTML = 'New Folder';
      container.appendChild(img);
      container.appendChild(text);
@@ -50,14 +50,14 @@ chooseFilesButton.onclick=function()
 {
     fileSelector.click();
     fileSelector.onchange=function(event){
-        var files=fileSelector.files;
+        let files=fileSelector.files;
         handleFiles(files);
     }
 }
 dropArea.onclick=function(){
     fileSelector.click();
     fileSelector.onchange=function(event){
-        var files=fileSelector.files;
+        let files=fileSelector.files;
         handleFiles(files);
     }
 }
