@@ -2,10 +2,10 @@
 
 class CRegister extends Controller {
 
-	private $model;
-
+	private $_model;
+	private $_error_msg=null;
 	public function __construct() {
-		$this->model = $this->model('mregister');
+		$this->_model = $this->model('mregister');
 		// if(isset($_POST["submit_register"])) // setat doar daca am apasat o data butonul register
 		// 	$controller_action = $_POST["submit_register"];
 
@@ -23,31 +23,33 @@ class CRegister extends Controller {
 		if(isset($_POST["submit_register"]))
 		{
 			if( $_POST["email"] == '' || $_POST["username"] == '' || $_POST["password"] == '') {
-				$this->_showPageContent('incomplete_fields_error'); // cand nu s-au completat toate datele
+				$_error_msg='Please fill in all the fields';
+				$this->_render($_error_msg); 
 				}
 			else {
+				$_error_msg ='';
 				$this->_addUser($_POST["email"], $_POST["username"], $_POST["password"]);
-				$this->_showPageContent('no_errors');
+				$this->_render($_error_msg);
 			}
 		}
 		else {
-			$this->_showPageContent();
+			$this->_render();
 		}
 	}
 
 	public function index() {
-		// nein again
+		
 	}
 
 	private function _addUser($email, $username, $password) {
-		$this->model->addAccount($email, $username, $password);
+		$this->_model->addAccount($email, $username, $password);
 	}
 
-	private function _showPageContent($valid_input = NULL) {
+	private function _render($input_msg = NULL) {
 		$this->view('register/vregister');
 		$view = new VRegister();
-		$view -> loadDataIntoView($valid_input);
-		echo $view -> offerView();
+		$view -> loadDataIntoView($input_msg);
+		echo $view -> renderView();
 	}
 }
 

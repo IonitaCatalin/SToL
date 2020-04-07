@@ -8,9 +8,13 @@ body {
     font-family: sans-serif;
 }
 
+.login_form .first_inline {
+    display: inline-block;
+}
+
 .login_form {
     width: 360px;
-    height: 360px;
+    height: 340px;
     background: #fff;
     color: #000;
     top: 50%;
@@ -22,6 +26,9 @@ body {
     opacity:0.9;
 }
 
+.login_form .first_inline {
+    display: inline-block;
+}
 
 h1 {
     margin: 0;
@@ -38,10 +45,12 @@ h1 {
     text-align: center;
 }
 
-
-.login_form input[type="text"], input[type="email"], input[type="password"] {
+.login_form input {
     width: 100%;
     margin-bottom: 20px;
+}
+
+.login_form input[type="text"], input[type="password"] {
     border: none;
     border-bottom: 1px solid lightgray;
     background: transparent;
@@ -58,79 +67,39 @@ h1 {
     width: 120px;
     float: right;
     background: #0066ff;
-    color: white;
+    color: #fff;
     font-size: 18px;
     border-radius: 15px;
-    margin-top: 20px;
 }
 .login_form input[type="submit"]:hover {
     cursor: pointer;
     background: #99c2ff;
-    color: #000;
-    background-image: url("icons/arrow-right.png");
+    color:blue;
+    background-image: url("images/arrow-right.png");
     background-repeat: no-repeat;
     background-position: center;
-    font-size: 0px;
-   
+    font-size: 0px;   
 } */
 
-.btn-register
+.btn
 {
     border: none;
     outline: none;
     height: 40px;
     width: 120px;
-    background: #0066ff;
-    color: white;
-    font-size: 18px;
-    border-radius: 15px;
-    margin-top: 5px;
     float: right;
-    display: inline-block;
-}
-
-.btn-back
-{
-    border: none;
-    outline: none;
-    height: 40px;
-    width: 120px;
     background: #0066ff;
-    color: white;
+    color: #fff;
     font-size: 18px;
-    border-radius: 15px;
-    margin-top: 5px;
-    float: left;
-    display: inline-block;
+    transition: .2s ease-in;
 }
-.alert {
-    padding: 13px;
-    background-color: #f44336; 
-    color: white;
-    margin:0px;
-  }
-  
-.btn-close {
-    margin-left: 15px;
-    color: white;
-    font-weight: bold;
-    float: right;
-    font-size: 22px;
-    line-height: 20px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  
-.btn-close:hover {
-    color: black;
-  }
-  
 
 .btn:hover
 {
+    transform: translateY(-5px);
     cursor: pointer;
-    color:white;
     background: #99c2ff;
+    color:white;
     background-repeat: no-repeat;
     background-position: center;
 }
@@ -146,14 +115,13 @@ h1 {
     color: #3385ff;
 }
 
-.login_form .username_input,.password_input,.email_input {
+.login_form .username_input,.password_input {
     display:grid;
     grid-template-columns: 0.1fr 1fr;
     grid-gap:5px;
 }
 
-
-.login_form .username_input i,.password_input i,.email_input i {
+.login_form .username_input i,.password_input i {
     margin-top:9px;
     font-size:35px;
 }

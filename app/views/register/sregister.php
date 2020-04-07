@@ -14,7 +14,7 @@
 <body>
     <div class="login_form">
         <h1>Stol</h1>
-        <form method="POST" action="">
+        <form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
             <div class="email_input">
                 <i class="ri-mail-line"></i>
                 <input type="email" name="email" placeholder="Enter Email">
@@ -29,23 +29,15 @@
                 <i class="ri-lock-line"></i>
                 <input type="password" name="password" placeholder="Enter Password">
             </div>
-            <?php
-            switch($valid_input)
-            {
-                case 'no_errors':{
-                    echo '<p style="color: green; font-size: 1.0em;">Your account was created succesfully!</p>';
-                    break;
-                }
-                case 'incomplete_fields_error':{
-                    echo '<p style="color: red; font-size: 1.0em;"> You have to fill all the fields</p>';
-                    break;
-                }
-            }
-            ?>
-
+            <?php if($input_msg!=''):?>
+                <div class="alert">
+                    <span class="btn-close" onclick="this.parentElement.style.display='none';">&times;</span>
+                    <?php echo $input_msg ?>
+                </div>
+             <?php endif;?>
             <button class="btn btn-back" type="button" onclick="location.href='clogin';">Back</button>
             <input class="btn btn-register" type="submit" name="submit_register" value="Register" />
-
+           
         </form>
     </div>
       
