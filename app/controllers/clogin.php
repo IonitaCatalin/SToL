@@ -2,41 +2,53 @@
 
     Class CLogin extends Controller
     {
-        private $_model;
-
-        
+        private $model;      
+        private $error_msg_input;
+        private $error_msg_model;
         public function __construct()
         {
-            $_error_msg_input=null;
-            $_error_validation_model=null;
+           
             $this->model=$this->model('mlogin');
-            if(isset($_POST['login_request']))
+            if(isset($_POST['submit_login']))
             {
-                if(!isset($_POST['username']) || !isset($_POST['password']))
+                if($_POST['username']=='' || $_POST['password']=='')
                 {
-                    $this->_error_msg_input='Please fill in all the required field';
-                    $this->_render($this->_error_msg_input,null);
+                    $this->error_msg_input='Please fill in all the required field';
+                    $this->render($this->error_msg_input);
+                    
+                }
+                else
+                {
+                    $email=$_POST['username'];
+                    $password=$_POST['password'];
+                    $login_status=$this->logInUser($email,$password);
+                    if(!$login_status)
+                    {
+                        $this->error_msg_model='Wrong username or password';
+                    }
+                    $this->render(null,$this->error_msg_model);
+
                 }
             }
             else
             {
-                $this->_render($_error_msg_input,$_error_validation_model);
+                $this->render();
             }
         }
         public function index()
         {
-
+           
         }
-        private function _render($error_msg_input,$model_error)
+        private function render($error_msg_input=null,$error_model=null)
         {
             $this->view('login/vlogin');
             $view=new VLogin();
+            $view->loadDataIntoView($error_msg_input,$error_model);
             echo $view->renderView();
-            
-
         }
-
-        
+        private function logInUser($username,$password)
+        {
+           return $this->model->logInUser($username,$password);
+        }
     }
-
 ?>

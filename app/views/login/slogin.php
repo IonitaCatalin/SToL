@@ -14,7 +14,18 @@
 <body>
     <div class="login_form">
         <h1>Stol</h1>
-        <form method="POST" action="<?php echo $_SERVER['PHP_SELF']?>">
+        <?php if($error_input!='' || $error_model!=''):?>
+            <div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                <?php if($error_input!=''):?>
+                        <?php echo $error_input; ?>
+                <?php endif; ?>
+                <?php  if($error_input=='' && $error_model!=''): ?>
+                        <?php echo $error_model; ?>
+                <?php endif;?>
+                </div>
+            <?php endif ?>
+        <form method="POST" action="">
             <div class="username_input">
                 <i class="ri-user-smile-line"></i>
                 <!--<p>Username</p> -->
@@ -27,10 +38,11 @@
             </div>
             <div>
                <!-- <input type="submit" name="login" value="Login">-->
-                <input type="submit" value="Login" class="btn btn-login" name="login_request">
+                <input name="submit_login" type="submit" value="Login" class="btn btn-login" >
 	        	<a href="recover.html">Lost your password?</a><br>
 	        	<a href="register.html">Don't have an account?</a>
         	</div>
+           
         </form>
     </div>
       

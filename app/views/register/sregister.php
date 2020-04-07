@@ -14,7 +14,8 @@
 <body>
     <div class="login_form">
         <h1>Stol</h1>
-        <form method="POST" action="<?php echo $_SERVER['PHP_SELF'];?>">
+        <form method="POST" action="">
+        
             <div class="email_input">
                 <i class="ri-mail-line"></i>
                 <input type="email" name="email" placeholder="Enter Email">
@@ -29,15 +30,15 @@
                 <i class="ri-lock-line"></i>
                 <input type="password" name="password" placeholder="Enter Password">
             </div>
-            <?php if($input_msg!=''):?>
-                <div class="alert">
-                    <span class="btn-close" onclick="this.parentElement.style.display='none';">&times;</span>
-                    <?php echo $input_msg ?>
+            <?php if($error_msg!=''):?>
+            <div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                <?php echo $error_msg ?>
                 </div>
-             <?php endif;?>
+            <?php endif ?>
             <button class="btn btn-back" type="button" onclick="location.href='clogin';">Back</button>
             <input class="btn btn-register" type="submit" name="submit_register" value="Register" />
-           
+
         </form>
     </div>
       
