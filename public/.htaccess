@@ -3,7 +3,7 @@ Options -MultiViews
 RewriteEngine On
 
 # calea catre index.php din folderul public ??
-RewriteBase /public/
+RewriteBase /ProiectTW/public/
 
 # directory and file checking ??
 RewriteCond %{REQUEST_FILENAME} !-d

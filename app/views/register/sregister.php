@@ -30,12 +30,14 @@
                 <i class="ri-lock-line"></i>
                 <input type="password" name="password" placeholder="Enter Password">
             </div>
-            <?php if($error_msg!=''):?>
-            <div class="alert">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                <?php echo $error_msg ?>
-                </div>
-            <?php endif ?>
+            <?php 
+                if(!is_null($error_msg)){
+                    echo '<div class="alert">';
+                    echo '<span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>';
+                    echo $error_msg;
+                    echo '</div>';
+                }
+            ?>
             <button class="btn btn-back" type="button" onclick="location.href='clogin';">Back</button>
             <input class="btn btn-register" type="submit" name="submit_register" value="Register" />
 

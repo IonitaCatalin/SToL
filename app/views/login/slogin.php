@@ -14,17 +14,23 @@
 <body>
     <div class="login_form">
         <h1>Stol</h1>
-        <?php if($error_input!='' || $error_model!=''):?>
+
+        <?php 
+            if(!is_null($error_msg)){
+                echo '<div class="alert">
+                <span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>';
+                echo $error_msg;
+                echo '</div>';
+            }
+        ?>
+
+        <!-- <?php if(!is_null($error_msg)):?>
             <div class="alert">
                 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                <?php if($error_input!=''):?>
-                        <?php echo $error_input; ?>
-                <?php endif; ?>
-                <?php  if($error_input=='' && $error_model!=''): ?>
-                        <?php echo $error_model; ?>
-                <?php endif;?>
-                </div>
-            <?php endif ?>
+                <?php echo $error_msg; ?>
+            </div>
+        <?php endif ?> -->
+
         <form method="POST" action="">
             <div class="username_input">
                 <i class="ri-user-smile-line"></i>

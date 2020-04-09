@@ -2,19 +2,19 @@
     Class VLogin
     {
         private $template;
-        private $error_input;
-        private $error_model;
+        private $error_msg;
+
         public function __construct() {
             $this->template = 'slogin.php';
         }
-        public function loadDataIntoView($error_input,$error_model)
+
+        public function loadDataIntoView($error_msg)
         {
-            $this->error_input=$error_input;
-            $this->error_model=$error_model;
+            $this->error_msg = $error_msg;
         }
+
         public function renderView() {
-            $error_input=$this->error_input;
-            $error_model=$this->error_model;
+            $error_msg = $this->error_msg;
 			ob_start();
 			include($this->template);
 			$output = ob_get_contents();

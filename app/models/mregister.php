@@ -14,6 +14,34 @@
 
 			]);
 		}
+
+		public function checkExistingEmail($email) {
+			$check_email = $email;
+			$sql = "SELECT 'abc' FROM accounts WHERE email = :email";
+			$check_email_stmt = DB::getConnection()->prepare($sql);
+			$check_email_stmt -> execute([
+				'email' => $check_email
+			]);
+
+			if($check_email_stmt->rowCount() != 0)
+				return true;
+			else
+				return false;
+		}
+
+		public function checkExistingUsername($username) {
+			$check_username = $username;
+			$sql = "SELECT 'abc' FROM accounts WHERE username = :username";
+			$check_username_stmt = DB::getConnection()->prepare($sql);
+			$check_username_stmt -> execute([
+				'username' => $check_username
+			]);
+
+			if($check_username_stmt->rowCount() != 0)
+				return true;
+			else
+				return false;
+		}
 	}
 
 

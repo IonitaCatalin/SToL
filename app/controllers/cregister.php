@@ -7,31 +7,40 @@ class CRegister extends Controller {
 
 	public function __construct() {
 		$this->model = $this->model('mregister');
-		// if(isset($_POST["submit_register"])) // setat doar daca am apasat o data butonul register
-		// 	$controller_action = $_POST["submit_register"];
-
-		// if ($actiune == "register") {
-		// 	if( $_POST["email"] == '' || $_POST["username"] == '' || $_POST["password"] == '') {
-		// 		$this->_showPageContent('incomplet'); // cand nu s-au completat toate datele
-		// 	}
-		// 	else {
-		// 		$this->_addUser($_POST["email"], $_POST["username"], $_POST["password"]);
-		// 		$this->_showPageContent('succes');
-		// 	}
-		// } 
-		// else
-		// 	$this->_showPageContent();
+		
 		if(isset($_POST["submit_register"]))
 		{
-			if( $_POST["email"] == '' || $_POST["username"] == '' || $_POST["password"] == '') {
-				$this->error_msg='Please fill in all the fields';
+			if($_POST["email"] == '' || $_POST["username"] == '' || $_POST["password"] == '') {
+				$this->error_msg='Please fill in all the fields.';
 				$this->render($this->error_msg); // cand nu s-au completat toate datele
-				}
+			}
 			else {
-				$this->error_msg=null;
-				$this->addUser($_POST["email"], $_POST["username"], $_POST["password"]);
+				$this->error_msg = '';
+
+				$email = $_POST["email"];
+				$username = $_POST["username"];
+				$password = $_POST["password"];
+
+				if($this->checkExistingEmail($email)){
+					$this->error_msg = 'The email address is already in use.';
+				}
+				else if($this->checkExistingUsername($username)) {
+					$this->error_msg = 'The username is not available.';
+				}
+				else if(strlen($username) < 6) {
+					$this->error_msg = 'The username is shorter than 6 characters';
+				}
+				else if(strlen($password) < 6) {
+					$this->error_msg = 'The password is shorter than 6 characters';
+				}
+				else {
+					$this->error_msg=null;
+					$this->addUser($_POST["email"], $_POST["username"], $_POST["password"]);
+				}
+
 				$this->render($this->error_msg);
 			}
+			
 		}
 		else {
 			$this->render();
@@ -39,7 +48,7 @@ class CRegister extends Controller {
 	}
 
 	public function index() {
-		// nein again
+		// :)
 	}
 
 	private function addUser($email, $username, $password) {
@@ -51,6 +60,14 @@ class CRegister extends Controller {
 		$view = new VRegister();
 		$view -> loadDataIntoView($error_msg);
 		echo $view -> loadView();
+	}
+
+	private function checkExistingEmail($email) {
+		return $this->model->checkExistingEmail($email);
+	}
+
+	private function checkExistingUsername($username) {
+		return $this->model->checkExistingUsername($username);
 	}
 }
 

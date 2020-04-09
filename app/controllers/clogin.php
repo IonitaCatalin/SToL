@@ -2,32 +2,31 @@
 
     Class CLogin extends Controller
     {
-        private $model;      
-        private $error_msg_input;
-        private $error_msg_model;
+        private $model;
+        private $error_msg;
+
         public function __construct()
         {
            
             $this->model=$this->model('mlogin');
             if(isset($_POST['submit_login']))
             {
-                if($_POST['username']=='' || $_POST['password']=='')
+                if($_POST['username'] == '' || $_POST['password'] == '')
                 {
-                    $this->error_msg_input='Please fill in all the required field';
-                    $this->render($this->error_msg_input);
-                    
+                    $this->error_msg = 'Please fill in all the required fields';
+                    $this->render($this->error_msg); 
                 }
                 else
                 {
-                    $email=$_POST['username'];
+                    $this->error_msg = null;
+                    $username=$_POST['username'];
                     $password=$_POST['password'];
-                    $login_status=$this->logInUser($email,$password);
+                    $login_status=$this->logInUser($username,$password);
                     if(!$login_status)
                     {
-                        $this->error_msg_model='Wrong username or password';
+                        $this->error_msg = 'Wrong username or password';
                     }
-                    $this->render(null,$this->error_msg_model);
-
+                    $this->render($this->error_msg);
                 }
             }
             else
@@ -35,15 +34,16 @@
                 $this->render();
             }
         }
+
         public function index()
         {
            
         }
-        private function render($error_msg_input=null,$error_model=null)
+        private function render($error_msg = NULL)
         {
             $this->view('login/vlogin');
             $view=new VLogin();
-            $view->loadDataIntoView($error_msg_input,$error_model);
+            $view->loadDataIntoView($error_msg);
             echo $view->renderView();
         }
         private function logInUser($username,$password)
