@@ -45,12 +45,10 @@ h1 {
     text-align: center;
 }
 
-.login_form input {
-    width: 100%;
-    margin-bottom: 20px;
-}
 
 .login_form input[type="text"], input[type="password"] {
+    width: 100%;
+    margin-bottom: 20px;
     border: none;
     border-bottom: 1px solid lightgray;
     background: transparent;
@@ -59,6 +57,7 @@ h1 {
     color: #000;
     font-size: 16px;
 }
+
 
 /* .login_form input[type="submit"] {
     border: none;
@@ -83,10 +82,12 @@ h1 {
 
 .btn
 {
+    margin-top: 9px;
     border: none;
     outline: none;
     height: 40px;
     width: 120px;
+    border-radius: 5px;
     float: right;
     background: #0066ff;
     color: #fff;
@@ -103,25 +104,33 @@ h1 {
     background-repeat: no-repeat;
     background-position: center;
 }
+
+.btn-login {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
 .alert {
     padding: 12px;
     background-color: #f44336; 
     color: white;
     margin-bottom: 0px;
-  }
-  .closebtn {
-    margin-left: 15px;
-    color: white;
-    font-weight: bold;
-    float: right;
-    font-size: 22px;
-    line-height: 20px;
-    cursor: pointer;
-    transition: 0.3s;
-  }
-  .closebtn:hover {
-    color: black;
-  }
+ }
+
+.closebtn {
+	margin-left: 15px;
+	color: white;
+	font-weight: bold;
+	float: right;
+	font-size: 22px;
+	line-height: 20px;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+.closebtn:hover {
+	color: black;
+}
 
 .login_form a {
     text-decoration: none;

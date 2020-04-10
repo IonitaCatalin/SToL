@@ -15,14 +15,7 @@
     <div class="login_form">
         <h1>Stol</h1>
 
-        <?php 
-            if(!is_null($error_msg)){
-                echo '<div class="alert">
-                <span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>';
-                echo $error_msg;
-                echo '</div>';
-            }
-        ?>
+
 
         <!-- <?php if(!is_null($error_msg)):?>
             <div class="alert">
@@ -42,6 +35,16 @@
                 <i class="ri-lock-line"></i>
                 <input type="password" name="password" placeholder="Enter Password">
             </div>
+
+            <?php 
+                if(!is_null($error_msg)){
+                    echo '<div class="alert">
+                    <span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>';
+                    echo $error_msg;
+                    echo '</div>';
+                }
+            ?>
+
             <div>
                <!-- <input type="submit" name="login" value="Login">-->
                 <input name="submit_login" type="submit" value="Login" class="btn btn-login" >
