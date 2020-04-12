@@ -1,6 +1,6 @@
 <?php
 
-session_start(); // extrem de fucking important
+//session_start(); // pornit din login controller
 
 require_once '../app/init.php';
 

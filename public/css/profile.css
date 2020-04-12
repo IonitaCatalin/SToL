@@ -1,0 +1,200 @@
+html, body {
+	margin: 0;
+	height: 100%;
+}
+
+body {
+	color: black;
+	font-family: 'Arimo' ;
+	font-size: 1.2em;
+}
+
+.grid-wrapper {
+	width: 100%;
+	margin:0;
+	height: 100%;
+	background-color: orange;
+	display: grid;
+	grid-template-rows: 110px auto;
+	grid-template-columns: 100%;
+}
+
+header {
+	grid-column: 1/2;
+	grid-row: 1/2;
+	background-color: rgb(9,74,178);
+	color: white;
+	text-align: center;
+}
+
+header h1 {
+	margin: 13px 0 0 0;
+}
+
+article {
+	grid-column: 1/2;
+	grid-row: 2/3;
+	background-color: lightgray;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+    align-content: center;
+    align-items: center;
+}
+
+.rows_group{
+	margin: 20px auto 0 auto;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	justify-content: flex-start;
+    align-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 20px; /* spatiul alb din jurul randurilor,
+    				pt a obtine efect de subliniere(dar nu pe tot randul)*/
+}
+
+.rows_group h2 {
+	margin: 0;
+	padding: 0;
+}
+
+.generic_row {
+	margin: 0 auto 0 auto;
+	width: 850px;
+    height: 50px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 69px;
+	background-color: white;
+	color: black;
+	border-bottom: 3px solid black;
+	display: inline-flex;
+}
+
+.generic_row * {
+	margin: auto auto auto 20px; /* face textul din randuri oarecum aliniat */
+}
+
+#text_profile {
+	background-color: orange;
+}
+
+#text_change_picture {
+	display: inline-block;
+	margin-right: 5px;
+	margin-bottom: 0px;
+	font-size: 0.7em;
+}
+
+#change_avatar_container {
+	margin: 0;
+	padding: 0;
+	margin: auto 20px auto 0;
+}
+
+#avatar {
+	width: 67px;
+	height: 67px;
+	border: 1px dotted black;
+}
+
+#text_edit_profile {
+	background-color: orange;
+}
+
+.button_log_in {
+	margin-left: 50px;
+	background-color: lightyellow;
+	outline: none;
+	border: 1px solid orange;
+	height: 30px;
+}
+
+.button_log_in:hover {
+	color: white;
+	background-color: orange;
+}
+
+.button_log_out {
+	margin-left: 50px;
+	background-color: lightyellow;
+	outline: none;
+	border: 1px solid orange;
+	height: 30px;
+}
+
+.button_log_out:hover {
+	background-color: orange;
+	color: white;
+}
+
+a:visited {
+  	color: inherit; /* link-urile nu isi mai schimba culoarea dupa click */
+}
+a:link {
+	color: black;
+}
+
+#cancel_changes_button, #save_changes_button {
+	background-color: orange;
+	border: 1px solid black;
+	padding: 7px;
+	font-size: 1.17em;
+	font-weight: bold;
+	margin: auto ;
+	text-decoration: none;
+
+}
+
+#cancel_changes_button:hover, #save_changes_button:hover{
+	background-color: darkorange;
+	color: white;
+}
+
+input[type="text"], input[type="password"], input[type="email"] {
+	outline: 1px dotted lightgray;
+	height: 17px;
+}
+
+footer {
+	display: none;
+}
+
+@media only screen and (max-width: 870px) {
+	.grid-wrapper{
+		display: flex;
+		flex-direction: column;
+		background-color: white;
+	}
+
+	header {
+		order: 1;
+	}
+
+	article {
+		order: 2;
+		width: 100%;
+		background-color: red;
+	}
+
+	.rows_group {
+		margin: 0;
+		width: 100%;
+	}
+
+	.generic_row {
+		width: 100%;
+		height: auto;
+	}
+
+	.generic_row * {
+		display: inline;;
+	}
+
+	footer {
+		order: 3;
+	}
+}

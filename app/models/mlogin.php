@@ -15,7 +15,7 @@
             if($login_stmt->rowCount()>0)
             {
                 session_start();
-                header("Location:/ProiectTW/public/cfiles/");
+                header("Location:/ProiectTW/public/cprofile");
                 die();
                 return true;
             }   

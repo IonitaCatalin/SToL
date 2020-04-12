@@ -34,7 +34,7 @@ class CRegister extends Controller {
 					$this->error_msg = 'The password is shorter than 6 characters';
 				}
 				else {
-					$this->error_msg=null;
+					$this->error_msg= 'Success';
 					$this->addUser($_POST["email"], $_POST["username"], $_POST["password"]);
 				}
 
