@@ -14,7 +14,6 @@
         }
 
         public function renderView() {
-            //$nume_var = $this->data["ceva"]; ??
 			ob_start();
 			include($this->template);
 			$output = ob_get_contents();
