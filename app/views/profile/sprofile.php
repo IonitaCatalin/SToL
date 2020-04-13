@@ -54,7 +54,7 @@
 					</div>
 					<div class="generic_row">
 						<div id="text_g_drive">Google Drive:</div>
-						<button class="button_log_in" type="submit">Authorize</button>
+						<button class="button_log_in" onclick="window.location.href = 'http://localhost/ProiectTW/public/cprofile/googledriveAuth';" type="submit">Authorize</button>
 					</div>
 					<div class="generic_row">
 						<div id="text_one_drive">MS One Drive:</div>
