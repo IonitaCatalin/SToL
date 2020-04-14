@@ -14,8 +14,13 @@
 			</header>
 
 			<article>
+			
 				<div class="rows_group">
+					<div class="alert">
+  						<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+						</div>
 					<div class="generic_row">
+					
 						<div id="text_profile"><h2>Profile</h2></div>
 						<label id="change_avatar_container" for="image">
 							<input type="file" name="image" id="image" style="display:none;"/>
@@ -23,12 +28,12 @@
 					    </label>
 					</div>
 					<div class="generic_row">
-						<div id="text_name">Name:</div>
-						<div id="actual_name">Username</div>
+						<div id="text_name">Username:</div>
+						<div id="actual_name"></div>
 					</div>
 					<div class="generic_row">
 						<div id="text_email">Email:</div>
-						<div id="actual_email">example@qq.com</div>
+						<div id="actual_email"></div>
 					</div>
 				</div>
 
@@ -54,15 +59,15 @@
 					</div>
 					<div class="generic_row">
 						<div id="text_g_drive">Google Drive:</div>
-						<button class="button_log_in" onclick="window.location.href = 'http://localhost/ProiectTW/public/cprofile/googledriveAuth';" type="submit">Authorize</button>
+						<button id="button-gdrive" class="button_log_in" onclick="window.location.href = 'http://localhost/ProiectTW/public/cprofile/googledriveAuth';" type="submit">Authorize</button>
 					</div>
 					<div class="generic_row">
 						<div id="text_one_drive">MS One Drive:</div>
-						<button class="button_log_in" onclick="window.location.href = 'http://localhost/ProiectTW/public/cprofile/onedriveAuth';" type="submit">Authorize</button>
+						<button id="button-onedrive" class="button_log_in" onclick="window.location.href = 'http://localhost/ProiectTW/public/cprofile/onedriveAuth';" type="submit">Authorize</button>
 					</div>
 					<div class="generic_row">
 						<div id="text_dropbox">DropBox:</div>
-						<button class="button_log_in"  type="submit">Authorize</button>
+						<button id="button-dropbox" class="button_log_in"  type="submit">Authorize</button>
 					</div>
 					<div class="generic_row">
 						<button id="cancel_changes_button">Go Back</button>
@@ -75,6 +80,7 @@
 			<footer>
 				Footer
 			</footer>
+			<script src='../public/js/profile.js'></script>
 		</div>
 	</body>
 </html>

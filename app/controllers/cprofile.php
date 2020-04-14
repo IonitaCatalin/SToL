@@ -2,11 +2,13 @@
 
 require_once '../app/core/Onedrive.php';
 require_once '../app/core/Googledrive.php';
+require_once '../app/core/JsonResponse.php';
 
 class CProfile extends Controller {
 
 	private $model;
 	private $data; 
+	private $error_msg;
 
 
 	public function __construct() {
@@ -18,8 +20,15 @@ class CProfile extends Controller {
 			De fiecare data cand intram pe o pagina noua suntem obligatii sa apelam session_start
 		*/
 		session_start();
-		$this->render();
-		echo $_SESSION['USER_ID'];
+		
+		if(isset($_SESSION['USER_ID']))
+		{
+			$this->render();
+		}
+		else
+		{
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+		}
 	}
 	
 	public function authorizeServiceOneDrive()
@@ -29,8 +38,15 @@ class CProfile extends Controller {
 			$escaped_url = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
 			$params=parse_url($escaped_url,PHP_URL_QUERY);
 			$auth_code=substr($params,strpos($params,'=')+1,strlen($params));
-			$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
-			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+			try
+			{
+				$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
+				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+			}
+			catch(OnedriveAuthException $exception)
+			{
+				
+			}
 	}
 
 	public function onedriveAuth()
@@ -40,7 +56,7 @@ class CProfile extends Controller {
 		{
 			header('Location:'.OneDriveService::authorizationRedirectURL());
 		} else {
-			echo 'Nu uita sa faci log in.';
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
 		}
 	}
 
@@ -49,7 +65,7 @@ class CProfile extends Controller {
 		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.GoogleDriveService::authorizationRedirectURL());
 		} else {
-			echo 'Nu uita sa faci log in.';
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
 		}
 	}
 
@@ -71,8 +87,39 @@ class CProfile extends Controller {
 	}
 
 	public function user()
-	{
-		
+	{	
+		session_start();
+		if(!isset($_SESSION['USER_ID'])){
+			$json_response=new JsonResponse('error',null,'Access denied for unauthorized user');
+			echo $json_response->response();
+		}
+		//V-a trebuii adaugat si metoda post pentru upload deocamdata merge doar pe recuperarea de date
+		else if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed');
+			echo $json_response->response();
+		}
+		else
+		{
+			try
+			{
+				try
+				{	
+					$result=$this->model->getUserDataArray($_SESSION['USER_ID']);
+					$json=new JsonResponse('success',$result,null);
+					echo $json->response();
+				}
+				catch(PDOException $exception)
+				{
+					$json_response=new JsonResponse('error',null,'Service temporarly unavailable');
+					echo $json_response->response();
+				}
+			}
+			catch(PDOException $exception)
+			{
+				echo $exception->getMessage();
+			}
+		}
+
 	}
 
 	private function render($error_msg  = NULL) {
