@@ -1,9 +1,24 @@
-document.addEventListener("DOMContentLoaded", function(){
-    var xhr = new XMLHttpRequest();
+const saveButton=document.querySelector('#save_changes_button');
+const backButton=document.querySelector('#cancel_changes_button');
+
+function toggleAlert(message=null)
+{
+    let alert=document.querySelector('.alert');
+    let paragraph=document.createElement('P');
+    let errorMsg=document.createTextNode(message);
+    paragraph.appendChild(errorMsg);
+    alert.appendChild(paragraph);
+    if(alert.style.display=='none')
+        alert.style.display='block';
+    else alert.style.display='none';
+}
+
+function fetchUserData()
+{
+    let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function(){
         if (xhr.readyState === 4 && xhr.status==200){
             const response=JSON.parse(xhr.responseText);
-            console.log(response);
             if(response.status=='success')
             {
                 let username=document.querySelector('#actual_name');
@@ -25,25 +40,27 @@ document.addEventListener("DOMContentLoaded", function(){
                 if(response.data.dropbox==true)
                 {
                     let dropbox=document.querySelector("#button-dropbox");
-                    dropbox.style.backgroundColor="red";
+                    dropbox.style.backgroundColor='red';
                     dropbox.textContent='Unauthorize\u2716';
                 }
             }
             else
             {
-
-                let alert=document.querySelector('.alert');
-                let paragraph=document.createElement('P');
-                let errorMsg=document.createTextNode(data.message);
-                paragraph.appendChild(errorMsg);
-                alert.appendChild(paragraph);
-                alert.style.display='block';
-                
+                toggleAlert(response.message);
             }
         }
     };
-    
     xhr.open('GET', 'http://localhost/ProiectTW/public/cprofile/user');
     xhr.send();
+}
 
-    });
+function updateUserData()
+{
+    
+    let username=document.getElementById('new-name');
+    let oldPassword=document.querySelector('old-password');
+    let newPassword=document.querySelector('new-password');
+
+}
+document.addEventListener("DOMContentLoaded",fetchUserData);
+saveButton.addEventListener('click',updateUserData);

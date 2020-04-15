@@ -7,65 +7,63 @@ require_once '../app/core/JsonResponse.php';
 class CProfile extends Controller {
 
 	private $model;
-	private $data; 
-	private $error_msg;
-
+	private $data;
 
 	public function __construct() {
 		$this->model = $this->model('mprofile');	
 	}
 
-	public function index() {
-		/*
-			De fiecare data cand intram pe o pagina noua suntem obligatii sa apelam session_start
-		*/
+	public function index()
+	{
 		session_start();
-		
-		if(isset($_SESSION['USER_ID']))
-		{
+		if(isset($_SESSION['USER_ID'])) {
 			$this->render();
 		}
-		else
-		{
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+		else {
+			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 		}
 	}
 	
 	public function authorizeServiceOneDrive()
 	{
-			session_start();
-			$url =  "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-			$escaped_url = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
-			$params=parse_url($escaped_url,PHP_URL_QUERY);
-			$auth_code=substr($params,strpos($params,'=')+1,strlen($params));
-			try
-			{
-				$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
-				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
-			}
-			catch(OnedriveAuthException $exception)
-			{
-				
-			}
+		session_start();
+		$url =  "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+		$escaped_url = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
+		$params=parse_url($escaped_url,PHP_URL_QUERY);
+		$auth_code=substr($params,strpos($params,'=')+1,strlen($params));
+		try
+		{
+			$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
+			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+		}
+		catch(OnedriveAuthException $exception)
+		{
+			echo "$this->code: $this->message"; // ?
+		}
 	}
 
 	public function onedriveAuth()
 	{
 		session_start();
-		if(isset($_SESSION['USER_ID']))
-		{
+		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.OneDriveService::authorizationRedirectURL());
 		} else {
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 		}
 	}
 
-	public function googledriveAuth() {
+	public function googledriveAuth()
+	{
 		session_start();
-		if(isset($_SESSION['USER_ID'])) {
+		// click pe Unauthorize dupa ce esti logat pt a vedea fisierele
+		if( $this->model->getUserDataArray($_SESSION['USER_ID'])['googledrive'] == true) {
+			echo 'Already logged in. Also unauthorize is not yet functional';
+			GoogleDriveService::listAllFiles($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'));
+		}
+		else if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.GoogleDriveService::authorizationRedirectURL());
 		} else {
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 		}
 	}
 
@@ -77,7 +75,7 @@ class CProfile extends Controller {
 			$decoded_json = GoogleDriveService::getAccesRefreshToken($_GET['code']);
 			//GoogleDriveService::removeAccessRefreshToken($decoded_json);
 			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'],'googledrive');
-			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/cprofile");
 		}
 
 		if(isset($_GET['error'])){
@@ -94,14 +92,8 @@ class CProfile extends Controller {
 			echo $json_response->response();
 		}
 		//V-a trebuii adaugat si metoda post pentru upload deocamdata merge doar pe recuperarea de date
-		else if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed');
-			echo $json_response->response();
-		}
-		else
+		elseif($_SERVER['REQUEST_METHOD']=='GET')
 		{
-			try
-			{
 				try
 				{	
 					$result=$this->model->getUserDataArray($_SESSION['USER_ID']);
@@ -113,11 +105,15 @@ class CProfile extends Controller {
 					$json_response=new JsonResponse('error',null,'Service temporarly unavailable');
 					echo $json_response->response();
 				}
-			}
-			catch(PDOException $exception)
-			{
-				echo $exception->getMessage();
-			}
+		}
+		elseif($_SERVER['REQUEST_METHOD']=='PATCH')
+		{
+			
+		}
+		else 
+		{
+			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed');
+			echo $json_response->response();
 		}
 
 	}

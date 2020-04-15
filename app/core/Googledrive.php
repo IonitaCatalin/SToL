@@ -5,16 +5,11 @@
         public static function authorizationRedirectURL() {
 
             $endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
-            // $client_id = "570482443729-qqchddo5v01cjvnn5r93du9oh34m1jco.apps.googleusercontent.com";
-            // $response_type = "code";
-            // $scope = "https://www.googleapis.com/auth/drive.metadata.readonly";
-            // $redirect_uri = "http://localhost/ProiectTW/public/cprofile/authorizeServiceGoogleDrive/";
-            // $access_type = "offline";
-            // $prompt = "consent";
+
 
             $params = [
                 //'prompt' => "consent",
-                'scope' => "https://www.googleapis.com/auth/drive.metadata.readonly",
+                'scope' => "https://www.googleapis.com/auth/drive",
                 '$access_type' => "offline",
                 'response_type' => "code",
                 'redirect_uri' => "http://localhost/ProiectTW/public/cprofile/authorizeServiceGoogleDrive/",
@@ -30,11 +25,6 @@
 
         public static function getAccesRefreshToken($code)
         {
-            // $code = $code; // :)
-            // $client_id = "570482443729-qqchddo5v01cjvnn5r93du9oh34m1jco.apps.googleusercontent.com";
-            // $client_secret = "eNo_ecjNkFkxJhzvuQ3QsJIF";
-            // $redirect_uri = "http://localhost/ProiectTW/public/cprofile/authorizeServiceGoogleDrive/";
-            // $grant_type = "authorization_code";
 
             $array=[
                 'code' => $code,
@@ -51,6 +41,7 @@
                 CURLOPT_URL => 'https://oauth2.googleapis.com/token',
                 CURLOPT_HTTPHEADER => array('Content-Type: application/x-www-form-urlencoded'),
                 CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_SSL_VERIFYPEER => FALSE,
                 CURLOPT_POST => 1,
                 //CURLOPT_USERAGENT => 'Stol',
                 CURLOPT_POSTFIELDS => $post_fields
@@ -82,6 +73,28 @@
             curl_close($ch);
             echo 'HTTP code: ' . $httpcode; //200 succes, 40X nein
 
+        }
+
+        public static function listAllFiles($token)
+        {
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => "https://www.googleapis.com/drive/v3/files",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => array("authorization: Bearer ${token}"),
+            ));
+            $result = curl_exec($ch);
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            echo '<br>HTTP code: ' . $httpcode; //200 succes, 40X nein
+            echo '<pre>';
+            print_r($result);
+            echo '</pre>';
         }
     }
 

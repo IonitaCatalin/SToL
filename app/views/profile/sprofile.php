@@ -42,9 +42,9 @@
 						<div id="text_edit_profile"><h2>Change account details</h2></div>
 					</div>
 					<div class="generic_row">
-						<div id="text_change_name">Change name:</div>
+						<div id="text_change_name">Change username:</div>
 						<div id="input_edit_name">
-							<label for="new-name">New name:</label>
+							<label for="new-name">New username:</label>
 							<input type="text" name="new_name" id="new-name">
 						</div>
 					</div>
