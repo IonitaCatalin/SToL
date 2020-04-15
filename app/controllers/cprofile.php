@@ -8,26 +8,20 @@ class CProfile extends Controller {
 
 	private $model;
 	private $data; 
-	private $error_msg;
-
 
 	public function __construct() {
 		$this->model = $this->model('mprofile');	
 	}
 
 	public function index() {
-		/*
-			De fiecare data cand intram pe o pagina noua suntem obligatii sa apelam session_start
-		*/
 		session_start();
-		
 		if(isset($_SESSION['USER_ID']))
 		{
 			$this->render();
 		}
 		else
 		{
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 		}
 	}
 	
@@ -41,7 +35,7 @@ class CProfile extends Controller {
 			try
 			{
 				$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
-				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+				header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 			}
 			catch(OnedriveAuthException $exception)
 			{
@@ -56,7 +50,7 @@ class CProfile extends Controller {
 		{
 			header('Location:'.OneDriveService::authorizationRedirectURL());
 		} else {
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 		}
 	}
 
@@ -65,7 +59,7 @@ class CProfile extends Controller {
 		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.GoogleDriveService::authorizationRedirectURL());
 		} else {
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 		}
 	}
 
@@ -77,7 +71,7 @@ class CProfile extends Controller {
 			$decoded_json = GoogleDriveService::getAccesRefreshToken($_GET['code']);
 			//GoogleDriveService::removeAccessRefreshToken($decoded_json);
 			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'],'googledrive');
-			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/cprofile");
 		}
 
 		if(isset($_GET['error'])){
@@ -94,14 +88,8 @@ class CProfile extends Controller {
 			echo $json_response->response();
 		}
 		//V-a trebuii adaugat si metoda post pentru upload deocamdata merge doar pe recuperarea de date
-		else if ($_SERVER['REQUEST_METHOD'] != 'GET') {
-			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed');
-			echo $json_response->response();
-		}
-		else
+		elseif($_SERVER['REQUEST_METHOD']=='GET')
 		{
-			try
-			{
 				try
 				{	
 					$result=$this->model->getUserDataArray($_SESSION['USER_ID']);
@@ -113,11 +101,15 @@ class CProfile extends Controller {
 					$json_response=new JsonResponse('error',null,'Service temporarly unavailable');
 					echo $json_response->response();
 				}
-			}
-			catch(PDOException $exception)
-			{
-				echo $exception->getMessage();
-			}
+		}
+		elseif($_SERVER['REQUEST_METHOD']=='PATCH')
+		{
+			
+		}
+		else 
+		{
+			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed');
+			echo $json_response->response();
 		}
 
 	}
