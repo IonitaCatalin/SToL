@@ -63,11 +63,31 @@
 			$stmt->execute();
 			if($stmt->rowCount() > 0) {
 				$result = $stmt->fetch();
-				//var_dump($result);
 				return $result['access_token'];
 			}
 			else
 				echo 'Id-ul nu are niciun token asociat';
+		}
+
+		public function getRefreshToken($id, $service)
+		{
+			$sql = '';
+			switch ($service) {
+				case 'onedrive':
+					$sql = "SELECT refresh_token FROM onedrive_service WHERE user_id = ${id}";
+					break;
+				case 'googledrive':
+					$sql = "SELECT refresh_token FROM googledrive_service WHERE user_id = ${id}";
+					break;
+			}
+			$stmt = DB::getConnection()->prepare($sql);
+			$stmt->execute();
+			if($stmt->rowCount() > 0) {
+				$result = $stmt->fetch();
+				return $result['refresh_token'];
+			}
+			else
+				echo 'Id-ul nu are niciun refresh token asociat';
 		}
 
 		public function getUserDataArray($user_id)

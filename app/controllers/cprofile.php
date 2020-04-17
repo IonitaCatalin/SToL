@@ -20,7 +20,8 @@ class CProfile extends Controller {
 			$this->render();
 		}
 		else {
-			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");   // Am comentat liniile de felul acesta deoarece uneori $_SERVER['HTTP_POST'] e null si calea va fi gresita
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
 		}
 	}
 	
@@ -34,7 +35,8 @@ class CProfile extends Controller {
 		try
 		{
 			$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
-			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 		}
 		catch(OnedriveAuthException $exception)
 		{
@@ -48,7 +50,8 @@ class CProfile extends Controller {
 		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.OneDriveService::authorizationRedirectURL());
 		} else {
-			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
 		}
 	}
 
@@ -57,13 +60,15 @@ class CProfile extends Controller {
 		session_start();
 		// click pe Unauthorize dupa ce esti logat pt a vedea fisierele
 		if( $this->model->getUserDataArray($_SESSION['USER_ID'])['googledrive'] == true) {
-			echo 'Already logged in. Also unauthorize is not yet functional';
+			echo 'Unauthorize is not yet functional. Using this button for tests:)<br>';
+			//GoogleDriveService::getAccessTokenAfterRefresh($this->model->getRefreshToken($_SESSION['USER_ID'], 'googledrive')); //teoretic merge, practic aplicatia nu e verificata si nu primesc refresh token-uri de la google:)
 			GoogleDriveService::listAllFiles($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'));
 		}
 		else if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.GoogleDriveService::authorizationRedirectURL());
 		} else {
-			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
 		}
 	}
 
@@ -74,8 +79,9 @@ class CProfile extends Controller {
 		if(isset($_GET['code'])){
 			$decoded_json = GoogleDriveService::getAccesRefreshToken($_GET['code']);
 			//GoogleDriveService::removeAccessRefreshToken($decoded_json);
-			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'],'googledrive');
-			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/cprofile");
+			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'googledrive');
+			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/cprofile");
+			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 		}
 
 		if(isset($_GET['error'])){
