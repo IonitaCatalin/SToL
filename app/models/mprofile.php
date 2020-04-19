@@ -4,7 +4,7 @@
 
 	class MProfile {
 
-		public function insertAuthToken($data,$id,$service)
+		public function insertAuthToken($data, $id, $service)
 		{
 			$expires=$data['expires_in'];
 			array_key_exists('refresh_token', $data) ? $refresh_token = $data['refresh_token'] : $refresh_token = null; // cei de la google sunt zgarciti cu refresh token-urile
@@ -26,55 +26,94 @@
 				'expires' => $expires
 			]);
 		}
+
 		private function isOneDriveAuthorized($id)
 		{
-			$get_onedrive_query="SELECT user_id FROM onedrive_service WHERE user_id=${id}";
-			$get_onedrive_stmt=DB::getConnection()->prepare($get_onedrive_query);
+			$get_onedrive_query = "SELECT user_id FROM onedrive_service WHERE user_id = ${id}";
+			$get_onedrive_stmt = DB::getConnection()->prepare($get_onedrive_query);
 			$get_onedrive_stmt->execute();
-			if($get_onedrive_stmt->rowCount()>0)
-			{
+			if($get_onedrive_stmt->rowCount() > 0)
 				return true;
-			}
-			else return false;
-
+			else
+				return false;
 		}
+
 		private function isGoogleDriveAuthorized($id)
 		{
-			$get_onedrive_query="SELECT user_id FROM googledrive_service WHERE user_id=${id}";
-			$get_onedrive_stmt=DB::getConnection()->prepare($get_onedrive_query);
-			$get_onedrive_stmt->execute();
-			if($get_onedrive_stmt->rowCount()>0)
-			{
+			$get_googledrive_query = "SELECT user_id FROM googledrive_service WHERE user_id = ${id}";
+			$get_googledrive_stmt = DB::getConnection()->prepare($get_googledrive_query);
+			$get_googledrive_stmt->execute();
+			if($get_googledrive_stmt->rowCount()>0)
 				return true;
-			}
-			else return false;
-
+			else
+				return false;
 		}
+
+		public function getAccessToken($id, $service)
+		{
+			$sql = '';
+			switch ($service) {
+				case 'onedrive':
+					$sql = "SELECT access_token FROM onedrive_service WHERE user_id = ${id}";
+					break;
+				case 'googledrive':
+					$sql = "SELECT access_token FROM googledrive_service WHERE user_id = ${id}";
+					break;
+			}
+			$stmt = DB::getConnection()->prepare($sql);
+			$stmt->execute();
+			if($stmt->rowCount() > 0) {
+				$result = $stmt->fetch();
+				return $result['access_token'];
+			}
+			else
+				echo 'Id-ul nu are niciun token asociat';
+		}
+
+		public function getRefreshToken($id, $service)
+		{
+			$sql = '';
+			switch ($service) {
+				case 'onedrive':
+					$sql = "SELECT refresh_token FROM onedrive_service WHERE user_id = ${id}";
+					break;
+				case 'googledrive':
+					$sql = "SELECT refresh_token FROM googledrive_service WHERE user_id = ${id}";
+					break;
+			}
+			$stmt = DB::getConnection()->prepare($sql);
+			$stmt->execute();
+			if($stmt->rowCount() > 0) {
+				$result = $stmt->fetch();
+				return $result['refresh_token'];
+			}
+			else
+				echo 'Id-ul nu are niciun refresh token asociat';
+		}
+
 		public function getUserDataArray($user_id)
 		{
-			$result_array=array();
-			$get_query="SELECT username,email FROM accounts WHERE id=${user_id}";
-			
-			$get_googledrive_query="SELECT user_id FROM googledrive_service WHERE user_id=${user_id}";
-			$get_dropbox_query="SELECT user_id FROM onedriv_service WHERE user_id=${user_id}";
-				$get_stmt=DB::getConnection()->prepare($get_query);
-				$get_googledrive_stmt=DB::getConnection()->prepare($get_googledrive_query);
-				$get_stmt->execute();
-				$result_array+=$get_stmt->fetch(PDO::FETCH_ASSOC);
-				$onedrive_status=$this->isOneDriveAuthorized($user_id);
-				$google_status=$this->isGoogleDriveAuthorized($user_id);
-				$dropbox_status=false;
-				$result_array['onedrive']=$onedrive_status;
-				$result_array['googledrive']=$google_status;
-				$result_array['dropbox']=$dropbox_status;
-				return $result_array;
+			$result_array = array();
+
+			$get_query = "SELECT username, email FROM accounts WHERE id = ${user_id}";
+			$get_stmt=DB::getConnection()->prepare($get_query);
+			$get_stmt->execute();
+			$result_array += $get_stmt->fetch(PDO::FETCH_ASSOC);
+
+			$onedrive_status=$this->isOneDriveAuthorized($user_id);
+			$google_status=$this->isGoogleDriveAuthorized($user_id);
+			$dropbox_status=false;
+
+			$result_array['onedrive'] = $onedrive_status;
+			$result_array['googledrive'] = $google_status;
+			$result_array['dropbox'] = $dropbox_status;
+			return $result_array;
 		}
 		public function updateUsername($username)
 		{
 			throw new UsernameTakenException('Username is already taken!');
 		}
 		
-
 	}
 
 ?>

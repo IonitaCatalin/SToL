@@ -9,12 +9,17 @@ require_once '../app/core/Exceptions/CredentialExceptions.php';
 class CProfile extends Controller {
 
 	private $model;
+<<<<<<< HEAD
 	private $data; 
+=======
+	private $data;
+>>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 
 	public function __construct() {
 		$this->model = $this->model('mprofile');	
 	}
 
+<<<<<<< HEAD
 	public function index() {
 		session_start();
 		if(isset($_SESSION['USER_ID']))
@@ -24,11 +29,23 @@ class CProfile extends Controller {
 		else
 		{
 			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+=======
+	public function index()
+	{
+		session_start();
+		if(isset($_SESSION['USER_ID'])) {
+			$this->render();
+		}
+		else {
+			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");   // Am comentat liniile de felul acesta deoarece uneori $_SERVER['HTTP_POST'] e null si calea va fi gresita
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+>>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 		}
 	}
 	
 	public function authorizeServiceOneDrive()
 	{
+<<<<<<< HEAD
 			session_start();
 			$url =  "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 			$escaped_url = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
@@ -43,25 +60,58 @@ class CProfile extends Controller {
 			{
 				
 			}
+=======
+		session_start();
+		$url =  "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+		$escaped_url = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
+		$params=parse_url($escaped_url,PHP_URL_QUERY);
+		$auth_code=substr($params,strpos($params,'=')+1,strlen($params));
+		try
+		{
+			$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
+			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+		}
+		catch(OnedriveAuthException $exception)
+		{
+			echo "$this->code: $this->message"; // ?
+		}
+>>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 	}
 
 	public function onedriveAuth()
 	{
 		session_start();
-		if(isset($_SESSION['USER_ID']))
-		{
+		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.OneDriveService::authorizationRedirectURL());
 		} else {
+<<<<<<< HEAD
 			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+=======
+			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+>>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 		}
 	}
 
-	public function googledriveAuth() {
+	public function googledriveAuth()
+	{
 		session_start();
-		if(isset($_SESSION['USER_ID'])) {
+		// click pe Unauthorize dupa ce esti logat pt a vedea fisierele
+		if( $this->model->getUserDataArray($_SESSION['USER_ID'])['googledrive'] == true) {
+			echo 'Unauthorize is not yet functional. Using this button for tests:)<br>';
+			//GoogleDriveService::getAccessTokenAfterRefresh($this->model->getRefreshToken($_SESSION['USER_ID'], 'googledrive')); //teoretic merge, practic aplicatia nu e verificata si nu primesc refresh token-uri de la google:)
+			GoogleDriveService::listAllFiles($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'));
+		}
+		else if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.GoogleDriveService::authorizationRedirectURL());
 		} else {
+<<<<<<< HEAD
 			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+=======
+			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+>>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 		}
 	}
 
@@ -72,8 +122,14 @@ class CProfile extends Controller {
 		if(isset($_GET['code'])){
 			$decoded_json = GoogleDriveService::getAccesRefreshToken($_GET['code']);
 			//GoogleDriveService::removeAccessRefreshToken($decoded_json);
+<<<<<<< HEAD
 			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'],'googledrive');
 			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/cprofile");
+=======
+			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'googledrive');
+			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/cprofile");
+			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+>>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 		}
 
 		if(isset($_GET['error'])){
@@ -104,6 +160,7 @@ class CProfile extends Controller {
 					echo $json_response->response();
 				}
 		}
+<<<<<<< HEAD
 		elseif($_SERVER['REQUEST_METHOD']=='PUT')
 		{
 			try
@@ -122,6 +179,16 @@ class CProfile extends Controller {
 				$json_response=new JsonResponse('error',null,'Service temporarly unavailable');
 				echo $json_response->response();
 			}
+=======
+		elseif($_SERVER['REQUEST_METHOD']=='PATCH')
+		{
+			
+		}
+		else 
+		{
+			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed');
+			echo $json_response->response();
+>>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 		}
 		else 
 		{
