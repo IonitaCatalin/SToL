@@ -1,5 +1,6 @@
 <?php
 	require_once '../app/core/Db.php';
+	require_once '../app/core/Exceptions/CredentialExceptions.php';
 
 	class MProfile {
 
@@ -67,6 +68,10 @@
 				$result_array['googledrive']=$google_status;
 				$result_array['dropbox']=$dropbox_status;
 				return $result_array;
+		}
+		public function updateUsername($username)
+		{
+			throw new UsernameTakenException('Username is already taken!');
 		}
 		
 

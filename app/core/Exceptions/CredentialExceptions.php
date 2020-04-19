@@ -1,5 +1,5 @@
 <?php
-    class OneDriveException extends Exception
+    class CredentialException extends Exception
     {
     public function __construct($message, $code = 0, Exception $previous = null) {
         $this->$message=$message;
@@ -12,5 +12,10 @@
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 
+}
+
+class UsernameTakenException extends CredentialException
+{
+    
 }
 ?>

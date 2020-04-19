@@ -4,7 +4,6 @@
     define('GRANT_TYPE','files.readwrite offline_access');
     define('REDIRECT_URI','http://localhost/ProiectTW/public/cprofile/authorizeServiceOneDrive/');
     require_once('OnedriveException.php');
-    require_once('OnedriveAuthException.php');
     class OneDriveService
     {
         public static function authorizationRedirectURL()
@@ -34,7 +33,7 @@
                 $array=json_decode($response,true);
                 if(isset($array['error']))
                 {
-                    throw new OnedriveAuthToken('The authentication token could not be redeemed!');
+                    throw new OnedriveAuthException('The authentication token could not be redeemed!');
                 }
                 else return $array;
         }

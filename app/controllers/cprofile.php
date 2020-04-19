@@ -1,8 +1,10 @@
 <?php
 
-require_once '../app/core/Onedrive.php';
-require_once '../app/core/Googledrive.php';
+require_once '../app/core/Onedrive/Onedrive.php';
+require_once '../app/core/Onedrive/OnedriveException.php';
+require_once '../app/core/GDrive/Googledrive.php';
 require_once '../app/core/JsonResponse.php';
+require_once '../app/core/Exceptions/CredentialExceptions.php';
 
 class CProfile extends Controller {
 
@@ -102,9 +104,24 @@ class CProfile extends Controller {
 					echo $json_response->response();
 				}
 		}
-		elseif($_SERVER['REQUEST_METHOD']=='PATCH')
+		elseif($_SERVER['REQUEST_METHOD']=='PUT')
 		{
-			
+			try
+			{
+				$this->model->updateUsername('ceva nou');
+				$json=new JsonResponse('error',null,'Request primit se astepta procesarea');
+				echo $json->response();
+			}
+			catch(UsernameTakenException $exception)
+			{
+				$json=new JsonResponse('error',null,$exception->getMessage());
+				echo $json->response();
+			}
+			catch(PDOException $exception)
+			{
+				$json_response=new JsonResponse('error',null,'Service temporarly unavailable');
+				echo $json_response->response();
+			}
 		}
 		else 
 		{

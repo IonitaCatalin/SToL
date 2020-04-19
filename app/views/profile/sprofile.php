@@ -5,6 +5,7 @@
 		<title>Profile Page</title>
 		<link href="https://fonts.googleapis.com/css?family=Arimo&display=swap" rel="stylesheet">
 		<link rel="stylesheet" type="text/css" href="../public/css/profile.css">
+		<link rel="shortcut icon" href="../public/images/favicon.ico">
 	</head>
 	<body>
 		<div class="grid-wrapper">
@@ -17,8 +18,9 @@
 			
 				<div class="rows_group">
 					<div class="alert">
-  						<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-						</div>
+						  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+						  <p id="alert_text"></p>
+					</div>
 					<div class="generic_row">
 					
 						<div id="text_profile"><h2>Profile</h2></div>

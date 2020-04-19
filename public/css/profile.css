@@ -128,8 +128,12 @@ article {
 }
 
 .button_log_in:hover {
-	color: white;
-	background-color: orange;
+	transform: translateY(-5px);
+    cursor: pointer;
+    background: #99c2ff;
+    color:white;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .button_log_out {
@@ -167,8 +171,12 @@ a:link {
 }
 
 #cancel_changes_button:hover, #save_changes_button:hover{
-	/* background-color: darkorange;
-	color: white; */
+	transform: translateY(-5px);
+    cursor: pointer;
+    background: #99c2ff;
+    color:white;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 #input_edit_password
 {
