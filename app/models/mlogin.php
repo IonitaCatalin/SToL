@@ -25,7 +25,7 @@
                 {
                     return false;
                 }
-            } catch (Exception $e) {
+            } catch (PDOException $e) {
                 return false;
               }
            

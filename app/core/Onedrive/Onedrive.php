@@ -6,11 +6,6 @@
     define('REDIRECT_URI','http://localhost/ProiectTW/public/cprofile/authorizeServiceOneDrive/');
 
     require_once('OnedriveException.php');
-<<<<<<< HEAD:app/core/Onedrive/Onedrive.php
-=======
-    require_once('OnedriveAuthException.php');
-
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55:app/core/Onedrive.php
     class OneDriveService
     {
         public static function authorizationRedirectURL()
@@ -38,7 +33,6 @@
                 CURLOPT_HTTPHEADER => array('Content-Type: application/x-www-form-urlencoded'),
                 CURLOPT_POSTFIELDS => $query_string
             ]);
-<<<<<<< HEAD:app/core/Onedrive/Onedrive.php
                 $response=curl_exec($curl);
                 $array=json_decode($response,true);
                 if(isset($array['error']))
@@ -46,17 +40,6 @@
                     throw new OnedriveAuthException('The authentication token could not be redeemed!');
                 }
                 else return $array;
-=======
-
-            $response = curl_exec($curl);
-            $array = json_decode($response, true);
-
-            if(isset($array['error'])) {
-                throw new OnedriveAuthToken('The authentication token could not be redeemed!');
-            }
-            else 
-                return $array;
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55:app/core/Onedrive.php
         }
     }
 

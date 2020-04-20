@@ -15,11 +15,8 @@ class OneDriveException extends Exception {
 
 }
 
-<<<<<<< HEAD:app/core/Onedrive/OnedriveException.php
 class OneDriveAuthException extends OneDriveException
 {
     
 }
-=======
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55:app/core/OnedriveException.php
 ?>

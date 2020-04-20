@@ -4,22 +4,17 @@ require_once '../app/core/Onedrive/Onedrive.php';
 require_once '../app/core/Onedrive/OnedriveException.php';
 require_once '../app/core/GDrive/Googledrive.php';
 require_once '../app/core/JsonResponse.php';
-require_once '../app/core/Exceptions/CredentialExceptions.php';
+require_once '../app/core/Exceptions/CredentialsExceptions.php';
 
 class CProfile extends Controller {
 
 	private $model;
-<<<<<<< HEAD
 	private $data; 
-=======
-	private $data;
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 
 	public function __construct() {
 		$this->model = $this->model('mprofile');	
 	}
 
-<<<<<<< HEAD
 	public function index() {
 		session_start();
 		if(isset($_SESSION['USER_ID']))
@@ -29,38 +24,11 @@ class CProfile extends Controller {
 		else
 		{
 			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
-=======
-	public function index()
-	{
-		session_start();
-		if(isset($_SESSION['USER_ID'])) {
-			$this->render();
-		}
-		else {
-			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");   // Am comentat liniile de felul acesta deoarece uneori $_SERVER['HTTP_POST'] e null si calea va fi gresita
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 		}
 	}
 	
 	public function authorizeServiceOneDrive()
 	{
-<<<<<<< HEAD
-			session_start();
-			$url =  "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-			$escaped_url = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
-			$params=parse_url($escaped_url,PHP_URL_QUERY);
-			$auth_code=substr($params,strpos($params,'=')+1,strlen($params));
-			try
-			{
-				$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
-				header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
-			}
-			catch(OnedriveAuthException $exception)
-			{
-				
-			}
-=======
 		session_start();
 		$url =  "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
 		$escaped_url = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
@@ -76,7 +44,6 @@ class CProfile extends Controller {
 		{
 			echo "$this->code: $this->message"; // ?
 		}
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 	}
 
 	public function onedriveAuth()
@@ -85,12 +52,9 @@ class CProfile extends Controller {
 		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.OneDriveService::authorizationRedirectURL());
 		} else {
-<<<<<<< HEAD
 			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
-=======
 			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 			header('Location:'.'http://localhost/ProiectTW/public/clogin');
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 		}
 	}
 
@@ -106,12 +70,8 @@ class CProfile extends Controller {
 		else if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.GoogleDriveService::authorizationRedirectURL());
 		} else {
-<<<<<<< HEAD
-			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
-=======
 			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 			header('Location:'.'http://localhost/ProiectTW/public/clogin');
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 		}
 	}
 
@@ -122,14 +82,11 @@ class CProfile extends Controller {
 		if(isset($_GET['code'])){
 			$decoded_json = GoogleDriveService::getAccesRefreshToken($_GET['code']);
 			//GoogleDriveService::removeAccessRefreshToken($decoded_json);
-<<<<<<< HEAD
 			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'],'googledrive');
 			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/cprofile");
-=======
 			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'googledrive');
 			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/cprofile");
 			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 		}
 
 		if(isset($_GET['error'])){
@@ -160,35 +117,39 @@ class CProfile extends Controller {
 					echo $json_response->response();
 				}
 		}
-<<<<<<< HEAD
 		elseif($_SERVER['REQUEST_METHOD']=='PUT')
 		{
 			try
 			{
-				$this->model->updateUsername('ceva nou');
-				$json=new JsonResponse('error',null,'Request primit se astepta procesarea');
+				$put_args=json_decode(file_get_contents("php://input"),true);
+				if(isset($put_args['username']) && $put_args['username']!='')
+				{
+					$this->model->updateUsername($put_args['username'],$_SESSION['USER_ID']);
+				}
+				if(isset($put_args['oldpass']) && isset($put_args['newpass']))
+				{
+					$this->model->updatePassword($put_args['oldpass'],$put_args['newpass'],$_SESSION['USER_ID']);
+				}
+				$json=new JsonResponse('success',null,'Profile data updated succesfully!');
 				echo $json->response();
 			}
 			catch(UsernameTakenException $exception)
 			{
+				
 				$json=new JsonResponse('error',null,$exception->getMessage());
 				echo $json->response();
 			}
+			catch(IncorrectPasswordException $exception)
+			{
+				$json_response=new JsonResponse('error',null,$exception->getMessage());
+				echo $json_response->response();
+			}
 			catch(PDOException $exception)
 			{
+				echo $exception->getMessage();
 				$json_response=new JsonResponse('error',null,'Service temporarly unavailable');
 				echo $json_response->response();
 			}
-=======
-		elseif($_SERVER['REQUEST_METHOD']=='PATCH')
-		{
-			
-		}
-		else 
-		{
-			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed');
-			echo $json_response->response();
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 		}
 		else 
 		{

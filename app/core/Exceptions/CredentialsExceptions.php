@@ -1,5 +1,5 @@
 <?php
-    class CredentialException extends Exception
+    class CredentialsException extends Exception
     {
     public function __construct($message, $code = 0, Exception $previous = null) {
         $this->$message=$message;
@@ -14,8 +14,14 @@
 
 }
 
-class UsernameTakenException extends CredentialException
+class UsernameTakenException extends CredentialsException
 {
     
 }
+
+class IncorrectPasswordException extends CredentialsException
+{
+    
+}
+
 ?>

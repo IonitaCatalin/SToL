@@ -1,6 +1,6 @@
 <?php
 	require_once '../app/core/Db.php';
-	require_once '../app/core/Exceptions/CredentialExceptions.php';
+	require_once '../app/core/Exceptions/CredentialsExceptions.php';
 
 	class MProfile {
 
@@ -109,9 +109,58 @@
 			$result_array['dropbox'] = $dropbox_status;
 			return $result_array;
 		}
-		public function updateUsername($username)
+		public function checkExistingUsername($username) {
+			$check_username = $username;
+			$sql = "SELECT id  FROM accounts WHERE username = :username";
+			$check_username_stmt = DB::getConnection()->prepare($sql);
+			$check_username_stmt -> execute([
+				'username' => $check_username
+			]);
+
+			if($check_username_stmt->rowCount() != 0)
+				return true;
+			else
+				return false;
+		}
+		public function updateUsername($username,$id)
 		{
-			throw new UsernameTakenException('Username is already taken!');
+
+			if($this->checkExistingUsername($username))
+			{
+				throw new UsernameTakenException('Username is already taken!');
+			}
+			else
+			{
+				$sql="UPDATE accounts SET username=:username,updated_at=:updated WHERE id=:id";
+				$update_username_stmt=DB::getConnection()->prepare($sql);
+				$update_username_stmt->execute([
+						'username'=>htmlentities($username),
+						'updated'=>date("Y-m-d H:i:s"),
+						'id' => $id
+				]);
+			}
+		}
+		public function updatePassword($oldpass,$newpass,$id)
+		{
+			$get_sql="SELECT password FROM ACCOUNTS WHERE id=:userid";
+			$get_pass_stmt=DB::getConnection()->prepare($get_sql);
+			$get_pass_stmt->execute([
+				'userid'=>$id
+			]);
+			$old_password=$get_pass_stmt->fetch(PDO::FETCH_ASSOC);
+			if(strcmp($old_password['password'],$oldpass)==0)
+			{
+				$update_sql="UPDATE accounts SET password=:newpass WHERE id=:userid";
+				$update_pass_stmt=DB::getConnection()->prepare($update_sql);
+				$update_pass_stmt->execute([
+					'newpass'=>$newpass,
+					'userid'=>$id
+				]);
+			}
+			else
+			{
+				throw new IncorrectPasswordException('The old password introduced is incorrect!');
+			}
 		}
 		
 	}

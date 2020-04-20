@@ -1,15 +1,23 @@
-<<<<<<< HEAD
 const saveButton=document.getElementById('save_changes_button');
 const backButton=document.getElementById('cancel_changes_button');
 
-function toggleAlert(message=null)
+function toggleAlert(message=null,error=true)
 {
     const alert=document.querySelector('.alert');
     const alertText=document.getElementById('alert_text');
     
     if(alert.style.display!=='block')
     {
+        
         alert.style.display='block';
+        if(error)
+        {
+            alert.style.backgroundColor='#f44336';
+        }
+        else
+        {
+            alert.style.backgroundColor='#33cc33';
+        }
         alertText.innerHTML=message;
     }
     else 
@@ -17,21 +25,6 @@ function toggleAlert(message=null)
         alert.style.display='none';
         alertText.innerHTML='';
     }
-=======
-const saveButton=document.querySelector('#save_changes_button');
-const backButton=document.querySelector('#cancel_changes_button');
-
-function toggleAlert(message=null)
-{
-    let alert=document.querySelector('.alert');
-    let paragraph=document.createElement('P');
-    let errorMsg=document.createTextNode(message);
-    paragraph.appendChild(errorMsg);
-    alert.appendChild(paragraph);
-    if(alert.style.display=='none')
-        alert.style.display='block';
-    else alert.style.display='none';
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
 }
 
 function fetchUserData()
@@ -44,6 +37,8 @@ function fetchUserData()
             {
                 let username=document.getElementById('actual_name');
                 let email=document.getElementById('actual_email');
+                username.innerHTML='';
+                email.innerHTML='';
                 username.appendChild(document.createTextNode(response.data.username));
                 email.appendChild(document.createTextNode(response.data.email));
                 if(response.data.onedrive==true)
@@ -60,18 +55,14 @@ function fetchUserData()
                 }
                 if(response.data.dropbox==true)
                 {
-<<<<<<< HEAD
                     let dropbox=document.getElementById("button-dropbox");
-=======
-                    let dropbox=document.querySelector("#button-dropbox");
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
                     dropbox.style.backgroundColor='red';
                     dropbox.textContent='Unauthorize\u2716';
                 }
             }
             else
             {
-                toggleAlert(response.message);
+                toggleAlert(response.message,true);
             }
         }
     };
@@ -81,7 +72,6 @@ function fetchUserData()
 
 function updateUserData()
 {
-<<<<<<< HEAD
     const username=document.getElementById('new-name').value;
     const oldPassword=document.getElementById('old-password').value;
     const newPassword=document.getElementById('new-password').value;
@@ -108,13 +98,16 @@ function updateUserData()
         xhr.onreadystatechange = function(){
             if (xhr.readyState === 4 && xhr.status==200){
                 const response=JSON.parse(xhr.responseText);
+                console.log(response);
                 if(response.status=='error')
                 {
-                    toggleAlert(response.message);
+                    toggleAlert(response.message,true);
                 }
-                else if(response.status=='succes')
+                else if(response.status=='success')
                 {
-                    toggleAlert('Profile data have been updated succesfully!');
+                    fetchUserData();
+                    toggleAlert(response.message,false);
+
                 }
             }
         };
@@ -129,13 +122,3 @@ function updateUserData()
 document.addEventListener("DOMContentLoaded",fetchUserData);
 saveButton.addEventListener('click',updateUserData);
 
-=======
-    
-    let username=document.getElementById('new-name');
-    let oldPassword=document.querySelector('old-password');
-    let newPassword=document.querySelector('new-password');
-
-}
-document.addEventListener("DOMContentLoaded",fetchUserData);
-saveButton.addEventListener('click',updateUserData);
->>>>>>> eb72603992d1bd687d73c9ea99f6a2eb5b2f1d55
