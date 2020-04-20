@@ -69,7 +69,7 @@
 					</div>
 					<div class="generic_row">
 						<div id="text_dropbox">DropBox:</div>
-						<button id="button-dropbox" class="button_log_in"  type="submit">Authorize</button>
+						<button id="button-dropbox" class="button_log_in"  onclick="window.location.href = 'http://localhost/ProiectTW/public/cprofile/dropboxAuth';" type="submit">Authorize</button>
 					</div>
 					<div class="generic_row">
 						<button id="cancel_changes_button">Go Back</button>

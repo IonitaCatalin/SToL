@@ -33,13 +33,13 @@
                 CURLOPT_HTTPHEADER => array('Content-Type: application/x-www-form-urlencoded'),
                 CURLOPT_POSTFIELDS => $query_string
             ]);
-                $response=curl_exec($curl);
-                $array=json_decode($response,true);
-                if(isset($array['error']))
-                {
-                    throw new OnedriveAuthException('The authentication token could not be redeemed!');
-                }
-                else return $array;
+            $response=curl_exec($curl);
+            $array=json_decode($response,true);
+            if(isset($array['error']))
+            {
+                throw new OnedriveAuthException('The authentication token could not be redeemed!');
+            }
+            else return $array;
         }
     }
 

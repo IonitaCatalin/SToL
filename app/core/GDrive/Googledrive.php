@@ -14,7 +14,7 @@
             $params = [
                 //'prompt' => "consent",
                 'scope' => "https://www.googleapis.com/auth/drive",
-                '$access_type' => "offline",
+                'access_type' => "offline",
                 'response_type' => "code",
                 'redirect_uri' => GOOGLE_REDIRECT_URI,
                 'client_id' => GOOGLE_CLIENT_ID

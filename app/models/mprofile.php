@@ -6,8 +6,8 @@
 
 		public function insertAuthToken($data, $id, $service)
 		{
-			$expires=$data['expires_in'];
-			array_key_exists('refresh_token', $data) ? $refresh_token = $data['refresh_token'] : $refresh_token = null; // cei de la google sunt zgarciti cu refresh token-urile
+			array_key_exists('expires_in', $data) ? $expires = $data['expires_in'] : $expires = null; // pt dropbox nu expira, trebuie revocate
+			array_key_exists('refresh_token', $data) ? $refresh_token = $data['refresh_token'] : $refresh_token = null; // dropbox nu are asa ceva, sunt permanente pana la revocare
 			$access_token=$data['access_token'];	
 			$user_id=$id;
 			switch ($service) {
@@ -17,14 +17,24 @@
 				case 'googledrive':
 					$sql = "INSERT INTO googledrive_service (user_id,refresh_token,access_token,expires_in) VALUES (:id, :refresh, :access, :expires)";
 					break;
+				case 'dropbox':
+					$sql = "INSERT INTO dropbox_service (user_id, access_token) VALUES (:id, :access)";
+					break;
 			}
 			$insert_request = DB::getConnection()->prepare($sql);
-			return $insert_request -> execute([
-				'id' => $user_id,
-				'refresh' => $refresh_token,
-				'access' => $access_token,
-				'expires' => $expires
-			]);
+
+			if( in_array($service, array('onedrive', 'googledrive')) )
+				return $insert_request -> execute([
+					'id' => $user_id,
+					'refresh' => $refresh_token,
+					'access' => $access_token,
+					'expires' => $expires
+				]);
+			else
+				return $insert_request -> execute([
+					'id' => $user_id,
+					'access' => $access_token
+				]);
 		}
 
 		private function isOneDriveAuthorized($id)
@@ -49,6 +59,17 @@
 				return false;
 		}
 
+		private function isDropboxAuthorized($id)
+		{
+			$get_dropbox_query = "SELECT user_id FROM dropbox_service WHERE user_id = ${id}";
+			$get_dropbox_stmt = DB::getConnection()->prepare($get_dropbox_query);
+			$get_dropbox_stmt->execute();
+			if($get_dropbox_stmt->rowCount()>0)
+				return true;
+			else
+				return false;
+		}
+
 		public function getAccessToken($id, $service)
 		{
 			$sql = '';
@@ -58,6 +79,9 @@
 					break;
 				case 'googledrive':
 					$sql = "SELECT access_token FROM googledrive_service WHERE user_id = ${id}";
+					break;
+				case 'dropbox':
+					$sql = "SELECT access_token FROM dropbox_service WHERE user_id = ${id}";
 					break;
 			}
 			$stmt = DB::getConnection()->prepare($sql);
@@ -102,13 +126,14 @@
 
 			$onedrive_status=$this->isOneDriveAuthorized($user_id);
 			$google_status=$this->isGoogleDriveAuthorized($user_id);
-			$dropbox_status=false;
+			$dropbox_status=$this->isDropboxAuthorized($user_id);
 
 			$result_array['onedrive'] = $onedrive_status;
 			$result_array['googledrive'] = $google_status;
 			$result_array['dropbox'] = $dropbox_status;
 			return $result_array;
 		}
+
 		public function checkExistingUsername($username) {
 			$check_username = $username;
 			$sql = "SELECT id  FROM accounts WHERE username = :username";
@@ -122,6 +147,7 @@
 			else
 				return false;
 		}
+
 		public function updateUsername($username,$id)
 		{
 
@@ -140,6 +166,7 @@
 				]);
 			}
 		}
+
 		public function updatePassword($oldpass,$newpass,$id)
 		{
 			$get_sql="SELECT password FROM ACCOUNTS WHERE id=:userid";

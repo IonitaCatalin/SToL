@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 13, 2020 at 08:48 PM
+-- Generation Time: Apr 20, 2020 at 03:25 PM
 -- Server version: 10.4.11-MariaDB
--- PHP Version: 7.4.3
+-- PHP Version: 7.4.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -47,6 +47,17 @@ INSERT INTO `accounts` (`id`, `email`, `username`, `password`, `created_at`, `up
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `dropbox_service`
+--
+
+CREATE TABLE `dropbox_service` (
+  `user_id` int(11) NOT NULL,
+  `access_token` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `googledrive_service`
 --
 
@@ -81,6 +92,12 @@ ALTER TABLE `accounts`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `dropbox_service`
+--
+ALTER TABLE `dropbox_service`
+  ADD PRIMARY KEY (`user_id`);
+
+--
 -- Indexes for table `googledrive_service`
 --
 ALTER TABLE `googledrive_service`
@@ -105,6 +122,12 @@ ALTER TABLE `accounts`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `dropbox_service`
+--
+ALTER TABLE `dropbox_service`
+  ADD CONSTRAINT `fk_acccounts_dropbox` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`);
 
 --
 -- Constraints for table `googledrive_service`

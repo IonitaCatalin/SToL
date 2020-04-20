@@ -3,6 +3,7 @@
 require_once '../app/core/Onedrive/Onedrive.php';
 require_once '../app/core/Onedrive/OnedriveException.php';
 require_once '../app/core/GDrive/Googledrive.php';
+require_once '../app/core/Dropbox/Dropbox.php';
 require_once '../app/core/JsonResponse.php';
 require_once '../app/core/Exceptions/CredentialsExceptions.php';
 
@@ -23,21 +24,17 @@ class CProfile extends Controller {
 		}
 		else
 		{
-			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
+			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 		}
 	}
 	
 	public function authorizeServiceOneDrive()
 	{
 		session_start();
-		$url =  "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-		$escaped_url = htmlspecialchars( $url, ENT_QUOTES, 'UTF-8' );
-		$params=parse_url($escaped_url,PHP_URL_QUERY);
-		$auth_code=substr($params,strpos($params,'=')+1,strlen($params));
+		$auth_code = $_GET['code'];
 		try
 		{
 			$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
-			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 		}
 		catch(OnedriveAuthException $exception)
@@ -52,8 +49,6 @@ class CProfile extends Controller {
 		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.OneDriveService::authorizationRedirectURL());
 		} else {
-			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
-			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 			header('Location:'.'http://localhost/ProiectTW/public/clogin');
 		}
 	}
@@ -64,13 +59,11 @@ class CProfile extends Controller {
 		// click pe Unauthorize dupa ce esti logat pt a vedea fisierele
 		if( $this->model->getUserDataArray($_SESSION['USER_ID'])['googledrive'] == true) {
 			echo 'Unauthorize is not yet functional. Using this button for tests:)<br>';
-			//GoogleDriveService::getAccessTokenAfterRefresh($this->model->getRefreshToken($_SESSION['USER_ID'], 'googledrive')); //teoretic merge, practic aplicatia nu e verificata si nu primesc refresh token-uri de la google:)
 			GoogleDriveService::listAllFiles($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'));
 		}
-		else if(isset($_SESSION['USER_ID'])) {
+		else  if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.GoogleDriveService::authorizationRedirectURL());
 		} else {
-			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/clogin");
 			header('Location:'.'http://localhost/ProiectTW/public/clogin');
 		}
 	}
@@ -81,16 +74,40 @@ class CProfile extends Controller {
 		$url = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		if(isset($_GET['code'])){
 			$decoded_json = GoogleDriveService::getAccesRefreshToken($_GET['code']);
-			//GoogleDriveService::removeAccessRefreshToken($decoded_json);
-			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'],'googledrive');
-			header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/cprofile");
 			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'googledrive');
-			//header('Location:'."http://{$_SERVER['HTTP_POST']}/ProiectTW/public/cprofile");
 			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 		}
 
 		if(isset($_GET['error'])){
 			echo "Eroare: " . $_GET['error'] . "<br>";
+			die("Nu s-a putut obtine codul pentru cerere.");
+		}
+	}
+
+	public function dropboxAuth()
+	{
+		session_start();
+		if( $this->model->getUserDataArray($_SESSION['USER_ID'])['dropbox'] == true) {
+			echo 'Already authorized :)';
+		}
+		else if(isset($_SESSION['USER_ID'])) {
+			header('Location:'. DropboxService::authorizationRedirectURL());
+		} else {
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
+		}
+	}
+
+	public function authorizeServiceDropbox()
+	{
+		session_start();
+		if(isset($_GET['code'])){
+			$decoded_json = DropboxService::getAccesRefreshToken($_GET['code']);
+			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'dropbox');
+			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+		}
+		if(isset($_GET['error'])){
+			echo "Eroare: " . $_GET['error'] . "<br>";
+			echo "Cod eroare: " . $_GET['error_description'] . "<br>";
 			die("Nu s-a putut obtine codul pentru cerere.");
 		}
 	}
