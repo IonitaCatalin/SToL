@@ -1,0 +1,27 @@
+[
+    {
+      "type": "folder",
+      "name": "Downloads",
+      "path":"/",
+      "children": [
+        {
+          "type": "text-file",
+          "name": "database_export_log",
+          "path": "/Downloads"
+          
+        }
+        ,
+        {
+            "type":"folder",
+            "name":"Dummy folder",
+            "path":"/Downloads"
+        }
+        ,
+        {
+            "type":"folder",
+            "name":"Dummy files",
+            "path":"/Downloads"
+        }
+      ]
+    }
+  ]

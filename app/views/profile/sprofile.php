@@ -72,7 +72,7 @@
 						<button id="button-dropbox" class="button_log_in"  onclick="window.location.href = 'http://localhost/ProiectTW/public/cprofile/dropboxAuth';" type="submit">Authorize</button>
 					</div>
 					<div class="generic_row">
-						<button id="cancel_changes_button">Go Back</button>
+						<button id="cancel_changes_button" onclick="location.href='cfiles'">Go Back</button>
 						<button id="save_changes_button">Save</button>
 					</div>
 				</div>

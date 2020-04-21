@@ -24,7 +24,7 @@ class CProfile extends Controller {
 		}
 		else
 		{
-			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
 		}
 	}
 	

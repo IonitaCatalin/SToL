@@ -1,0 +1,33 @@
+[
+    {
+      "type": "folder",
+      "name": "root",
+      "path": "/",
+      "children": [
+        {
+          "type": "folder",
+          "name": "Downloads",
+          "path": "/"
+          
+        }
+        ,
+        {
+            "type":"folder",
+            "name":"Movies",
+            "path":"/"
+        }
+        ,
+        {
+            "type":"text-file",
+            "name":"Tema SGBD",
+            "path":"/"
+        }
+	,
+	{
+            "type":"text-file",
+            "name":"Tema TW",
+            "path":"/"
+        }
+      ]
+    }
+  ]

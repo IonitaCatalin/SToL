@@ -18,7 +18,7 @@
                 {
                     session_start();
                     $_SESSION['USER_ID']=$result['id'];
-                    header("Location:/ProiectTW/public/cprofile");
+                    header("Location:/ProiectTW/public/cfiles");
                     return true;
                 }   
                 else

@@ -12,7 +12,7 @@
 		}
 
 		public function loadView() {
-			$error_msg = $this->error_msg; 
+			$error_msg = $this->error_msg;
 			ob_start();
 			include($this->template);
 			$output = ob_get_contents();
