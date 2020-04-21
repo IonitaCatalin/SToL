@@ -1,8 +1,9 @@
 <?php
 
     define('CLIENT_ID','53a3e6f5-ab36-41d1-aa38-5ef621f6829d');
+    define('TENANT','common');
     define('CLIENT_SECRET','Tn2mKeXphox6vV=?S_HFuvG6?QGURqC5');
-    define('GRANT_TYPE','files.readwrite offline_access');
+    define('GRANT_TYPE','openid User.Read offline_access Files.ReadWrite.All');
     define('REDIRECT_URI','http://localhost/ProiectTW/public/cprofile/authorizeServiceOneDrive/');
 
     require_once('OnedriveException.php');
@@ -10,7 +11,8 @@
     {
         public static function authorizationRedirectURL()
         {
-            return 'https://login.live.com/oauth20_authorize.srf?client_id='.CLIENT_ID.'&scope='.GRANT_TYPE.'&response_type=code&redirect_uri=http://localhost/ProiectTW/public/cprofile/authorizeServiceOneDrive/';
+            //return 'https://login.live.com/oauth20_authorize.srf?client_id='.CLIENT_ID.'&scope='.GRANT_TYPE.'&response_type=code&redirect_uri=http://localhost/ProiectTW/public/cprofile/authorizeServiceOneDrive/';
+            return 'https://login.microsoftonline.com/'.TENANT.'/oauth2/v2.0/authorize?client_id='.CLIENT_ID.'&response_type=code&redirect_uri='.REDIRECT_URI.'&response_mode=query&scope='.GRANT_TYPE;
         }
 
         public static function getAccesRefreshToken($auth_code)

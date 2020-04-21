@@ -12,10 +12,10 @@
 			$user_id=$id;
 			switch ($service) {
 				case 'onedrive':
-					$sql = "INSERT INTO onedrive_service (user_id,refresh_token,access_token,expires_in) VALUES (:id, :refresh, :access, :expires)";
+					$sql = "INSERT INTO onedrive_service (user_id,refresh_token,access_token,expires_in,generated_at) VALUES (:id, :refresh, :access, :expires,:time_stamp)";
 					break;
 				case 'googledrive':
-					$sql = "INSERT INTO googledrive_service (user_id,refresh_token,access_token,expires_in) VALUES (:id, :refresh, :access, :expires)";
+					$sql = "INSERT INTO googledrive_service (user_id,refresh_token,access_token,expires_in,generated_at) VALUES (:id, :refresh, :access, :expires,:time_stamp)";
 					break;
 				case 'dropbox':
 					$sql = "INSERT INTO dropbox_service (user_id, access_token) VALUES (:id, :access)";
@@ -28,7 +28,8 @@
 					'id' => $user_id,
 					'refresh' => $refresh_token,
 					'access' => $access_token,
-					'expires' => $expires
+					'expires' => $expires,
+					'time_stamp'=>date("Y-m-d H:i:s")
 				]);
 			else
 				return $insert_request -> execute([
