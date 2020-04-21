@@ -46,18 +46,21 @@ function fetchUserData()
                     let onedrive=document.getElementById("button-onedrive");
                     onedrive.style.backgroundColor="red";
                     onedrive.textContent='Unauthorize\u2716';
+                    //onedrive.addEventListener('click',deauthenticateService('onedrive'));
                 }
                 if(response.data.googledrive==true)
                 {
                     let gdrive=document.getElementById("button-gdrive");
                     gdrive.style.backgroundColor="red";
                     gdrive.textContent='Unauthorize\u2716';
+                    //gdrive.addEventListener('click',deauthenticateService('googledrive'));
                 }
                 if(response.data.dropbox==true)
                 {
                     let dropbox=document.getElementById("button-dropbox");
                     dropbox.style.backgroundColor='red';
                     dropbox.textContent='Unauthorize\u2716';
+                   // dropbox.addEventListener('click',deauthenticateService('dropbox'));
                 }
             }
             else
@@ -111,12 +114,35 @@ function updateUserData()
                 }
             }
         };
-        xhr.open('PUT', 'http://localhost/ProiectTW/public/cprofile/user');
+        xhr.open('DELETE', 'http://localhost/ProiectTW/public/cprofile/user');
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.send(JSON.stringify(params));
     }
     }
    
+}
+
+function deauthenticateService(service)
+{
+    let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function(){
+            if (xhr.readyState === 4 && xhr.status==200){
+                const response=JSON.parse(xhr.responseText);
+                console.log(response);
+                if(response.status=='error')
+                {
+                    toggleAlert(response.message,true);
+                }
+                else if(response.status=='success')
+                {
+                    fetchUserData();
+                    toggleAlert(response.message,false);
+
+                }
+            }
+        };
+        xhr.open('DELETE', 'http://localhost/ProiectTW/public/cprofile/deauth?service='+service);
+        xhr.send();
 }
 
 document.addEventListener("DOMContentLoaded",fetchUserData);

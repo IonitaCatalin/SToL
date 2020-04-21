@@ -175,6 +175,37 @@ class CProfile extends Controller {
 		}
 
 	}
+	public function deauth($params='')
+	{
+		session_start();
+		if(!isset($_SESSION['USER_ID']))
+		{
+			$json_response=new JsonResponse('error',null,'Access denied for unauthorized user');
+			echo $json_response->response();
+		}
+		elseif($_SERVER['REQUEST_METHOD']=='DELETE')
+		{
+			$query = array();
+			parse_str($_SERVER['QUERY_STRING'], $query);
+				try
+				{	
+					//$result=$this->model->getUserDataArray($_SESSION['USER_ID']);
+					$json=new JsonResponse('success',null,'Service deauthenticated!');
+					echo $json->response();
+				}
+				catch(PDOException $exception)
+				{
+					$json_response=new JsonResponse('error',null,'Service temporarly unavailable');
+					echo $json_response->response();
+				}
+		}
+		else
+		{
+			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed');
+			echo $json_response->response();
+		}
+		
+	}
 
 	private function render($error_msg  = NULL) {
 		$this->view('profile/vprofile');
