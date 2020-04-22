@@ -14,7 +14,7 @@
             $params = [
                 //'prompt' => "consent",
                 'scope' => "https://www.googleapis.com/auth/drive",
-                '$access_type' => "offline",
+                'access_type' => "offline",
                 'response_type' => "code",
                 'redirect_uri' => GOOGLE_REDIRECT_URI,
                 'client_id' => GOOGLE_CLIENT_ID
@@ -217,6 +217,131 @@
             }
 
             return $data;
+        }
+
+        public static function uploadFile($token, $path = null) {
+
+            $url = "https://www.googleapis.com/upload/drive/v2/files?uploadType=resumable";
+
+            //$path = 'D:\Downloads\uploadedFile.txt'; //sa nu fie empty..
+            //$path = 'D:\Downloads\uploadedFile.rar';
+            //$path = 'D:\Downloads\uploadedFile.png';
+            $path = 'D:\Downloads\iobituninstaller.exe';
+
+            if(!file_exists($path)) {
+                echo "Nu exista niciun fisier la $path";
+                return;
+            }
+
+            $file = file_get_contents($path);
+
+            // 1. upload metadate fisier pt a primi un 'resumable' upload link
+            $filename = basename($path);
+            $metadata = '{ "title": "' . $filename . '" }';
+            $metadatasize = strlen($metadata);
+
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_SSL_VERIFYPEER => FALSE,
+                CURLOPT_RETURNTRANSFER => TRUE, //return the transfer as a string
+                CURLOPT_HEADER => TRUE, //enable headers
+                CURLOPT_NOBODY => TRUE, //get only headers
+                CURLOPT_BINARYTRANSFER => TRUE,
+                CURLOPT_POST => TRUE,
+                CURLOPT_HTTPHEADER => array(
+                    //"X-Upload-Content-Type: application/octet-stream",
+                    //"X-Upload-Content-Length: " . $metadatasize,
+                    "Content-Type: application/json; charset=UTF-8",
+                    "Content-Length: " . $metadatasize,
+                    "Authorization: Bearer " . $token
+                ),
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_POSTFIELDS => $metadata,
+                // ---- https://stackoverflow.com/a/41135574
+                CURLOPT_HEADERFUNCTION =>
+                    function($curl, $header) use (&$headers) {
+                        $len = strlen($header);
+                        $header = explode(':', $header, 2);
+                        if (count($header) < 2) // ignore invalid headers
+                          return $len;
+
+                        $headers[strtolower(trim($header[0]))][] = trim($header[1]);
+
+                        return $len;
+                    }
+                // ----
+            ));
+
+            if(($response = curl_exec($ch)) === false){
+                echo 'Curl error: ' . curl_error($ch);
+                return;
+            }
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            // echo '<pre>';
+            // print_r($headers);
+            // echo '</pre>';
+
+            if($httpcode != 200) {
+                echo "Eroare: " . $httpcode;
+                echo '<pre>';
+                // extragere headere din raspuns
+                $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+                $header = substr($response, 0, $header_size);
+                $body = substr($response, $header_size);
+                $body = json_decode($body, true);
+                print_r ($body);
+                //echo $body['error']['code'] . ' ' . $body['error']['message'];
+                echo '</pre>';
+                return;
+            }
+            curl_close($ch);
+
+            if(!array_key_exists('location', $headers)){
+                echo 'Nu am primit "Location" in  header !!!';
+                return;
+            }
+            else
+                $resumable_url = $headers['location'][0];
+
+            // 2. upload fisier folosind link-ul primit
+            $filesize = strlen($file);
+
+            $ch2 = curl_init();
+            curl_setopt_array($ch2, array(
+                CURLOPT_URL => $resumable_url,
+                CURLOPT_SSL_VERIFYPEER => FALSE,
+                CURLOPT_RETURNTRANSFER => TRUE,
+                CURLOPT_BINARYTRANSFER => TRUE,
+                CURLOPT_CUSTOMREQUEST => "PUT",
+                CURLOPT_HTTPHEADER => array(
+                    "Content-Type: application/octet-stream",
+                    "Content-Length: " . $filesize,
+                    "Authorization: Bearer " . $token
+                ),
+                //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_POSTFIELDS => $file
+            ));
+
+            if(($result = curl_exec($ch2)) === false){
+                echo 'Curl error: ' . curl_error($ch);
+                exit;
+            }
+            $httpcode = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
+            curl_close($ch2);
+
+            if($httpcode == 200 || $httpcode == 201) {
+                echo "Upload Success: " . $httpcode;
+            }
+            else {
+                echo "Eroare: " . $httpcode;
+                echo '<pre>';
+                var_dump($result);
+                echo '</pre>';
+                return;
+            }
+
         }
 
     }
