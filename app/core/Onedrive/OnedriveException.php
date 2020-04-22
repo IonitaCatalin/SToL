@@ -15,7 +15,12 @@ class OneDriveException extends Exception {
 
 }
 
-class OneDriveAuthException extends OneDriveException
+class OneDriveRedeemTokenException extends OneDriveException
+{
+    
+}
+
+class OneDriveRefreshTokenException extends OneDriveException
 {
     
 }

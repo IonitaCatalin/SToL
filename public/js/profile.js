@@ -35,32 +35,61 @@ function fetchUserData()
             const response=JSON.parse(xhr.responseText);
             if(response.status=='success')
             {
+                let onedrive=document.getElementById("button-onedrive");
+                let gdrive=document.getElementById("button-gdrive");
                 let username=document.getElementById('actual_name');
                 let email=document.getElementById('actual_email');
                 username.innerHTML='';
                 email.innerHTML='';
                 username.appendChild(document.createTextNode(response.data.username));
                 email.appendChild(document.createTextNode(response.data.email));
+                let dropbox=document.getElementById("button-dropbox");
                 if(response.data.onedrive==true)
                 {
-                    let onedrive=document.getElementById("button-onedrive");
+                    
                     onedrive.style.backgroundColor="red";
                     onedrive.textContent='Unauthorize\u2716';
-                    //onedrive.addEventListener('click',deauthenticateService('onedrive'));
+                    onedrive.onclick=function(){
+                        location.href = 'http://localhost/ProiectTW/public/cprofile/deauth/?service=onedrive';
+                    };
+                }
+                else
+                {
+                    onedrive.onclick=function(){
+                        location.href='http://localhost/ProiectTW/public/cprofile/onedriveAuth';
+                    }
                 }
                 if(response.data.googledrive==true)
                 {
-                    let gdrive=document.getElementById("button-gdrive");
+                    
                     gdrive.style.backgroundColor="red";
                     gdrive.textContent='Unauthorize\u2716';
                     //gdrive.addEventListener('click',deauthenticateService('googledrive'));
+                    gdrive.onclick=function(){
+                        location.href = 'http://localhost/ProiectTW/public/cprofile/deauth/?service=googledrive';
+                    };
+                }
+                else
+                {
+
+                    gdrive.onclick=function(){
+                        onclick='http://localhost/ProiectTW/public/cprofile/googledriveAuth';
+                    }
                 }
                 if(response.data.dropbox==true)
                 {
-                    let dropbox=document.getElementById("button-dropbox");
+                   
                     dropbox.style.backgroundColor='red';
                     dropbox.textContent='Unauthorize\u2716';
-                   // dropbox.addEventListener('click',deauthenticateService('dropbox'));
+                    dropbox.onclick=function(){
+                        location.href = 'http://localhost/ProiectTW/public/cprofile/deauth/?service=dropbox';
+                    };
+                }
+                else
+                {
+                    dropbox.onclick=function(){
+                        onclick='http://localhost/ProiectTW/public/cprofile/dropboxAuth';
+                    }
                 }
             }
             else
@@ -114,7 +143,7 @@ function updateUserData()
                 }
             }
         };
-        xhr.open('DELETE', 'http://localhost/ProiectTW/public/cprofile/user');
+        xhr.open('PUT', 'http://localhost/ProiectTW/public/cprofile/user');
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.send(JSON.stringify(params));
     }
@@ -122,28 +151,6 @@ function updateUserData()
    
 }
 
-function deauthenticateService(service)
-{
-    let xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function(){
-            if (xhr.readyState === 4 && xhr.status==200){
-                const response=JSON.parse(xhr.responseText);
-                console.log(response);
-                if(response.status=='error')
-                {
-                    toggleAlert(response.message,true);
-                }
-                else if(response.status=='success')
-                {
-                    fetchUserData();
-                    toggleAlert(response.message,false);
-
-                }
-            }
-        };
-        xhr.open('DELETE', 'http://localhost/ProiectTW/public/cprofile/deauth?service='+service);
-        xhr.send();
-}
 
 document.addEventListener("DOMContentLoaded",fetchUserData);
 saveButton.addEventListener('click',updateUserData);

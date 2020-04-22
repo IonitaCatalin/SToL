@@ -190,7 +190,26 @@
 				throw new IncorrectPasswordException('The old password introduced is incorrect!');
 			}
 		}
-		
+
+		public function invalidateService($id,$service)
+		{
+			$delete_sql = '';
+			switch ($service) {
+				case 'onedrive':
+					$delete_sql = "DELETE FROM onedrive_service WHERE user_id = ${id}";
+					break;
+				case 'googledrive':
+					$delete_sql = "DELETE FROM googledrive_service WHERE user_id = ${id}";
+					break;
+				case 'dropbox':
+					$delete_sql="DELETE FROM dropbox_service WHERE user_id=${id}";
+					break;
+
+			}
+			$stmt = DB::getConnection()->prepare($delete_sql);
+			$stmt->execute();
+		}
 	}
+	
 
 ?>

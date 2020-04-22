@@ -15,7 +15,6 @@
 			</header>
 
 			<article>
-			
 				<div class="rows_group">
 					<div class="alert">
 						  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
@@ -61,15 +60,15 @@
 					</div>
 					<div class="generic_row">
 						<div id="text_g_drive">Google Drive:</div>
-						<button id="button-gdrive" class="button_log_in" onclick="window.location.href = 'http://localhost/ProiectTW/public/cprofile/googledriveAuth';" type="submit">Authorize</button>
+						<button id="button-gdrive" class="button_log_in" type="submit">Authorize</button>
 					</div>
 					<div class="generic_row">
 						<div id="text_one_drive">MS One Drive:</div>
-						<button id="button-onedrive" class="button_log_in" onclick="window.location.href = 'http://localhost/ProiectTW/public/cprofile/onedriveAuth';" type="submit">Authorize</button>
+						<button id="button-onedrive" class="button_log_in" type="submit">Authorize</button>
 					</div>
 					<div class="generic_row">
 						<div id="text_dropbox">DropBox:</div>
-						<button id="button-dropbox" class="button_log_in"  onclick="window.location.href = 'http://localhost/ProiectTW/public/cprofile/dropboxAuth';" type="submit">Authorize</button>
+						<button id="button-dropbox" class="button_log_in" type="submit">Authorize</button>
 					</div>
 					<div class="generic_row">
 						<button id="cancel_changes_button" onclick="location.href='cfiles'">Go Back</button>

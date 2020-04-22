@@ -11,7 +11,7 @@ class CProfile extends Controller {
 
 	private $model;
 	private $data; 
-
+	private $auth_error='';
 	public function __construct() {
 		$this->model = $this->model('mprofile');	
 	}
@@ -37,9 +37,14 @@ class CProfile extends Controller {
 			$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
 			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 		}
-		catch(OnedriveAuthException $exception)
+		catch(OnedriveRedeemTokenException $exception)
 		{
-			echo "$this->code: $this->message"; // ?
+			//Ramane de vazut ce o sa facem in situatia asta
+			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+		}
+		catch(PDOException $exception)
+		{
+			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 		}
 	}
 
@@ -148,7 +153,7 @@ class CProfile extends Controller {
 				{
 					$this->model->updateUsername($put_args['username'],$_SESSION['USER_ID']);
 				}
-				if(isset($put_args['oldpass']) && isset($put_args['newpass']))
+				if(isset($put_args['oldpass']) && isset($put_args['newpass']) && $put_args['oldpass']!='')
 				{
 					$this->model->updatePassword($put_args['oldpass'],$put_args['newpass'],$_SESSION['USER_ID']);
 				}
@@ -180,36 +185,31 @@ class CProfile extends Controller {
 		}
 
 	}
-	public function deauth($params='')
+	public function deauth()
 	{
 		session_start();
-		if(!isset($_SESSION['USER_ID']))
+		$query = array();
+		parse_str($_SERVER['QUERY_STRING'], $query);
+		if(isset($query['service']))
 		{
-			$json_response=new JsonResponse('error',null,'Access denied for unauthorized user');
-			echo $json_response->response();
-		}
-		elseif($_SERVER['REQUEST_METHOD']=='DELETE')
-		{
-			$query = array();
-			parse_str($_SERVER['QUERY_STRING'], $query);
-				try
-				{	
-					//$result=$this->model->getUserDataArray($_SESSION['USER_ID']);
-					$json=new JsonResponse('success',null,'Service deauthenticated!');
-					echo $json->response();
-				}
-				catch(PDOException $exception)
-				{
-					$json_response=new JsonResponse('error',null,'Service temporarly unavailable');
-					echo $json_response->response();
-				}
+			if($query['service']=='onedrive')
+			{
+				$this->model->invalidateService($_SESSION['USER_ID'],'onedrive');
+				header('Location:'.OneDriveService::signOutRedirectURL());
+			}
+			elseif($query['service']=='googledrive')
+			{
+				$this->model->invalidateService($_SESSION['USER_ID'],'gdrive');
+			}
+			elseif($query['service']=='dropbox')
+			{
+				$this->model->invalidateService($_SESSION['USER_ID'],'googledrive');
+			}
 		}
 		else
 		{
-			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed');
-			echo $json_response->response();
+			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 		}
-		
 	}
 
 	private function render($error_msg  = NULL) {
