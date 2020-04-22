@@ -20,7 +20,7 @@
                 'client_id' => CLIENT_ID,
                 'redirect_uri' => REDIRECT_URI_AUTH,
                 'client_secret'=> CLIENT_SECRET,
-                //'code' => $auth_code,
+                'code' => $auth_code,
                 'grant_type' => 'authorization_code' 
             ];
             $query_string=http_build_query($opt_array);
@@ -42,7 +42,7 @@
             }
             else return $array;
         }
-        private function renewTokens($refresh_token)
+        public function renewTokens($refresh_token)
         {
             $opt_array=[
                 'client_id' => CLIENT_ID,

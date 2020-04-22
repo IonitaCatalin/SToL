@@ -199,7 +199,7 @@ class CProfile extends Controller {
 			}
 			elseif($query['service']=='googledrive')
 			{
-				$this->model->invalidateService($_SESSION['USER_ID'],'gdrive');
+				$this->model->invalidateService($_SESSION['USER_ID'],'googledrive');
 			}
 			elseif($query['service']=='dropbox')
 			{
@@ -219,6 +219,11 @@ class CProfile extends Controller {
 		echo $view -> renderView();
 	}
 
+	public function test()
+	{
+		session_start();
+		var_dump(OneDriveService::renewTokens($this->model->getRefreshToken($_SESSION['USER_ID'],'onedrive')));
+	}
 }
 
 ?>
