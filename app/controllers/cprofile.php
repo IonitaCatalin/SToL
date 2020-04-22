@@ -59,8 +59,12 @@ class CProfile extends Controller {
 		// click pe Unauthorize dupa ce esti logat pt a vedea fisierele
 		if( $this->model->getUserDataArray($_SESSION['USER_ID'])['googledrive'] == true) {
 			echo 'Unauthorize is not yet functional. Using this button for tests:)<br>';
-			GoogleDriveService::listAllFiles($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'));
+			//GoogleDriveService::listAllFiles($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'));
+			//GoogleDriveService::getFileMetadataById($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), '1jBeVdo4YYPoxrNOVYp3PoCy3NSlQyoiQ');
+			// foloseste mai intai list pt a gasi un id
+			GoogleDriveService::downloadFileById($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), '1bVVzi2wwEtx3Xq45l0c7PA2uBwYzlQOk');
 		}
+
 		else  if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.GoogleDriveService::authorizationRedirectURL());
 		} else {

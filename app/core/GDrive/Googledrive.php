@@ -1,6 +1,6 @@
 <?php
 
-    // le-am numit cu google deoarece e conflict cu cele de la drive
+    // le-am numit cu google deoarece e conflict cu cele de la onedrive
     define('GOOGLE_CLIENT_ID', '570482443729-qqchddo5v01cjvnn5r93du9oh34m1jco.apps.googleusercontent.com');
     define('GOOGLE_CLIENT_SECRET', 'eNo_ecjNkFkxJhzvuQ3QsJIF');
     define('GOOGLE_REDIRECT_URI', 'http://localhost/ProiectTW/public/cprofile/authorizeServiceGoogleDrive/');
@@ -14,7 +14,7 @@
             $params = [
                 //'prompt' => "consent",
                 'scope' => "https://www.googleapis.com/auth/drive",
-                'access_type' => "offline",
+                '$access_type' => "offline",
                 'response_type' => "code",
                 'redirect_uri' => GOOGLE_REDIRECT_URI,
                 'client_id' => GOOGLE_CLIENT_ID
@@ -125,14 +125,99 @@
                 CURLOPT_CUSTOMREQUEST => "GET",
                 CURLOPT_HTTPHEADER => array("authorization: Bearer ${token}"),
             ));
-            $result = curl_exec($ch);
+            if(($result = curl_exec($ch)) === false){
+                echo 'Curl error: ' . curl_error($ch);
+                return null;
+            }
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
-            echo '<br>HTTP code: ' . $httpcode; //200 succes, 40X nein
             echo '<pre>';
             print_r($result);
             echo '</pre>';
         }
-    }
 
+        public static function downloadFileById($token, $file_id) {
+
+            // folosesc v2 deoarece pt v3 n-am gasit documentatie buna
+            $url = 'https://www.googleapis.com/drive/v2/files/' . $file_id .'?alt=media';
+
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_HEADER => 0,
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_BINARYTRANSFER => 1,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_CONNECTTIMEOUT => 20,
+                CURLOPT_HTTPHEADER => array("Authorization: Bearer ${token}")
+            ));
+
+            if(($data = curl_exec($ch)) === false){
+                echo 'Curl error: ' . curl_error($ch);
+                return null;
+            }
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            $metadate = self::getFileMetadataById($token, $file_id);
+            if($metadate == null){
+                echo "Download: nu exista fisierul(metadate): $file_id";
+                return;
+            }
+
+            $file = $data;
+            if($json = json_decode($data, true)){
+                echo "Eroare la descarcarea fisierului " . $metadate['title'];
+                echo '<pre>';
+                print_r($json);
+                echo '</pre>';
+            } else {
+                // dialogul de save file
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename="' . $metadate['title'] . '"');
+                header('Content-Length: ' . $metadate['fileSize']);
+                ob_clean();
+                echo ($file);
+                return; //return ca sa nu mai apara si alte lucruri in fisier
+                echo "Am terminat de salvat"; //ar trebui sa nu apara in fisier :)
+                //ob_end_clean();
+            }
+        }
+
+        public static function getFileMetadataById($token, $file_id) {
+            // v2 ofera mai multe informatii
+            $url = 'https://www.googleapis.com/drive/v2/files/' . $file_id;
+
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_HEADER => 0,
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_BINARYTRANSFER => 1,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_CONNECTTIMEOUT => 20,
+                CURLOPT_HTTPHEADER => array("Authorization: Bearer ${token}")
+            ));
+            if(($json_metadata = curl_exec($ch)) === false){
+                echo 'Curl error: ' . curl_error($ch);
+                return null;
+            }
+            curl_close($ch);
+
+            $data = json_decode($json_metadata, true);
+
+            // daca file id e gresit
+            if(array_key_exists('error', $data)){
+                //echo '<pre>'; print_r($data); echo '</pre>'; // mesajul de eroare
+                return null;
+            }
+
+            return $data;
+        }
+
+    }
 ?>
