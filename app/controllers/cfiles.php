@@ -1,11 +1,15 @@
 <?php
-
+require_once '../app/core/Onedrive/Onedrive.php';
+require_once '../app/core/GDrive/Googledrive.php';
+require_once '../app/core/Dropbox/Dropbox.php';
 class CFiles extends Controller {
 
 	private $model;
+	private OnedriveService $onedrive;
 
 	public function __construct() {
 		$this->model = $this->model('mfiles');	
+		$this->onedrive=new OneDriveService;
 	}
 
 	public function index() {
@@ -25,6 +29,13 @@ class CFiles extends Controller {
 		$view = new VFiles();
 		$view -> loadDataIntoView($data);
 		echo $view -> renderView();
+	}
+	//Un mic endpoint de test pentru a testa libraria de Onedrive sigur aceasta v-a disparea in productie :-)
+	public function testOneDrive()
+	{
+		session_start();
+		var_dump($this->onedrive->getDriveMetadata($this->model->getAccessToken('onedrive',$_SESSION['USER_ID'])));
+		
 	}
 
 }

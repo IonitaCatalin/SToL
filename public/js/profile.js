@@ -35,6 +35,7 @@ function fetchUserData()
             const response=JSON.parse(xhr.responseText);
             if(response.status=='success')
             {
+                console.log(response);
                 let onedrive=document.getElementById("button-onedrive");
                 let gdrive=document.getElementById("button-gdrive");
                 let username=document.getElementById('actual_name');
@@ -64,16 +65,14 @@ function fetchUserData()
                     
                     gdrive.style.backgroundColor="red";
                     gdrive.textContent='Unauthorize\u2716';
-                    //gdrive.addEventListener('click',deauthenticateService('googledrive'));
-                    gdrive.onclick=function(){
+                    gdrive.onclick=function(){s
                         location.href = 'http://localhost/ProiectTW/public/cprofile/deauth/?service=googledrive';
                     };
                 }
                 else
                 {
-
                     gdrive.onclick=function(){
-                        onclick='http://localhost/ProiectTW/public/cprofile/googledriveAuth';
+                        location.href='http://localhost/ProiectTW/public/cprofile/googledriveAuth';
                     }
                 }
                 if(response.data.dropbox==true)
@@ -88,7 +87,7 @@ function fetchUserData()
                 else
                 {
                     dropbox.onclick=function(){
-                        onclick='http://localhost/ProiectTW/public/cprofile/dropboxAuth';
+                        location.href='http://localhost/ProiectTW/public/cprofile/dropboxAuth';
                     }
                 }
             }

@@ -12,10 +12,10 @@
 			$user_id=$id;
 			switch ($service) {
 				case 'onedrive':
-					$sql = "INSERT INTO onedrive_service (user_id,refresh_token,access_token,expires_in,generated_at) VALUES (:id, :refresh, :access, :expires,:time_stamp)";
+					$sql = "INSERT INTO onedrive_service (user_id,refresh_token,access_token,expires_in,generated_at) VALUES (:id, :refresh, :access, :expires,SYSDATE())";
 					break;
 				case 'googledrive':
-					$sql = "INSERT INTO googledrive_service (user_id,refresh_token,access_token,expires_in,generated_at) VALUES (:id, :refresh, :access, :expires,:time_stamp)";
+					$sql = "INSERT INTO googledrive_service (user_id,refresh_token,access_token,expires_in,generated_at) VALUES (:id, :refresh, :access, :expires,SYSDATE())";
 					break;
 				case 'dropbox':
 					$sql = "INSERT INTO dropbox_service (user_id, access_token) VALUES (:id, :access)";
@@ -29,7 +29,6 @@
 					'refresh' => $refresh_token,
 					'access' => $access_token,
 					'expires' => $expires,
-					'time_stamp'=>date("Y-m-d H:i:s")
 				]);
 			else
 				return $insert_request -> execute([
@@ -95,26 +94,6 @@
 				echo 'Id-ul nu are niciun token asociat';
 		}
 
-		public function getRefreshToken($id, $service)
-		{
-			$sql = '';
-			switch ($service) {
-				case 'onedrive':
-					$sql = "SELECT refresh_token FROM onedrive_service WHERE user_id = ${id}";
-					break;
-				case 'googledrive':
-					$sql = "SELECT refresh_token FROM googledrive_service WHERE user_id = ${id}";
-					break;
-			}
-			$stmt = DB::getConnection()->prepare($sql);
-			$stmt->execute();
-			if($stmt->rowCount() > 0) {
-				$result = $stmt->fetch();
-				return $result['refresh_token'];
-			}
-			else
-				echo 'Id-ul nu are niciun refresh token asociat';
-		}
 
 		public function getUserDataArray($user_id)
 		{

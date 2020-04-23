@@ -1,5 +1,4 @@
 <?php
-
 require_once '../app/core/Onedrive/Onedrive.php';
 require_once '../app/core/Onedrive/OnedriveException.php';
 require_once '../app/core/GDrive/Googledrive.php';
@@ -11,7 +10,7 @@ class CProfile extends Controller {
 
 	private $model;
 	private $data; 
-	private $auth_error='';
+
 	public function __construct() {
 		$this->model = $this->model('mprofile');	
 	}
@@ -62,16 +61,16 @@ class CProfile extends Controller {
 	{
 		session_start();
 		// click pe Unauthorize dupa ce esti logat pt a vedea fisierele
-		if( $this->model->getUserDataArray($_SESSION['USER_ID'])['googledrive'] == true) {
-			echo 'Unauthorize is not yet functional. Using this button for tests:)<br>';
-			//GoogleDriveService::listAllFiles($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'));
-			//GoogleDriveService::getFileMetadataById($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), '1jBeVdo4YYPoxrNOVYp3PoCy3NSlQyoiQ');
-			// foloseste mai intai list pt a gasi un id
-			//GoogleDriveService::downloadFileById($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), '1bVVzi2wwEtx3Xq45l0c7PA2uBwYzlQOk');
-			GoogleDriveService::uploadFile($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), null);
-		}
+		// if( $this->model->getUserDataArray($_SESSION['USER_ID'])['googledrive'] == true) {
+		// 	echo 'Unauthorize is not yet functional. Using this button for tests:)<br>';
+		// 	//GoogleDriveService::listAllFiles($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'));
+		// 	//GoogleDriveService::getFileMetadataById($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), '1jBeVdo4YYPoxrNOVYp3PoCy3NSlQyoiQ');
+		// 	// foloseste mai intai list pt a gasi un id
+		// 	//GoogleDriveService::downloadFileById($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), '1bVVzi2wwEtx3Xq45l0c7PA2uBwYzlQOk');
+		// 	GoogleDriveService::uploadFile($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), null);
+		// }
 
-		else  if(isset($_SESSION['USER_ID'])) {
+		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.GoogleDriveService::authorizationRedirectURL());
 		} else {
 			header('Location:'.'http://localhost/ProiectTW/public/clogin');
@@ -97,10 +96,7 @@ class CProfile extends Controller {
 	public function dropboxAuth()
 	{
 		session_start();
-		if( $this->model->getUserDataArray($_SESSION['USER_ID'])['dropbox'] == true) {
-			echo 'Already authorized :)';
-		}
-		else if(isset($_SESSION['USER_ID'])) {
+		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'. DropboxService::authorizationRedirectURL());
 		} else {
 			header('Location:'.'http://localhost/ProiectTW/public/clogin');
@@ -129,7 +125,6 @@ class CProfile extends Controller {
 			$json_response=new JsonResponse('error',null,'Access denied for unauthorized user');
 			echo $json_response->response();
 		}
-		//V-a trebuii adaugat si metoda post pentru upload deocamdata merge doar pe recuperarea de date
 		elseif($_SERVER['REQUEST_METHOD']=='GET')
 		{
 				try
@@ -200,10 +195,12 @@ class CProfile extends Controller {
 			elseif($query['service']=='googledrive')
 			{
 				$this->model->invalidateService($_SESSION['USER_ID'],'googledrive');
+				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 			}
 			elseif($query['service']=='dropbox')
 			{
-				$this->model->invalidateService($_SESSION['USER_ID'],'googledrive');
+				$this->model->invalidateService($_SESSION['USER_ID'],'dropbox');
+				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 			}
 		}
 		else
@@ -219,11 +216,6 @@ class CProfile extends Controller {
 		echo $view -> renderView();
 	}
 
-	public function test()
-	{
-		session_start();
-		var_dump(OneDriveService::renewTokens($this->model->getRefreshToken($_SESSION['USER_ID'],'onedrive')));
-	}
 }
 
 ?>
