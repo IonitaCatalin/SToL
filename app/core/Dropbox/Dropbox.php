@@ -1,5 +1,7 @@
 <?php
 
+    require_once('DropboxException.php');
+
     define('DROPBOX_APP_KEY','yakh16kscg1cb6o');
     define('DROPBOX_APP_SECRET','9guq9i3k5vibx8x');
     define('DROPBOX_REDIRECT_URI','http://localhost/ProiectTW/public/cprofile/authorizeServiceDropbox/');
@@ -46,6 +48,112 @@
             curl_close($curl);
             return json_decode($response,true);
         }
+
+        public static function listAllFiles($token)
+        {
+            $post_fields = 
+            '{
+                "path": "",
+                "recursive": true,
+                "include_media_info": false,
+                "include_deleted": false,
+                "include_has_explicit_shared_members": false,
+                "include_mounted_folders": true,
+                "include_non_downloadable_files": true
+            }';
+
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => "https://api.dropboxapi.com/2/files/list_folder",
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_POST => 1,
+                CURLOPT_POSTFIELDS => $post_fields,
+                CURLOPT_HTTPHEADER => array(
+                    "Authorization: Bearer ${token}",
+                    "Content-Type: application/json"
+                )
+            ));
+            if(($result = curl_exec($ch)) === false){
+                throw new DropboxListAllFilesException(
+                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
+            }
+            if($httpcode != 200){
+                throw new DropboxListAllFilesException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$result);
+            }
+            curl_close($ch);
+
+            // cand e eroare de la token sau path '/', returneaza un simplu string
+            if(!($array = json_decode($result, true))) {
+                throw new DropboxListAllFilesException(
+                    __METHOD__. ' '.__LINE__.' '.$result);
+            }
+
+            $array = json_decode($result, true);
+            if(array_key_exists('error_summary', $array)) {
+                //echo "<pre>"; print_r($array); echo "</pre>";
+                throw new DropboxListAllFilesException( // eroare path
+                    __METHOD__. ' '.__LINE__.' '.$array['error_summary']);
+            }
+
+            echo "<pre>";
+            print_r($array);
+            echo "</pre>";
+            
+        }
+
+        public static function getFileMetadataById($token, $file_id)
+        {
+
+            $post_fields = 
+            '{
+                "path": "' . $file_id . '",
+                "include_media_info": false,
+                "include_deleted": false,
+                "include_has_explicit_shared_members": false
+            }';
+
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => 'https://api.dropboxapi.com/2/files/get_metadata',
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_POST => 1,
+                CURLOPT_POSTFIELDS => $post_fields,
+                CURLOPT_HTTPHEADER => array(
+                    "Authorization: Bearer ${token}",
+                    "Content-Type: application/json"
+                )
+            ));
+            if(($json_metadata = curl_exec($ch)) === false){
+                throw new DropboxGetFileMetadataException(
+                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
+            }
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if($httpcode != 200){
+                throw new DropboxGetFileMetadataException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$data);
+            }
+            curl_close($ch);
+
+            // pt unele erori: token invalid, link gresit.. returneaza un simplu string
+            if(!($array = json_decode($json_metadata, true))) {
+                throw new DropboxGetFileMetadataException(
+                    __METHOD__. ' '.__LINE__.' '.$json_metadata);
+            }
+            
+            // cand fisierul nu exista si altele?
+            if(array_key_exists('error_summary', $array)){
+                //echo '<pre>'; print_r($array); echo '</pre>';
+                throw new DropboxGetFileMetadataException(
+                    // path/not_found == nu gaseste id-ul fisierului
+                    __METHOD__. ' '.__LINE__.' '.$array['error_summary']);
+            }
+
+            //echo '<pre>'; print_r($array); echo '</pre>';
+
+            return $array;
+        }
+
     }
 
 ?>
