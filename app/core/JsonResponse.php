@@ -13,15 +13,19 @@ class JsonResponse {
     private $status = 'success';
     private $data = array();
     private $message = null;
+    private $httpcode=null;
 
-    public function __construct($status, $data, $message) {
+    public function __construct($status, $data, $message,$httpcode=200) {
         header('Content-Type: application/json');
         $this->status = $status;
         $this->data = $data;
         $this->message = $message;
+        $this->httpcode=$httpcode;
+    
     }
 
     public function response() {
+        http_response_code($this->httpcode);
         $response_array = array(
             'status' => $this->status,
             'data' => $this->data,

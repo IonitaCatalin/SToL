@@ -64,7 +64,7 @@
             $response_array=json_decode($response,true);
             if(isset($response_array['error']))
             {
-                if($response_array['error']['code']=='itemNotFound')
+                if(curl_info($get_curl,CURLINFO_HTTP_CODE)!=200 && $response_array['error']['code']=='itemNotFound')
                 {
                    $post_curl=curl_init();
                    curl_setopt_array($post_curl,[

@@ -140,7 +140,7 @@ class CProfile extends Controller {
 	{	
 		session_start();
 		if(!isset($_SESSION['USER_ID'])){
-			$json_response=new JsonResponse('error',null,'Access denied for unauthorized user');
+			$json_response=new JsonResponse('error',null,'Access denied for unauthorized user',403);
 			echo $json_response->response();
 		}
 		elseif($_SERVER['REQUEST_METHOD']=='GET')
@@ -153,7 +153,7 @@ class CProfile extends Controller {
 				}
 				catch(PDOException $exception)
 				{
-					$json_response=new JsonResponse('error',null,'Service temporarly unavailable');
+					$json_response=new JsonResponse('error',null,'Service temporarly unavailable',500);
 					echo $json_response->response();
 				}
 		}
@@ -176,24 +176,24 @@ class CProfile extends Controller {
 			catch(UsernameTakenException $exception)
 			{
 				
-				$json=new JsonResponse('error',null,$exception->getMessage());
+				$json=new JsonResponse('error',null,$exception->getMessage(),409);
 				echo $json->response();
 			}
 			catch(IncorrectPasswordException $exception)
 			{
-				$json_response=new JsonResponse('error',null,$exception->getMessage());
+				$json_response=new JsonResponse('error',null,$exception->getMessage(),401);
 				echo $json_response->response();
 			}
 			catch(PDOException $exception)
 			{
 				echo $exception->getMessage();
-				$json_response=new JsonResponse('error',null,'Service temporarly unavailable');
+				$json_response=new JsonResponse('error',null,'Service temporarly unavailable',500);
 				echo $json_response->response();
 			}
 		}
 		else 
 		{
-			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed');
+			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed',405);
 			echo $json_response->response();
 		}
 

@@ -31,11 +31,10 @@ function fetchUserData()
 {
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function(){
-        if (xhr.readyState === 4 && xhr.status==200){
+        if (xhr.readyState === 4){
             const response=JSON.parse(xhr.responseText);
-            if(response.status=='success')
+            if(response.status=='success' && xhr.status==200)
             {
-                console.log(response);
                 let onedrive=document.getElementById("button-onedrive");
                 let gdrive=document.getElementById("button-gdrive");
                 let username=document.getElementById('actual_name');
@@ -93,7 +92,10 @@ function fetchUserData()
             }
             else
             {
-                toggleAlert(response.message,true);
+               if(xhr.status==500)
+               {
+                   toggleAlert(response.message,true);
+               }
             }
         }
     };
@@ -127,23 +129,28 @@ function updateUserData()
             newpass: newPassword
         }
         xhr.onreadystatechange = function(){
-            if (xhr.readyState === 4 && xhr.status==200){
-                const response=JSON.parse(xhr.responseText);
-                console.log(response);
-                if(response.status=='error')
-                {
-                    toggleAlert(response.message,true);
-                }
-                else if(response.status=='success')
-                {
-                    fetchUserData();
-                    toggleAlert(response.message,false);
+            if (xhr.readyState === 4){
+                    const response=JSON.parse(xhr.responseText);
+                    if(xhr.status==200 && response.status=='success')
+                    {
+                        fetchUserData();
+                        toggleAlert(response.message,false);
 
-                }
+                    }
+                    if(xhr.status==409)
+                    {
+                        toggleAlert(response.message,true);
+                    }
+                    if(xhr.status==401)
+                    {
+                        toggleAlert(response.message,true);
+                    }
+                
             }
         };
         xhr.open('PUT', 'http://localhost/ProiectTW/public/cprofile/user');
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('Accept','application/json');
         xhr.send(JSON.stringify(params));
     }
     }
