@@ -9,7 +9,7 @@ require_once '../app/core/Exceptions/CredentialsExceptions.php';
 class CProfile extends Controller {
 
 	private $model;
-	private $data; 
+	private $auth_error;
 
 	public function __construct() {
 		$this->model = $this->model('mprofile');	
@@ -19,7 +19,16 @@ class CProfile extends Controller {
 		session_start();
 		if(isset($_SESSION['USER_ID']))
 		{
-			$this->render();
+			if(isset($_SESSION['AUTH_ERROR']))
+			{
+				//Daca apare eroare la autentificare in vreun serviciu dupa redirect avem grija sa o afisam prin templating
+				$this->render($_SESSION['AUTH_ERROR']);
+				unset($_SESSION['AUTH_ERROR']);
+			}
+			else
+			{
+				$this->render();
+			}
 		}
 		else
 		{
@@ -30,20 +39,29 @@ class CProfile extends Controller {
 	public function authorizeServiceOneDrive()
 	{
 		session_start();
-		$auth_code = $_GET['code'];
-		try
+		if(isset($_SESSION['USER_ID']))
 		{
-			$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
-			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+			$auth_code = $_GET['code'];
+			try
+			{
+				$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
+				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+			}
+			catch(OnedriveAuthException $exception)
+			{
+				//Propagam textul de eroare la nivel de sesiune,cu fiecare redirect acesta se va pierde
+				$_SESSION['AUTH_ERROR']=$exception->getMessage();
+				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+
+			}
+			catch(PDOException $exception)
+			{
+				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+			}
 		}
-		catch(OnedriveRedeemTokenException $exception)
+		else
 		{
-			//Ramane de vazut ce o sa facem in situatia asta
-			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
-		}
-		catch(PDOException $exception)
-		{
-			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+			header('Location:'.'http://localhost/ProiectTW/public/clogin');
 		}
 	}
 

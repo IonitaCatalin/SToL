@@ -14,16 +14,6 @@
 <body>
     <div class="login_form">
         <h1>Stol</h1>
-
-
-
-        <!-- <?php if(!is_null($error_msg)):?>
-            <div class="alert">
-                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                <?php echo $error_msg; ?>
-            </div>
-        <?php endif ?> -->
-
         <form method="POST" action="">
             <div class="username_input">
                 <i class="ri-user-smile-line"></i>
@@ -44,7 +34,6 @@
                     echo '</div>';
                 }
             ?>
-
             <div>
                <!-- <input type="submit" name="login" value="Login">-->
                 <input name="submit_login" type="submit" value="Login" class="btn btn-login" >

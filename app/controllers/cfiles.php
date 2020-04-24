@@ -34,7 +34,6 @@ class CFiles extends Controller {
 	public function testOneDrive()
 	{
 		session_start();
-		var_dump($this->onedrive->getDriveMetadata($this->model->getAccessToken('onedrive',$_SESSION['USER_ID'])));
 		
 	}
 

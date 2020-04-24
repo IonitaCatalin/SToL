@@ -13,9 +13,19 @@
 				<h1>Stol-Universal Storage</h1>
 				<p>Informations about your account, linked services and more</p>
 			</header>
-
+			
 			<article>
 				<div class="rows_group">
+				<?php
+					if($error_msg!='')
+					{
+						echo '<div class="alert" style="display:block;">
+						<span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>';
+						echo $error_msg;
+						echo '</div>';
+					}
+					else
+				?>
 					<div class="alert">
 						  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
 						  <p id="alert_text"></p>
