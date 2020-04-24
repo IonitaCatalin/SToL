@@ -1,4 +1,5 @@
 <?php
+    require_once('GoogledriveException.php');
 
     // le-am numit cu google deoarece e conflict cu cele de la onedrive
     define('GOOGLE_CLIENT_ID', '570482443729-qqchddo5v01cjvnn5r93du9oh34m1jco.apps.googleusercontent.com');
@@ -66,18 +67,21 @@
                 CURLOPT_POST => 1,
                 CURLOPT_HTTPHEADER => array('Content-Type: application/x-www-form-urlencoded'),
             ]);
-            $result = curl_exec($ch);
-            if (curl_errno($ch)) {
-                echo 'Error:' . curl_error($ch);
+            if(($result = curl_exec($ch)) === false){
+                throw new GoogledriveInvalidateAccessTokenException(
+                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
             }
-
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if($httpcode != 200){
+                throw new GoogledriveInvalidateAccessTokenException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.json_decode($result, true)['error']);
+            }
             curl_close($ch);
-            echo 'HTTP code: ' . $httpcode; //200 succes, 40X nein
 
+            return true; // succes
         }
 
-        public static function getAccessTokenAfterRefresh($refreshToken)
+        public static function renewAccessToken($refreshToken)
         {
             $array=[
                 'client_id' => GOOGLE_CLIENT_ID,
@@ -88,8 +92,8 @@
 
             $post_fields=http_build_query($array);
             //echo "<br><br>".$query_string;
-            $curl=curl_init();
-            curl_setopt_array($curl, [
+            $ch=curl_init();
+            curl_setopt_array($ch, [
                 CURLOPT_URL => 'https://oauth2.googleapis.com/token',
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_HTTPHEADER => array('Content-Type: application/x-www-form-urlencoded'),
@@ -98,25 +102,28 @@
                 CURLOPT_POSTFIELDS => $post_fields
             ]);
 
-            $response = curl_exec($curl);
-            curl_close($curl);
-            $asoc_array = json_decode($response,true);
-            //print_r(json_decode($response,true));
-            if(array_key_exists("error", $asoc_array)) {
-                echo "<br>Error: " . $asoc_array['error'] . " - " .$asoc_array["error_description"] . "<br>";
-                return null; // ?
+            if(($result = curl_exec($ch)) === false){
+                throw new GoogledriveRenewAccessTokenException(
+                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
             }
-            else {
-                $access_token=$decoded_json['access_token'];
-                return $access_token;
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if($httpcode != 200){
+                throw new GoogledriveRenewAccessTokenException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.json_decode($result, true)['error']);
             }
+
+            $asoc_array = json_decode($result, true);
+            $access_token=$asoc_array['access_token'];
+            return $access_token;
+
         }
 
         public static function listAllFiles($token)
         {
             $ch = curl_init();
             curl_setopt_array($ch, array(
-                CURLOPT_URL => "https://www.googleapis.com/drive/v3/files",
+                CURLOPT_URL => "https://www.googleapis.com/drive/v3/files?q=%27me%27%20in%20owners%20and%20trashed%20%3D%20false", //fara fisiere shared sau deleted
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => "",
                 CURLOPT_MAXREDIRS => 10,
@@ -126,67 +133,24 @@
                 CURLOPT_HTTPHEADER => array("authorization: Bearer ${token}"),
             ));
             if(($result = curl_exec($ch)) === false){
-                echo 'Curl error: ' . curl_error($ch);
-                return null;
+                throw new GoogledriveListAllFilesException(
+                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
             }
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
+            if($httpcode != 200){
+                $asoc_array = json_decode($result, true);
+                throw new GoogledriveListAllFilesException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$asoc_array['error']['message'], $asoc_array['error']['code']);
+            }
+
             echo '<pre>';
             print_r($result);
             echo '</pre>';
         }
 
-        public static function downloadFileById($token, $file_id) {
-
-            // folosesc v2 deoarece pt v3 n-am gasit documentatie buna
-            $url = 'https://www.googleapis.com/drive/v2/files/' . $file_id .'?alt=media';
-
-            $ch = curl_init();
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
-                CURLOPT_HEADER => 0,
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_BINARYTRANSFER => 1,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => false,
-                CURLOPT_CONNECTTIMEOUT => 20,
-                CURLOPT_HTTPHEADER => array("Authorization: Bearer ${token}")
-            ));
-
-            if(($data = curl_exec($ch)) === false){
-                echo 'Curl error: ' . curl_error($ch);
-                return null;
-            }
-            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-
-            $metadate = self::getFileMetadataById($token, $file_id);
-            if($metadate == null){
-                echo "Download: nu exista fisierul(metadate): $file_id";
-                return;
-            }
-
-            $file = $data;
-            if($json = json_decode($data, true)){
-                echo "Eroare la descarcarea fisierului " . $metadate['title'];
-                echo '<pre>';
-                print_r($json);
-                echo '</pre>';
-            } else {
-                // dialogul de save file
-                header('Content-Type: application/octet-stream');
-                header('Content-Disposition: attachment; filename="' . $metadate['title'] . '"');
-                header('Content-Length: ' . $metadate['fileSize']);
-                ob_clean();
-                echo ($file);
-                return; //return ca sa nu mai apara si alte lucruri in fisier
-                echo "Am terminat de salvat"; //ar trebui sa nu apara in fisier :)
-                //ob_end_clean();
-            }
-        }
-
-        public static function getFileMetadataById($token, $file_id) {
+        public static function getFileMetadataById($token, $file_id)
+        {
             // v2 ofera mai multe informatii
             $url = 'https://www.googleapis.com/drive/v2/files/' . $file_id;
 
@@ -203,20 +167,70 @@
                 CURLOPT_HTTPHEADER => array("Authorization: Bearer ${token}")
             ));
             if(($json_metadata = curl_exec($ch)) === false){
-                echo 'Curl error: ' . curl_error($ch);
-                return null;
+                throw new GoogledriveGetFileMetadataException(
+                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
             }
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
-
-            $data = json_decode($json_metadata, true);
-
-            // daca file id e gresit
-            if(array_key_exists('error', $data)){
-                //echo '<pre>'; print_r($data); echo '</pre>'; // mesajul de eroare
-                return null;
+            if($httpcode != 200){
+                $asoc_array = json_decode($json_metadata, true);
+                throw new GoogledriveGetFileMetadataException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$asoc_array['error']['message'], $asoc_array['error']['code']);
             }
 
-            return $data;
+            $metadata = json_decode($json_metadata, true);
+
+            // echo '<pre>';
+            // print_r($metadata);
+            // echo '</pre>';
+            return $metadata;
+        }
+
+        public static function downloadFileById($token, $file_id) {
+
+            $url = 'https://www.googleapis.com/drive/v2/files/' . $file_id .'?alt=media';
+
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => $url,
+                CURLOPT_HEADER => 0,
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_BINARYTRANSFER => 1,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_SSL_VERIFYPEER => false,
+                CURLOPT_SSL_VERIFYHOST => false,
+                CURLOPT_CONNECTTIMEOUT => 20,
+                CURLOPT_HTTPHEADER => array("Authorization: Bearer ${token}")
+            ));
+
+            if(($data = curl_exec($ch)) === false){
+                throw new GoogledriveDownloadFileByIdException(
+                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
+            }
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if($httpcode != 200){
+                $asoc_array = json_decode($data, true);
+                throw new GoogledriveDownloadFileByIdException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$asoc_array['error']['message'], $asoc_array['error']['code']);
+            }
+
+            $metadate = self::getFileMetadataById($token, $file_id);
+            if($metadate == null){
+                throw new GoogledriveDownloadFileByIdException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '."Download: nu exista metadate pentru fisierul $file_id");            
+            }
+
+            $file = $data;
+
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="' . $metadate['title'] . '"');
+            header('Content-Length: ' . $metadate['fileSize']);
+            ob_clean();
+            echo ($file);
+            return true; //return ca sa nu mai apara si alte lucruri in fisier
+            echo "Am terminat de salvat"; //ar trebui sa nu apara in fisier :)
+    
         }
 
         public static function uploadFile($token, $path = null) {
@@ -224,13 +238,13 @@
             $url = "https://www.googleapis.com/upload/drive/v2/files?uploadType=resumable";
 
             //$path = 'D:\Downloads\uploadedFile.txt'; //sa nu fie empty..
-            //$path = 'D:\Downloads\uploadedFile.rar';
+            $path = 'D:\Downloads\uploadedFile.rar';
             //$path = 'D:\Downloads\uploadedFile.png';
-            $path = 'D:\Downloads\iobituninstaller.exe';
+            //$path = 'D:\Downloads\iobituninstaller.exe';
 
             if(!file_exists($path)) {
-                echo "Nu exista niciun fisier la $path";
-                return;
+                throw new GoogledriveUploadFileException(
+                    __METHOD__. ' '.__LINE__.' '."Nu exista niciun fisier la $path");
             }
 
             $file = file_get_contents($path);
@@ -272,35 +286,30 @@
                     }
                 // ----
             ));
-
             if(($response = curl_exec($ch)) === false){
-                echo 'Curl error: ' . curl_error($ch);
-                return;
+                throw new GoogledriveUploadFileException(
+                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
             }
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if($httpcode != 200){
+                // separare body de headere
+                $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+                $header = substr($response, 0, $header_size);
+                $body = substr($response, $header_size);
+                $body = json_decode($body, true);
+                //echo '<pre>'; print_r($body); echo '</pre>';
+                throw new GoogledriveUploadFileException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$body['error']['message'], $body['error']['code']);
+            }
+            curl_close($ch);
 
             // echo '<pre>';
             // print_r($headers);
             // echo '</pre>';
 
-            if($httpcode != 200) {
-                echo "Eroare: " . $httpcode;
-                echo '<pre>';
-                // extragere headere din raspuns
-                $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-                $header = substr($response, 0, $header_size);
-                $body = substr($response, $header_size);
-                $body = json_decode($body, true);
-                print_r ($body);
-                //echo $body['error']['code'] . ' ' . $body['error']['message'];
-                echo '</pre>';
-                return;
-            }
-            curl_close($ch);
-
             if(!array_key_exists('location', $headers)){
-                echo 'Nu am primit "Location" in  header !!!';
-                return;
+                throw new GoogledriveUploadFileException(
+                    __METHOD__. ' '.__LINE__.' '.'No "Location" header with upload link received !!!');
             }
             else
                 $resumable_url = $headers['location'][0];
@@ -323,24 +332,18 @@
                 //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_POSTFIELDS => $file
             ));
-
-            if(($result = curl_exec($ch2)) === false){
-                echo 'Curl error: ' . curl_error($ch);
-                exit;
+            if(($response = curl_exec($ch2)) === false){
+                throw new GoogledriveUploadFileException(
+                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
             }
             $httpcode = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
             curl_close($ch2);
+            if($httpcode != 200 && $httpcode!= 201){
+                throw new GoogledriveUploadFileException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$result);
+            }
 
-            if($httpcode == 200 || $httpcode == 201) {
-                echo "Upload Success: " . $httpcode;
-            }
-            else {
-                echo "Eroare: " . $httpcode;
-                echo '<pre>';
-                var_dump($result);
-                echo '</pre>';
-                return;
-            }
+            return true;
 
         }
 
