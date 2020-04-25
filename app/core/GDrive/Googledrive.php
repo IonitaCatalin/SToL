@@ -69,12 +69,12 @@
             ]);
             if(($result = curl_exec($ch)) === false){
                 throw new GoogledriveInvalidateAccessTokenException(
-                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
+                    __METHOD__. ' '.__LINE__ , "Curl error: " . curl_error($ch));
             }
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             if($httpcode != 200){
                 throw new GoogledriveInvalidateAccessTokenException(
-                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.json_decode($result, true)['error']);
+                    __METHOD__. ' '.__LINE__.' '.$httpcode, json_decode($result, true)['error']);
             }
             curl_close($ch);
 
@@ -104,13 +104,13 @@
 
             if(($result = curl_exec($ch)) === false){
                 throw new GoogledriveRenewAccessTokenException(
-                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
+                    __METHOD__. ' '.__LINE__ , "Curl error: " . curl_error($ch));
             }
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
             if($httpcode != 200){
                 throw new GoogledriveRenewAccessTokenException(
-                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.json_decode($result, true)['error']);
+                    __METHOD__. ' '.__LINE__.' '.$httpcode, json_decode($result, true)['error']);
             }
 
             $asoc_array = json_decode($result, true);
@@ -134,19 +134,45 @@
             ));
             if(($result = curl_exec($ch)) === false){
                 throw new GoogledriveListAllFilesException(
-                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
+                    __METHOD__. ' '.__LINE__, "Curl error: " . curl_error($ch));
             }
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
             if($httpcode != 200){
                 $asoc_array = json_decode($result, true);
                 throw new GoogledriveListAllFilesException(
-                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$asoc_array['error']['message'], $asoc_array['error']['code']);
+                    __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
             }
 
             echo '<pre>';
             print_r($result);
             echo '</pre>';
+        }
+
+        public static function getStorageQuota($token)
+        {
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => "https://www.googleapis.com/drive/v3/about?fields=storageQuota",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => array("authorization: Bearer ${token}"),
+            ));
+            if(($result = curl_exec($ch)) === false){
+                throw new GoogledriveStorageQuotaException(
+                    __METHOD__. ' '.__LINE__, "Curl error: " . curl_error($ch));
+            }
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if($httpcode != 200){
+                $asoc_array = json_decode($result, true);
+                throw new GoogledriveStorageQuotaException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
+            }
+
+            //echo '<pre>'; print_r(json_decode($result, true)); echo '</pre>';
+            return json_decode($result, true)['storageQuota']; // limit, usage, usageInDrive, usageInTrash
         }
 
         public static function getFileMetadataById($token, $file_id)
@@ -168,14 +194,14 @@
             ));
             if(($json_metadata = curl_exec($ch)) === false){
                 throw new GoogledriveGetFileMetadataException(
-                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
+                    __METHOD__. ' '.__LINE__ , "Curl error: " . curl_error($ch));
             }
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
             if($httpcode != 200){
                 $asoc_array = json_decode($json_metadata, true);
                 throw new GoogledriveGetFileMetadataException(
-                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$asoc_array['error']['message'], $asoc_array['error']['code']);
+                    __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
             }
 
             $metadata = json_decode($json_metadata, true);
@@ -212,13 +238,13 @@
             if($httpcode != 200){
                 $asoc_array = json_decode($data, true);
                 throw new GoogledriveDownloadFileByIdException(
-                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$asoc_array['error']['message'], $asoc_array['error']['code']);
+                    __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
             }
 
             $metadate = self::getFileMetadataById($token, $file_id);
             if($metadate == null){
                 throw new GoogledriveDownloadFileByIdException(
-                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '."Download: nu exista metadate pentru fisierul $file_id");            
+                    __METHOD__. ' '.__LINE__ , "Download: nu exista metadate pentru fisierul $file_id");            
             }
 
             $file = $data;
@@ -241,13 +267,20 @@
             $path = 'D:\Downloads\uploadedFile.rar';
             //$path = 'D:\Downloads\uploadedFile.png';
             //$path = 'D:\Downloads\iobituninstaller.exe';
+            //$path = 'D:\Downloads\BigFile.txt';
+
 
             if(!file_exists($path)) {
                 throw new GoogledriveUploadFileException(
-                    __METHOD__. ' '.__LINE__.' '."Nu exista niciun fisier la $path");
+                    __METHOD__. ' '.__LINE__ , "Nu exista niciun fisier la $path");
             }
 
-            $file = file_get_contents($path);
+            $filesize = filesize($path);
+            $storageQuota = self::getStorageQuota($token);
+            if(($storageQuota['usage'] + $filesize)  >  $storageQuota['limit']) {
+                throw new GoogledriveNotEnoughStorageSpaceException(
+                    __METHOD__. ' '.__LINE__ , "Nu exista suficient spatiu disponibil");
+            }
 
             // 1. upload metadate fisier pt a primi un 'resumable' upload link
             $filename = basename($path);
@@ -288,7 +321,7 @@
             ));
             if(($response = curl_exec($ch)) === false){
                 throw new GoogledriveUploadFileException(
-                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
+                    __METHOD__. ' '.__LINE__ , "Curl error: " . curl_error($ch));
             }
             $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             if($httpcode != 200){
@@ -299,7 +332,7 @@
                 $body = json_decode($body, true);
                 //echo '<pre>'; print_r($body); echo '</pre>';
                 throw new GoogledriveUploadFileException(
-                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$body['error']['message'], $body['error']['code']);
+                    __METHOD__. ' '.__LINE__.' '.$httpcode, $body['error']['message'], $body['error']['code']);
             }
             curl_close($ch);
 
@@ -309,41 +342,83 @@
 
             if(!array_key_exists('location', $headers)){
                 throw new GoogledriveUploadFileException(
-                    __METHOD__. ' '.__LINE__.' '.'No "Location" header with upload link received !!!');
+                    __METHOD__. ' '.__LINE__, 'No "Location" header with upload link received !!!');
             }
             else
                 $resumable_url = $headers['location'][0];
 
             // 2. upload fisier folosind link-ul primit
-            $filesize = strlen($file);
 
-            $ch2 = curl_init();
-            curl_setopt_array($ch2, array(
-                CURLOPT_URL => $resumable_url,
-                CURLOPT_SSL_VERIFYPEER => FALSE,
-                CURLOPT_RETURNTRANSFER => TRUE,
-                CURLOPT_BINARYTRANSFER => TRUE,
-                CURLOPT_CUSTOMREQUEST => "PUT",
-                CURLOPT_HTTPHEADER => array(
-                    "Content-Type: application/octet-stream",
-                    "Content-Length: " . $filesize,
-                    "Authorization: Bearer " . $token
-                ),
-                //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_POSTFIELDS => $file
-            ));
-            if(($response = curl_exec($ch2)) === false){
-                throw new GoogledriveUploadFileException(
-                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
-            }
-            $httpcode = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
-            curl_close($ch2);
-            if($httpcode != 200 && $httpcode!= 201){
-                throw new GoogledriveUploadFileException(
-                    __METHOD__. ' '.__LINE__.' '.$httpcode.' '.$result);
-            }
+            $filesize = filesize($path);
+            echo "FILESIZE: $filesize <br>";
+            $unit = 256 * 1024 * 8; // unitati de cate 1024KB
 
-            return true;
+            $total_uploaded = 0;
+            $offset = 0;
+            $i = 0;
+            while($offset != $filesize) {
+                
+                $chunk_size = ($offset + $unit) <= $filesize ? $unit : ($filesize - $offset );
+                $file = file_get_contents($path, false, null, $offset, $chunk_size);
+
+                echo "Incarc intervalul $offset -- " . ($offset + $chunk_size - 1) ."/$filesize";
+                $ch2 = curl_init();
+                curl_setopt_array($ch2, array(
+                    CURLOPT_URL => $resumable_url,
+                    CURLOPT_SSL_VERIFYPEER => FALSE,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_RETURNTRANSFER => TRUE,
+                    CURLOPT_BINARYTRANSFER => TRUE,
+                    CURLOPT_CUSTOMREQUEST => "PUT",
+                    CURLOPT_HTTPHEADER => array(
+                        "Content-Type: application/octet-stream",
+                        "Content-Length: " . $chunk_size,
+                        "Content-Range: bytes " . $offset."-".($offset + $chunk_size - 1)."/".$filesize,
+                        "Authorization: Bearer " . $token
+                    ),
+                    //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_POSTFIELDS => $file,
+                    CURLOPT_HEADERFUNCTION =>
+                    function($curl, $header) use (&$headers) {
+                        $len = strlen($header);
+                        $header = explode(':', $header, 2);
+                        if (count($header) < 2) // ignore invalid headers
+                          return $len;
+
+                        $headers[strtolower(trim($header[0]))][] = trim($header[1]);
+
+                        return $len;
+                    }
+                ));
+                if(($response = curl_exec($ch2)) === false){
+                    throw new GoogledriveUploadFileException(
+                        __METHOD__. ' '.__LINE__, "Curl error: " . curl_error($ch2));
+                }
+                $httpcode = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
+                curl_close($ch2);
+
+
+                if($httpcode == 200 || $httpcode == 201) {
+                    echo "<br> UPLOADED: " . ($offset+$chunk_size) ." - " . (($offset+$chunk_size)/$filesize * 100) . "%<br>";
+                    echo 'Succes';
+                    return true;
+                }
+                else if($httpcode == 308) {
+                    $ranges = $headers['range'];
+                    $last_range = end($ranges);     //ultimul elem din array
+                    $last_range = substr_replace($last_range, '', 0, 6); //elimin 'bytes='
+                    //echo explode("-", $last_range)[1];
+                    $offset = explode("-", $last_range)[1]; // selectez al doilea nr din "nr1-nr2"
+                    $offset ++; // citim incepand cu urmatorul octet
+                }
+                else if($httpcode != 308){
+                    $asoc_array = json_decode($response, true);
+                    throw new GoogledriveUploadFileException(
+                        __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
+                }
+
+                echo "<br> UPLOADED: $offset - " . ($offset/$filesize * 100) . "%<br>";
+            }
 
         }
 
