@@ -5,8 +5,10 @@ class DropboxException extends Exception {
 	public $message = '';
 	public $code = '';
 	public $previous = '';
+    public $path = '';
 
     public function __construct($message, $code = 0, Exception $previous = null) {
+        $this->$path = $path;
         $this->$message = $message;
         $this->$code = $code;
         $this->$previous = $previous;
@@ -21,37 +23,37 @@ class DropboxException extends Exception {
 
 class DropboxListAllFilesException extends DropboxException {
     public function __toString() {
-        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
     }
 }
 
 class DropboxAuthException extends DropboxException {
-	public function __toString() {
-        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
     }
 }
 
 class DropboxInvalidTokenException extends DropboxException {
-	public function __toString() {
-        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
     }
 }
 
 class DropboxGetFileMetadataException extends DropboxException {
-	public function __toString() {
-        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
     }
 }
 
 class DropboxDownloadFileByIdException extends DropboxException {
-	public function __toString() {
-        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
     }
 }
 
 class DropboxUploadFileException extends DropboxException {
     public function __toString() {
-        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
     }
 }
 
