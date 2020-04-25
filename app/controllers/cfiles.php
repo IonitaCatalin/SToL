@@ -1,5 +1,6 @@
 <?php
 require_once '../app/core/Onedrive/Onedrive.php';
+require_once '../app/core/Onedrive/OnedriveException.php';
 require_once '../app/core/GDrive/Googledrive.php';
 require_once '../app/core/Dropbox/Dropbox.php';
 class CFiles extends Controller {
@@ -34,6 +35,15 @@ class CFiles extends Controller {
 	public function testOneDrive()
 	{
 		session_start();
+		//$this->onedrive->uploadFile($this->model->getAccessToken('onedrive',$_SESSION['USER_ID']),'D:\XAMPP\htdocs\ProiectTW\upload_test\iverilog.exe');
+		try
+		{
+			$this->onedrive->uploadFile($this->model->getAccessToken('onedrive',$_SESSION['USER_ID']),'D:\XAMPP\htdocs\ProiectTW\upload_test\sample2.bin');
+		}
+		catch(OneDriveNotEnoughtSpaceException $exception)
+		{
+			echo 'Nu exista spatiu frate';
+		}
 		
 	}
 

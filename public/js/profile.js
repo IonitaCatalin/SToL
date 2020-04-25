@@ -135,7 +135,6 @@ function updateUserData()
                     {
                         fetchUserData();
                         toggleAlert(response.message,false);
-
                     }
                     if(xhr.status==409)
                     {

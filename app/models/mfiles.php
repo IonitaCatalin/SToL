@@ -48,7 +48,6 @@
 						]);
 							$refresh_token=$get_refresh_tokens_stmt->fetch(PDO::FETCH_ASSOC)['refresh_token'];
 							$refreshed_tokens=OneDriveService::renewTokens($refresh_token);
-							var_dump($refreshed_tokens);
 							$update_sql="UPDATE onedrive_service SET refresh_token=:refresh,access_token=:access,generated_at=SYSDATE() WHERE user_id=:userid";
 							$update_stmt=DB::getConnection()->prepare($update_sql);
 							$update_stmt->execute([
@@ -66,7 +65,6 @@
 							'userid'=>$id
 						]);
 						$result_token=$get_access_token_stmt->fetch(PDO::FETCH_ASSOC)['access_token'];
-
 						return $result_token;
 					}
 					break;
