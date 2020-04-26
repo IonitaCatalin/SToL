@@ -8,10 +8,10 @@ class GoogledriveException extends Exception {
     public $path = '';
 
     public function __construct($path, $message, $code = 0, Exception $previous = null) {
-        $this->$path = $path;
-        $this->$message = $message;
-        $this->$code = $code;
-        $this->$previous = $previous;
+        $this->path = $path;
+        $this->message = $message;
+        $this->code = $code;
+        $this->previous = $previous;
         parent::__construct($message, $code, $previous);
     }
 
