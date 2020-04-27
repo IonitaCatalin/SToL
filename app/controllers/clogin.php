@@ -3,7 +3,6 @@
     Class CLogin extends Controller
     {
         private $model;
-        private $error_msg;
 
         public function __construct()
         {
@@ -13,8 +12,7 @@
             {
                 if($_POST['username'] == '' || $_POST['password'] == '')
                 {
-                    $this->error_msg = 'Please fill in all the required fields';
-                    $this->render($this->error_msg); 
+                    
                 }
                 else
                 {
@@ -24,27 +22,19 @@
                     $login_status=$this->logInUser($username,$password);
                     if(!$login_status)
                     {
-                        $this->error_msg = 'Wrong username or password';
+                        // $this->error_msg = 'Wrong username or password';
                     }
-                    $this->render($this->error_msg);
                 }
             }
             else
             {
-                $this->render();
+                
             }
         }
 
         public function index()
         {
            
-        }
-        private function render($error_msg = NULL)
-        {
-            $this->view('login/vlogin');
-            $view=new VLogin();
-            $view->loadDataIntoView($error_msg);
-            echo $view->renderView();
         }
         private function logInUser($username,$password)
         {

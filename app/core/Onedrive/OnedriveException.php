@@ -17,25 +17,35 @@ class OneDriveException extends Exception {
 
 class OneDriveAuthException extends OneDriveException
 {
-    
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
+    }
 }
 
-class OneDriveRenewTokensException extends OneDriveAuthException
+class OneDriveRenewTokensException extends OneDriveException
 {
-    
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
+    }
 }
 
 class OneDriveUploadException extends OneDriveException
 {
-
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
+    }
 }
 
-class OneDriveNotEnoughtSpaceException extends OneDriveUploadException
+class OneDriveNotEnoughtSpaceException extends OneDriveException
 {
-    
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
+    }
 }
-class OneDriveUploadFailedException extends OneDriveUploadException
+class OneDriveDownloadException extends OneDriveException
 {
-
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
+    }
 }
 ?>

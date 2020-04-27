@@ -22,12 +22,10 @@ class CProfile extends Controller {
 			if(isset($_SESSION['AUTH_ERROR']))
 			{
 				//Daca apare eroare la autentificare in vreun serviciu dupa redirect avem grija sa o afisam prin templating
-				$this->render($_SESSION['AUTH_ERROR']);
 				unset($_SESSION['AUTH_ERROR']);
 			}
 			else
 			{
-				$this->render();
 			}
 		}
 		else
@@ -50,7 +48,7 @@ class CProfile extends Controller {
 			catch(OnedriveAuthException $exception)
 			{
 				//Propagam textul de eroare la nivel de sesiune,cu fiecare redirect acesta se va pierde
-				$_SESSION['AUTH_ERROR']=$exception->getMessage();
+				$_SESSION['AUTH_ERROR']='Authorization for Onedrive service failed';
 				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 
 			}
@@ -225,13 +223,6 @@ class CProfile extends Controller {
 		{
 			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 		}
-	}
-
-	private function render($error_msg  = NULL) {
-		$this->view('profile/vprofile');
-		$view = new VProfile();
-		$view -> loadDataIntoView($error_msg);
-		echo $view -> renderView();
 	}
 
 }

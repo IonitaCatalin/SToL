@@ -3,7 +3,6 @@
 class CRegister extends Controller {
 
 	private $model;
-	private $error_msg;
 
 	public function __construct() {
 		$this->model = $this->model('mregister');
@@ -22,28 +21,25 @@ class CRegister extends Controller {
 				$password = $_POST["password"];
 
 				if($this->checkExistingEmail($email)){
-					$this->error_msg = 'The email address is already in use.';
+					
 				}
 				else if($this->checkExistingUsername($username)) {
-					$this->error_msg = 'The username is not available.';
+					
 				}
 				else if(strlen($username) < 6) {
-					$this->error_msg = 'The username is shorter than 6 characters';
+					
 				}
 				else if(strlen($password) < 6) {
-					$this->error_msg = 'The password is shorter than 6 characters';
+					
 				}
 				else {
-					$this->error_msg= 'Success';
+					
 					$this->addUser($_POST["email"], $_POST["username"], $_POST["password"]);
 				}
-
-				$this->render($this->error_msg);
 			}
 			
 		}
 		else {
-			$this->render();
 		}
 	}
 

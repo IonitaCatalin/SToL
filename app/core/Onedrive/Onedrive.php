@@ -42,7 +42,7 @@
             $response_array=json_decode($response,true);
             if(isset($response_array['error']))
             {
-                throw new OnedriveAuthException('Authorization failed please try again!');
+                throw new OnedriveAuthException($response_array['error'],curl_getinfo($curl,CURLINFO_HTTP_CODE));
             }
             else 
             {
@@ -64,6 +64,7 @@
             $response_array=json_decode($response,true);
             if(isset($response_array['error']))
             {
+                $http_code=null;
                 if(curl_info($get_curl,CURLINFO_HTTP_CODE)!=200 && $response_array['error']['code']=='itemNotFound')
                 {
                    $post_curl=curl_init();
@@ -79,12 +80,13 @@
                         "@microsoft.graph.conflictBehavior": "rename"
                       }'
                    ]);
+                   $http_code=curl_getinfo($post_curl,CURLINFO_HTTP_CODE);
                    $response_array=json_decode(curl_exec($post_curl),true);
                    return $response_array;
                 }  
                 else
                 {
-                    throw new OneDriveAuthException('The app could not create the associated working container');
+                    throw new OneDriveAuthException($response_array['error'],$http_code);
                 }    
             }
         }
@@ -114,7 +116,7 @@
             curl_close($curl);
             if(isset($tokens_array['error']))
             {
-                throw new OnedriveRenewTokensException('The access token could not be renewed!');
+                throw new OnedriveRenewTokensException($tokens_array['error'],curl_getinfo($curl,CURLINFO_HTTP_CODE));
             }
             else return $tokens_array;
 
@@ -180,11 +182,12 @@
                     $response=curl_exec($upload_session_curl);
                     $upload_url=json_decode($response,true)['uploadUrl'];
                     curl_close($upload_session_curl);
-                    if(filesize($file_path)<2)
+                    if(filesize($file_path)<10000000)
                     {
+                        
                         /*
-                            In cazul in care fisierul este sub 60 MB il putem incarca integral folosind un singur request,
-                            insa pierdem destul de multa performanta
+                            In cazul in care fisierul este sub 10 MB il putem incarca integral folosind un singur request,
+                            din motive de performanta
                         */
                     
                         $upload_curl=curl_init();
@@ -202,12 +205,11 @@
                             CURLOPT_POSTFIELDS=>$bytes_content 
                         ]);
                         $response=curl_exec($upload_curl);
+                        $response_array=json_decode($response,true);
                         fclose($file_handle);
-                        echo '<br>'.$response;
-                        echo '<br>'.curl_getinfo($upload_curl,CURLINFO_HTTP_CODE);
                         if(!(curl_getinfo($upload_curl,CURLINFO_HTTP_CODE)==200 || curl_getinfo($upload_curl,CURLINFO_HTTP_CODE)==201))
                         {
-                            throw new OneDriveUploadFailedException('The update could not be completed');
+                            throw new OneDriveUploadException($response_arary['error'],curl_getinfo($upload_curl,CURLINFO_HTTP_CODE));
                         }
                         curl_close($upload_curl);
 
@@ -215,7 +217,7 @@
                     else
                     {
                         echo '<br>Facem upload pe chunk-uri';
-                        $fragment_size=327680*4;
+                        $fragment_size=327680*183;
                         $file_size=filesize($file_path);
                         $num_fragments=ceil($file_size/$fragment_size);
                         $bytes_remaining=$file_size;
@@ -245,35 +247,34 @@
                                 }
 
                                 $content_range='bytes '.$start.'-'.$end.'/'.$file_size;
-                                echo $content_range;
-                                $headers=array(
-                                    'Content-Length:'=>$num_bytes,
-                                    'Content-Range:'=>$content_range,
-                                    "Authorization:Bearer ${access_token}"
-                                );
 
                                 $upload_parts_curl=curl_init();
                                 curl_setopt_array($upload_parts_curl,[
                                     CURLOPT_URL=>$upload_url,
                                     CURLOPT_RETURNTRANSFER=>1,
                                     CURLOPT_CUSTOMREQUEST=>'PUT',
-                                    CURLOPT_HTTPHEADER=>$headers,
+                                    CURLOPT_HTTPHEADER=> array('Content-Range: '.$content_range,
+                                                               'Content-Length: '.$num_bytes),
                                     CURLOPT_POSTFIELDS=>$data,
                                     CURLOPT_USERAGENT=>'Stol',
+                                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                                     CURLOPT_BINARYTRANSFER => TRUE,
                                 ]);
                                 $server_output=curl_exec($upload_parts_curl);
-                                echo '<br>'.$server_output.'<br>';
+                                $response_array=json_decode($server_output,true);
+                                if(!(curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE)==201 || curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE)==202))
+                                {
+                                    throw new OneDriveUploadException($response_array['error'],curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE));
+                                }
                                 curl_close($upload_parts_curl);
-
                                 $bytes_remaining=$bytes_remaining - $chunk_size;
                                 $index++;
-                        }
-
+                            }
                     }
                 }
                 else
                 {
-                    throw new OneDriveNotEnoughtSpaceException('There is no space available on Onedrive container!');
+                    throw new OneDriveNotEnoughtSpaceException('There is no space available on Onedrive container!',507);
                 }
             }
             else
@@ -281,6 +282,11 @@
                 echo 'Problema cu fisierul';
             }
 
+        }
+        public function downloadFileById($access_token,$file_id)
+        {
+            $download_curl=curl_init();
+            
         }
     }
     

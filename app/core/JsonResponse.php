@@ -26,11 +26,21 @@ class JsonResponse {
 
     public function response() {
         http_response_code($this->httpcode);
-        $response_array = array(
-            'status' => $this->status,
-            'data' => $this->data,
-            'message' => $this->message
-        );
+        if(is_null($this->data))
+        {   
+            $response_array = array(
+                'status' => $this->status,
+                'message' => $this->message
+            );
+        }   
+        else
+        { 
+            $response_array = array(
+                'status' => $this->status,
+                 'data'=>$this->data,
+                'message' => $this->message
+            );
+        }
         return json_encode($response_array);
     }
 
