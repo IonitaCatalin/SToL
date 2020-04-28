@@ -6,39 +6,43 @@
 
         public function __construct()
         {
-           
             $this->model=$this->model('mlogin');
-            if(isset($_POST['submit_login']))
+        }
+        public function logInUser()
+        {
+            $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
+            if (stripos($content_type, 'application/json') === false) {
+                $json=new JsonResponse('error',null,'Only application/json content-type allowed',415);
+                echo $json->response();
+            }
+            $post_data=file_get_contents('php://input');
+            $post_array=json_decode($post_data,true);
+            if(!is_array($post_array))
             {
-                if($_POST['username'] == '' || $_POST['password'] == '')
+                $json=new JsonResponse('error',null,'Malformed request,JSON data object could not be parsed',400);
+                echo $json->response();
+            }
+            if(isset($post_array['username'])==false || isset($post_array['password'])==false)
+            {
+                    $json=new JsonResponse('error',null,'Malformed request,required fields are missing',400);
+                    echo $json->response();
+            }
+           else
+           {
+                $user_id=$this->model->logInUser($post_array['username'],$post_array['password']);
+                if(!is_null($user_id))
                 {
-                    
+                    session_start();
+                    $_SESSION['USER_ID']=$user_id;
+                    $json=new JsonResponse('success',null,'User succesfully logged in,session id was provided');
+                    echo $json->response();
                 }
                 else
                 {
-                    $this->error_msg = null;
-                    $username=$_POST['username'];
-                    $password=$_POST['password'];
-                    $login_status=$this->logInUser($username,$password);
-                    if(!$login_status)
-                    {
-                        // $this->error_msg = 'Wrong username or password';
-                    }
+                    $json=new JsonResponse('error',null,'Invalid credentials or user does not exist',401);
+                    echo $json->response();
                 }
-            }
-            else
-            {
-                
-            }
-        }
-
-        public function index()
-        {
-           
-        }
-        private function logInUser($username,$password)
-        {
-           return $this->model->logInUser($username,$password);
+           }
         }
     }
 ?>

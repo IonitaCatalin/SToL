@@ -1,5 +1,4 @@
 <?php
-    require_once '../app/core/Db.php';
     Class MLogin
     {
         private $login_result;
@@ -16,14 +15,11 @@
                 $result = $login_stmt->fetch(PDO::FETCH_ASSOC);
                 if($login_stmt->rowCount()>0)
                 {
-                    session_start();
-                    $_SESSION['USER_ID']=$result['id'];
-                    header("Location:/ProiectTW/public/cfiles");
-                    return true;
+                    return $result['id'];
                 }   
                 else
                 {
-                    return false;
+                    return null;
                 }
             } catch (PDOException $e) {
                 return false;

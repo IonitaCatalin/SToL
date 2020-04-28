@@ -25,7 +25,6 @@ class Route
 	}
 
 	public function patternMatches($URI) {
-        //Parametrii din URI ,de tipul /api/:id
 	    preg_match_all('@:([\w]+)@', $this->pattern, $param_names, PREG_PATTERN_ORDER);
 	    $param_names = $param_names[0];
 
