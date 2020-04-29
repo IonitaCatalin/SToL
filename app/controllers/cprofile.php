@@ -1,10 +1,5 @@
 <?php
-// require_once '../core/Onedrive/Onedrive.php';
-// require_once '../app/core/Onedrive/OnedriveException.php';
-// require_once '../app/core/GDrive/Googledrive.php';
-// require_once '../app/core/Dropbox/Dropbox.php';
-// require_once '../app/core/JsonResponse.php';
-// require_once '../app/core/Exceptions/CredentialsExceptions.php';
+
 
 class CProfile extends Controller {
 
@@ -124,6 +119,37 @@ class CProfile extends Controller {
 			echo $json->response();
 		}
 
+	}
+	public function changeUserData()
+	{
+			$post_array=json_decode(file_get_contents('php://input'),true);
+			if(!is_array($post_array))
+            {
+                $json=new JsonResponse('error',null,'Malformed request,JSON could not be interpreted',400);
+                echo $json->response();
+			}
+			else
+			{
+				if(isset($post_array['username']))
+				{
+					try
+					{	
+						$this->model->updateUsername($post_array['username'],$_SESSION['USER_ID']);
+						$json=new JsonResponse('succes',null,'Profile data update succesfully!');
+						echo $json->response();
+					}
+					catch(UsernameTakenException $exception)
+					{
+						$json=new JsonResponse('error',null,'Username is taken',409);
+						echo $json->response();
+					}
+					catch(PDOException $exception)
+					{
+						$json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+						echo $json->response();
+					}
+				}
+			}
 	}
 	public function deAuth()
 	{

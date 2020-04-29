@@ -20,7 +20,7 @@ class App
 
         $router = new Router();
 
-        $router->addRoute('GET','/page/login/',function(){
+        $router->addRoute('GET','/page/login',function(){
                 $page_controller=new CPage();
                 $page_controller->renderLogin();
         });
@@ -42,7 +42,7 @@ class App
             }
         });
 
-        $router->addRoute('GET','/page/files/',function(){
+        $router->addRoute('GET','/page/files',function(){
             if(CSession::isUserAuthorized())
             {
                 $page_controller=new CPage();
@@ -54,7 +54,7 @@ class App
             }
         });
 
-        $router->addRoute('POST','/api/user/',function(){
+        $router->addRoute('POST','/api/user',function(){
             if(CSession::isUserAuthorized())
             {
                 
@@ -66,7 +66,7 @@ class App
             }
             
         });
-        $router->addRoute('GET','/api/user/',function(){
+        $router->addRoute('GET','/api/user',function(){
             if(CSession::isUserAuthorized())
             {
                 $profile_controller=new CProfile();
@@ -77,20 +77,23 @@ class App
                 $json=new JsonResponse('error',null,'Unauthorized user',401);
                 echo $json->response();
             }
-            
         });
-        $router->addRoute('PATCH','/api/user',function(){
-
+        $router->addRoute('PATCH','/api/user/',function(){
+            if(CSession::isUserAuthorized())
+            {
+                $profile_controller=new CProfile();
+                $profile_controller->changeUserData();
+            }
+            else
+            {
+                $json=new JsonResponse('error',null,'Unauthorized user',401);
+                echo $json->response();
+            }
         });
 
         $router->addRoute('POST','/api/user/login',function(){
             $login_controller=new CLogin();
             $login_controller->logInUser();
-        });
-
-        $router->addRoute('POST','/api/user/register', function(){
-            $register_controller=new CRegister();
-            $register_controller->registerUser();
         });
 
         $router->run($this->method, $this->URI);
