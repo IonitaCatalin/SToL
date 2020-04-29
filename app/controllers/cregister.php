@@ -6,56 +6,56 @@ class CRegister extends Controller {
 
 	public function __construct() {
 		$this->model = $this->model('mregister');
-		
-		if(isset($_POST["submit_register"]))
+	}
+
+	public function registerUser() {
+
+		$content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
+        if (stripos($content_type, 'application/json') === false)
+        {
+            $json = new JsonResponse('error', null, 'Only application/json content-type allowed', 415);
+            echo $json->response();
+            return;
+        }
+
+		$post_data = file_get_contents('php://input');
+		$post_array = json_decode($post_data, true);
+
+		if(!is_array($post_array)) {
+			$json = new JsonResponse('error', null, 'Malformed request,JSON data object could not be parsed', 400);
+			echo $json->response();
+			return;
+		}
+
+        if( (isset($post_array['email'])==false) || 
+        	(isset($post_array['username'])==false) ||
+        	(isset($post_array['password'])==false) )
+        {
+			$json = new JsonResponse('error', null, 'Malformed request, required fields are missing', 400);
+			echo $json->response();
+        }
+        else if($this->checkExistingEmail($post_array['email'])){
+			$json = new JsonResponse('error', null, 'The provided email is already in use.', 400);
+			echo $json->response();
+		}
+		else if($this->checkExistingUsername($post_array['username'])) {
+			$json = new JsonResponse('error', null, 'The provided username is already in use.', 400);
+			echo $json->response();
+		}
+		else if(strlen($post_array['username']) < 6) {
+			$json = new JsonResponse('error', null, 'The provided username is too short.', 400);
+			echo $json->response();
+		}
+		else if(strlen($post_array['password']) < 6) {
+			$json = new JsonResponse('error', null, 'The provided password is too short.', 400);
+			echo $json->response();	
+		}
+		else
 		{
-			if($_POST["email"] == '' || $_POST["username"] == '' || $_POST["password"] == '') {
-				$this->error_msg='Please fill in all the fields.';
-				$this->render($this->error_msg); // cand nu s-au completat toate datele
-			}
-			else {
-				$this->error_msg = '';
-
-				$email = $_POST["email"];
-				$username = $_POST["username"];
-				$password = $_POST["password"];
-
-				if($this->checkExistingEmail($email)){
-					
-				}
-				else if($this->checkExistingUsername($username)) {
-					
-				}
-				else if(strlen($username) < 6) {
-					
-				}
-				else if(strlen($password) < 6) {
-					
-				}
-				else {
-					
-					$this->addUser($_POST["email"], $_POST["username"], $_POST["password"]);
-				}
-			}
-			
-		}
-		else {
-		}
-	}
-
-	public function index() {
-		// :)
-	}
-
-	private function addUser($email, $username, $password) {
-		$this->model->addAccount($email, $username, $password);
-	}
-
-	private function render($error_msg  = NULL) {
-		$this->view('register/vregister');
-		$view = new VRegister();
-		$view -> loadDataIntoView($error_msg);
-		echo $view -> loadView();
+			$this->model->addAccount($post_array['email'], $post_array['username'], $post_array['password']);
+			$json=new JsonResponse('success', null, 'User account successfully created');
+			echo $json->response();
+        }
 	}
 
 	private function checkExistingEmail($email) {

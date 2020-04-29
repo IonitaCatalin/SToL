@@ -1,5 +1,5 @@
 <?php
-	require_once '../app/core/Db.php';
+
 	class MRegister {
 		
 		public function addAccount($email, $username, $password) {
