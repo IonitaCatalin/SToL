@@ -10,69 +10,82 @@ class CProfile extends Controller {
 		$this->model = $this->model('mprofile');	
 	}
 
-	public function authorizeServiceOneDrive()
+	public function preAuthorization($service)
 	{
-		if(isset($_SESSION['USER_ID']))
+		$service=strtolower($service);
+		switch($service)
 		{
-			$auth_code = $_GET['code'];
+			case 'onedrive':
+			{
+				http_response_code(307);
+				header('Location:'.OneDriveService::authorizationRedirectURL());
+				break;
+			}
+			case 'googledrive':
+			{
+				http_response_code(307);
+				header('Location:'.GoogleDriveService::authorizationRedirectURL());
+				break;
+			}
+			case 'dropbox':
+			{
+				http_response_code(307);
+				header('Location:'.DropboxService::authorizationRedirectURL());
+				break;
+			}	
+		}
+	}
+	public function authorizeServices($service,$code)
+	{
+		$service=strtolower($service);
+		switch($service)
+		{
+			case 'onedrive':
+			{
+				$this->authorizeServiceOneDrive($code);
+				break;
+			}
+			case 'googledrive':
+			{
+				$this->authorizeServiceGoogleDrive($code);
+				break;
+			}
+			case 'dropbox':
+			{
+				$this->authorizeServiceDropbox($code);
+				break;
+			}	
+		}
+	}
+	public function authorizeServiceOneDrive($code)
+	{
 			try
 			{
-				$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($auth_code),$_SESSION['USER_ID'],'onedrive');
-				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+				$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($code),$_SESSION['USER_ID'],'onedrive');
+				$json=new JsonResponse('succes',null,'Onedrive service authorized succesfully',200);
+				echo $json->response();
 			}
 			catch(OnedriveAuthException $exception)
 			{
-				//Propagam textul de eroare la nivel de sesiune,cu fiecare redirect acesta se va pierde
-				$_SESSION['AUTH_ERROR']='Authorization for Onedrive service failed';
-				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
-
+				$json=new JsonResponse('error',null,'Authorization process for onedrive service failed');
+				echo $json->response();
 			}
 			catch(PDOException $exception)
 			{
-				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+				$json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+				echo $json->response();
 			}
-		}
-		else
-		{
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
-		}
+		
 	}
 
-	public function onedriveAuth()
-	{
-		if(isset($_SESSION['USER_ID'])) {
-			header('Location:'.OneDriveService::authorizationRedirectURL());
-		} else {
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
-		}
-	}
+	
 
-	public function googledriveAuth()
-	{
-		// click pe Unauthorize dupa ce esti logat pt a vedea fisierele
-		// if( $this->model->getUserDataArray($_SESSION['USER_ID'])['googledrive'] == true) {
-		// 	echo 'Unauthorize is not yet functional. Using this button for tests:)<br>';
-		// 	//GoogleDriveService::listAllFiles($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'));
-		// 	//GoogleDriveService::getFileMetadataById($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), '1jBeVdo4YYPoxrNOVYp3PoCy3NSlQyoiQ');
-		// 	// foloseste mai intai list pt a gasi un id
-		// 	//GoogleDriveService::downloadFileById($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), '1bVVzi2wwEtx3Xq45l0c7PA2uBwYzlQOk');
-		// 	GoogleDriveService::uploadFile($this->model->getAccessToken($_SESSION['USER_ID'], 'googledrive'), null);
-		// }
-
-		if(isset($_SESSION['USER_ID'])) {
-			header('Location:'.GoogleDriveService::authorizationRedirectURL());
-		} else {
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
-		}
-	}
-
-	public function authorizeServiceGoogleDrive()
+	public function authorizeServiceGoogleDrive($code)
 	{
 		$url = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		if(isset($_GET['code'])){
-			$decoded_json = GoogleDriveService::getAccesRefreshToken($_GET['code']);
+			$decoded_json = GoogleDriveService::getAccesRefreshToken($code);
 			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'googledrive');
-			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
 		}
 
 		if(isset($_GET['error'])){
@@ -81,14 +94,6 @@ class CProfile extends Controller {
 		}
 	}
 
-	public function dropboxAuth()
-	{
-		if(isset($_SESSION['USER_ID'])) {
-			header('Location:'. DropboxService::authorizationRedirectURL());
-		} else {
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
-		}
-	}
 
 	public function authorizeServiceDropbox()
 	{
@@ -171,30 +176,7 @@ class CProfile extends Controller {
 	}
 	public function deAuth()
 	{
-		$query = array();
-		parse_str($_SERVER['QUERY_STRING'], $query);
-		if(isset($query['service']))
-		{
-			if($query['service']=='onedrive')
-			{
-				$this->model->invalidateService($_SESSION['USER_ID'],'onedrive');
-				header('Location:'.OneDriveService::signOutRedirectURL());
-			}
-			elseif($query['service']=='googledrive')
-			{
-				$this->model->invalidateService($_SESSION['USER_ID'],'googledrive');
-				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
-			}
-			elseif($query['service']=='dropbox')
-			{
-				$this->model->invalidateService($_SESSION['USER_ID'],'dropbox');
-				header('Location:'.'http://localhost/ProiectTW/public/cprofile');
-			}
-		}
-		else
-		{
-			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
-		}
+		
 	}
 
 }

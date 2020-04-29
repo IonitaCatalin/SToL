@@ -8,7 +8,6 @@ class App
     function __construct($inputs)
     {
         $this->URI =$this->checkKey('URI', $inputs);
-        $this->raw_input =$this->checkKey('raw_input', $inputs);
         $this->method =$this->checkKey('method', $inputs);
     }
 
@@ -93,7 +92,28 @@ class App
         });
 
         $router->addRoute('GET','/api/user/authorize/:service',function($service){
-           
+            if(CSession::isUserAuthorized())
+            {
+                $profile_controller=new CProfile();
+                $profile_controller->preAuthorization($service);
+            }
+            else
+            {
+                $json=new JsonResponse('error',null,'Unauthorized user',401);
+                echo $json->response();
+            }
+        });
+        $router->addRoute('GET','/api/user/authorize/:service/:code',function($service,$code){
+            if(CSession::isUserAuthorized())
+            {
+                $profile_controller=new CProfile();
+                $profile_controller->authorizeServices($service,$code);
+            }
+            else
+            {
+                $json=new JsonResponse('error',null,'Unauthorized user',401);
+                echo $json->response();
+            }
         });
 
         $router->addRoute('POST','/api/user/login',function(){

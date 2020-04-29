@@ -4,7 +4,7 @@
     define('TENANT','common');
     define('CLIENT_SECRET','Tn2mKeXphox6vV=?S_HFuvG6?QGURqC5');
     define('SCOPE','openid offline_access Files.ReadWrite.All');
-    define('REDIRECT_URI_AUTH','http://localhost/ProiectTW/public/cprofile/authorizeServiceOneDrive/');
+    define('REDIRECT_URI_AUTH','http://localhost/ProiectTW/api/user/authorize/onedrive');
     define('REDIRECT_URI_REFRESH_TOKEN','http://localhost/ProiectTW/public/cfiles');
     define('USER_DRIVE_ENDPOINT','https://graph.microsoft.com/v1.0/me/drive');
 
