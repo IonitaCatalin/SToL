@@ -93,8 +93,13 @@ class App
         });
 
         $router->addRoute('POST','/api/user/login',function(){
-            $login_controller=new CLogin();
+            $login_controller = new CLogin();
             $login_controller->logInUser();
+        });
+
+        $router->addRoute('POST','/api/user/register', function(){
+            $register_controller = new CRegister();
+            $register_controller->registerUser();
         });
 
         $router->run($this->method, $this->URI);

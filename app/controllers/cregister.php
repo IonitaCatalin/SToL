@@ -27,11 +27,27 @@ class CRegister extends Controller {
 			return;
 		}
 
-        if( (isset($post_array['email'])==false) || 
-        	(isset($post_array['username'])==false) ||
-        	(isset($post_array['password'])==false) )
+        if( (isset($post_array['email']) == false) || 
+        	(isset($post_array['username']) == false) ||
+        	(isset($post_array['password']) == false) )
         {
 			$json = new JsonResponse('error', null, 'Malformed request, required fields are missing', 400);
+			echo $json->response();
+        }
+        else if($post_array['email'] == '') {
+			$json = new JsonResponse('error', null, 'The email field cannot be empty.', 400);
+			echo $json->response();
+        }
+        else if (!filter_var($post_array['email'], FILTER_VALIDATE_EMAIL)) {
+			$json = new JsonResponse('error', null, 'The email is not valid.', 400);
+			echo $json->response();
+		}
+        else if($post_array['username'] == '') {
+			$json = new JsonResponse('error', null, 'The username field cannot be empty.', 400);
+			echo $json->response();
+        }
+        else if($post_array['password'] == '') {
+			$json = new JsonResponse('error', null, 'The password field cannot be empty.', 400);
 			echo $json->response();
         }
         else if($this->checkExistingEmail($post_array['email'])){
@@ -53,7 +69,7 @@ class CRegister extends Controller {
 		else
 		{
 			$this->model->addAccount($post_array['email'], $post_array['username'], $post_array['password']);
-			$json=new JsonResponse('success', null, 'User account successfully created');
+			$json=new JsonResponse('success', null, 'User account successfully created', 200);
 			echo $json->response();
         }
 	}

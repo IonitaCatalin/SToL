@@ -14,26 +14,37 @@
 <body>
     <div class="login_form">
         <h1>Stol</h1>
-        <form method="POST" action="">
-        
+
+        <!-- <form method="POST" action=""> -->
+
             <div class="email_input">
                 <i class="ri-mail-line"></i>
-                <input type="email" name="email" placeholder="Enter Email">
+                <input type="email" id="email_field" name="email" placeholder="Enter Email">
             </div>
 
             <div class="username_input">
                 <i class="ri-user-smile-line"></i>
-                <input type="text" name="username" placeholder="Enter Username">
+                <input type="text" id="username_field" name="username" placeholder="Enter Username">
             </div>
            
             <div class="password_input">
                 <i class="ri-lock-line"></i>
-                <input type="password" name="password" placeholder="Enter Password">
+                <input type="password" id="password_field" name="password" placeholder="Enter Password">
             </div>
-            <button class="btn btn-back" type="button" onclick="location.href='login';">Back</button>
-            <input class="btn btn-register" type="submit" name="submit_register" value="Register" />
 
-        </form>
+            <div class="alert" style="display:none">
+                <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                <p id="alert_text"></p>
+            </div>
+            
+            <!-- <button class="btn btn-back" id="back_button" type="button" onclick="location.href='login';">Back</button>
+            <input class="btn btn-register" id="register_button" type="submit" name="submit_register" value="Register" /> -->
+            <button class="btn btn-back" id="back_button" type="button" onclick="location.href='login';">Back</button>
+            <button class="btn btn-register" id="register_button" />Register</button>
+
+        <!-- </form> -->
+
+        <script src='../page/js/register.js'></script>
     </div>
       
 </body>

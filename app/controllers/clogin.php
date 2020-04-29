@@ -34,7 +34,7 @@
                 {
                     session_start();
                     $_SESSION['USER_ID']=$user_id;
-                    $json=new JsonResponse('success',null,'User succesfully logged in,session id was provided');
+                    $json=new JsonResponse('success',null,'User succesfully logged in, session id was provided', 200);
                     echo $json->response();
                 }
                 else

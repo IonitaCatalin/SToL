@@ -25,7 +25,9 @@ class JsonResponse {
     }
 
     public function response() {
+
         http_response_code($this->httpcode);
+        
         if(is_null($this->data))
         {   
             $response_array = array(
