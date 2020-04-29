@@ -57,7 +57,8 @@ class App
         $router->addRoute('POST','/api/user',function(){
             if(CSession::isUserAuthorized())
             {
-                
+                $register_controller=new CRegister();
+                $register_controller->registerUser();
             }
             else
             {
@@ -78,7 +79,7 @@ class App
                 echo $json->response();
             }
         });
-        $router->addRoute('PATCH','/api/user/',function(){
+        $router->addRoute('PATCH','/api/user',function(){
             if(CSession::isUserAuthorized())
             {
                 $profile_controller=new CProfile();
