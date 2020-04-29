@@ -1,6 +1,4 @@
 <?php
-	require_once '../app/core/Db.php';
-	require_once '../app/core/Exceptions/CredentialsExceptions.php';
 
 	class MProfile {
 
@@ -98,7 +96,6 @@
 		public function getUserDataArray($user_id)
 		{
 			$result_array = array();
-
 			$get_query = "SELECT username, email FROM accounts WHERE id = ${user_id}";
 			$get_stmt=DB::getConnection()->prepare($get_query);
 			$get_stmt->execute();

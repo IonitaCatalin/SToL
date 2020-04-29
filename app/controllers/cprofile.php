@@ -1,10 +1,10 @@
 <?php
-require_once '../app/core/Onedrive/Onedrive.php';
-require_once '../app/core/Onedrive/OnedriveException.php';
-require_once '../app/core/GDrive/Googledrive.php';
-require_once '../app/core/Dropbox/Dropbox.php';
-require_once '../app/core/JsonResponse.php';
-require_once '../app/core/Exceptions/CredentialsExceptions.php';
+// require_once '../core/Onedrive/Onedrive.php';
+// require_once '../app/core/Onedrive/OnedriveException.php';
+// require_once '../app/core/GDrive/Googledrive.php';
+// require_once '../app/core/Dropbox/Dropbox.php';
+// require_once '../app/core/JsonResponse.php';
+// require_once '../app/core/Exceptions/CredentialsExceptions.php';
 
 class CProfile extends Controller {
 
@@ -15,28 +15,8 @@ class CProfile extends Controller {
 		$this->model = $this->model('mprofile');	
 	}
 
-	public function index() {
-		session_start();
-		if(isset($_SESSION['USER_ID']))
-		{
-			if(isset($_SESSION['AUTH_ERROR']))
-			{
-				//Daca apare eroare la autentificare in vreun serviciu dupa redirect avem grija sa o afisam prin templating
-				unset($_SESSION['AUTH_ERROR']);
-			}
-			else
-			{
-			}
-		}
-		else
-		{
-			header('Location:'.'http://localhost/ProiectTW/public/clogin');
-		}
-	}
-	
 	public function authorizeServiceOneDrive()
 	{
-		session_start();
 		if(isset($_SESSION['USER_ID']))
 		{
 			$auth_code = $_GET['code'];
@@ -65,7 +45,6 @@ class CProfile extends Controller {
 
 	public function onedriveAuth()
 	{
-		session_start();
 		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'.OneDriveService::authorizationRedirectURL());
 		} else {
@@ -75,7 +54,6 @@ class CProfile extends Controller {
 
 	public function googledriveAuth()
 	{
-		session_start();
 		// click pe Unauthorize dupa ce esti logat pt a vedea fisierele
 		// if( $this->model->getUserDataArray($_SESSION['USER_ID'])['googledrive'] == true) {
 		// 	echo 'Unauthorize is not yet functional. Using this button for tests:)<br>';
@@ -95,7 +73,6 @@ class CProfile extends Controller {
 
 	public function authorizeServiceGoogleDrive()
 	{
-		session_start();
 		$url = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 		if(isset($_GET['code'])){
 			$decoded_json = GoogleDriveService::getAccesRefreshToken($_GET['code']);
@@ -111,7 +88,6 @@ class CProfile extends Controller {
 
 	public function dropboxAuth()
 	{
-		session_start();
 		if(isset($_SESSION['USER_ID'])) {
 			header('Location:'. DropboxService::authorizationRedirectURL());
 		} else {
@@ -121,7 +97,6 @@ class CProfile extends Controller {
 
 	public function authorizeServiceDropbox()
 	{
-		session_start();
 		if(isset($_GET['code'])){
 			$decoded_json = DropboxService::getAccesRefreshToken($_GET['code']);
 			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'dropbox');
@@ -134,71 +109,24 @@ class CProfile extends Controller {
 		}
 	}
 
-	public function user()
+	public function getUser()
 	{	
-		session_start();
-		if(!isset($_SESSION['USER_ID'])){
-			$json_response=new JsonResponse('error',null,'Access denied for unauthorized user',403);
-			echo $json_response->response();
-		}
-		elseif($_SERVER['REQUEST_METHOD']=='GET')
+		try
 		{
-				try
-				{	
-					$result=$this->model->getUserDataArray($_SESSION['USER_ID']);
-					$json=new JsonResponse('success',$result,null);
-					echo $json->response();
-				}
-				catch(PDOException $exception)
-				{
-					$json_response=new JsonResponse('error',null,'Service temporarly unavailable',500);
-					echo $json_response->response();
-				}
+			$data_json=json_encode($this->model->getUserDataArray($_SESSION['USER_ID']));
+			$json=new JsonResponse('success',$data_json,'User retrieval succesfully',200);
+			echo $json->response();
+
 		}
-		elseif($_SERVER['REQUEST_METHOD']=='PUT')
+		catch(PDOException $exception)
 		{
-			try
-			{
-				$put_args=json_decode(file_get_contents("php://input"),true);
-				if(isset($put_args['username']) && $put_args['username']!='')
-				{
-					$this->model->updateUsername($put_args['username'],$_SESSION['USER_ID']);
-				}
-				if(isset($put_args['oldpass']) && isset($put_args['newpass']) && $put_args['oldpass']!='')
-				{
-					$this->model->updatePassword($put_args['oldpass'],$put_args['newpass'],$_SESSION['USER_ID']);
-				}
-				$json=new JsonResponse('success',null,'Profile data updated succesfully!');
-				echo $json->response();
-			}
-			catch(UsernameTakenException $exception)
-			{
-				
-				$json=new JsonResponse('error',null,$exception->getMessage(),409);
-				echo $json->response();
-			}
-			catch(IncorrectPasswordException $exception)
-			{
-				$json_response=new JsonResponse('error',null,$exception->getMessage(),401);
-				echo $json_response->response();
-			}
-			catch(PDOException $exception)
-			{
-				echo $exception->getMessage();
-				$json_response=new JsonResponse('error',null,'Service temporarly unavailable',500);
-				echo $json_response->response();
-			}
-		}
-		else 
-		{
-			$json_response=new JsonResponse('error',null,'Method '.$_SERVER['REQUEST_METHOD'].' is not allowed',405);
-			echo $json_response->response();
+			$json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+			echo $json->response();
 		}
 
 	}
-	public function deauth()
+	public function deAuth()
 	{
-		session_start();
 		$query = array();
 		parse_str($_SERVER['QUERY_STRING'], $query);
 		if(isset($query['service']))

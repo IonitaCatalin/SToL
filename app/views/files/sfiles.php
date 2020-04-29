@@ -7,7 +7,7 @@
 		<link href="https://fonts.googleapis.com/css?family=Arimo&display=swap" rel="stylesheet">
 		<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 		<link rel="icon" href="images/favicon.ico" type="image/ico"/>
-		<link rel="stylesheet" type="text/css" href="../public/css/files.css">
+		<link rel="stylesheet" type="text/css" href="../page/css/files.css">
 
 	</head>
 	<body>
@@ -106,9 +106,9 @@
 				Footer
 			</footer>
 		</div>
-		<script async src="../public/js/upload_content.js"></script>
-		<script async src="../public/js/context_menu.js"></script>
-		<script async src="../public/js/load_storage.js"></script>
-		<script async src="../public/js/collapsible_menu.js"></script>
+		<script async src="../page/js/upload_content.js"></script>
+		<script async src="../page/js/context_menu.js"></script>
+		<script async src="../page/js/load_storage.js"></script>
+		<script async src="../page/js/collapsible_menu.js"></script>
 	</body>
 </html>

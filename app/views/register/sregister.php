@@ -8,7 +8,7 @@
     <meta name="keywords" content="Stol,Storage_Manager">
     <meta name="author" content="co-authored by Ionita Mihail-Catalin, Georgica Marius">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../public/css/register.css">
+    <link rel="stylesheet" type="text/css" href="../page/css/register.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
@@ -30,15 +30,7 @@
                 <i class="ri-lock-line"></i>
                 <input type="password" name="password" placeholder="Enter Password">
             </div>
-            <?php 
-                if(!is_null($error_msg)){
-                    echo '<div class="alert">';
-                    echo '<span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>';
-                    echo $error_msg;
-                    echo '</div>';
-                }
-            ?>
-            <button class="btn btn-back" type="button" onclick="location.href='clogin';">Back</button>
+            <button class="btn btn-back" type="button" onclick="location.href='login';">Back</button>
             <input class="btn btn-register" type="submit" name="submit_register" value="Register" />
 
         </form>

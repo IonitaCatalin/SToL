@@ -21,20 +21,37 @@ class App
         $router = new Router();
 
         $router->addRoute('GET','/page/login/',function(){
-            echo 'Login';
+                $page_controller=new CPage();
+                $page_controller->renderLogin();
         });
         
         $router->addRoute('GET','/page/register',function(){
-            echo 'Register';
+                $pageController=new CPage();
+                $pageController->renderRegister(); 
         });
 
         $router->addRoute('GET','/page/profile',function(){
-            echo 'Profile';
+            if(CSession::isUserAuthorized())
+            {
+                $page_controller=new CPage();
+                $page_controller->renderProfile();
+            }
+            else
+            {
+                header('Location:'.'http://localhost/ProiectTW/page/login');
+            }
         });
 
         $router->addRoute('GET','/page/files/',function(){
-            session_start();
-            echo $_SESSION['USER_ID'];
+            if(CSession::isUserAuthorized())
+            {
+                $page_controller=new CPage();
+                $page_controller->renderFiles();
+            }
+            else
+            {
+                header('Location:'.'http://localhost/ProiectTW/page/login');
+            }
         });
 
         $router->addRoute('POST','/api/user/',function(){
@@ -44,18 +61,20 @@ class App
             }
             else
             {
-                $json=new JsonResponse('error',null,'Unauthorized user',405);
+                $json=new JsonResponse('error',null,'Unauthorized user',401);
+                echo $json->response();
             }
             
         });
         $router->addRoute('GET','/api/user/',function(){
             if(CSession::isUserAuthorized())
             {
-                
+                $profile_controller=new CProfile();
+                $profile_controller->getUser();
             }
             else
             {
-                $json=new JsonResponse('error',null,'Unauthorized user',405);
+                $json=new JsonResponse('error',null,'Unauthorized user',401);
                 echo $json->response();
             }
             
@@ -65,8 +84,8 @@ class App
         });
 
         $router->addRoute('POST','/api/user/login',function(){
-            $loginController=new CLogin();
-            $loginController->logInUser();
+            $login_controller=new CLogin();
+            $login_controller->logInUser();
         });
 
         $router->run($this->method, $this->URI);

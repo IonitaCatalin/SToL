@@ -8,7 +8,7 @@
     <meta name="keywords" content="Stol,Storage_Manager">
     <meta name="author" content="co-authored by Ionita Mihail-Catalin,Georgica Marius">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../public/css/login.css">
+    <link rel="stylesheet" type="text/css" href="../page/css/login.css">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
 </head>
 <body>
@@ -25,15 +25,6 @@
                 <i class="ri-lock-line"></i>
                 <input type="password" name="password" placeholder="Enter Password">
             </div>
-
-            <?php 
-                if(!is_null($error_msg)){
-                    echo '<div class="alert">
-                    <span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>';
-                    echo $error_msg;
-                    echo '</div>';
-                }
-            ?>
             <div>
                <!-- <input type="submit" name="login" value="Login">-->
                 <input name="submit_login" type="submit" value="Login" class="btn btn-login" >

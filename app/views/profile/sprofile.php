@@ -4,8 +4,8 @@
 		<meta charset="utf-8" />
 		<title>Profile Page</title>
 		<link href="https://fonts.googleapis.com/css?family=Arimo&display=swap" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="../public/css/profile.css">
-		<link rel="shortcut icon" href="../public/images/favicon.ico">
+		<link rel="stylesheet" type="text/css" href="../page/css/profile.css">
+		<link rel="shortcut icon" href="../page/images/favicon.ico">
 	</head>
 	<body>
 		<div class="grid-wrapper">
@@ -16,16 +16,6 @@
 			
 			<article>
 				<div class="rows_group">
-				<?php
-					if($error_msg!='')
-					{
-						echo '<div class="alert" style="display:block;">
-						<span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>';
-						echo $error_msg;
-						echo '</div>';
-					}
-					else
-				?>
 					<div class="alert">
 						  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
 						  <p id="alert_text"></p>
@@ -91,7 +81,7 @@
 			<footer>
 				Footer
 			</footer>
-			<script src='../public/js/profile.js'></script>
+			<script src='../page/js/profile.js'></script>
 		</div>
 	</body>
 </html>

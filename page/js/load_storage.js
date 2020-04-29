@@ -12,10 +12,9 @@ const backBtn=document.querySelector('#btn-back');
 
 function loadJSON(name,callback)
 {
-    console.log(name);
     var xobj = new XMLHttpRequest();
     xobj.overrideMimeType('application/json');
-    xobj.open('GET', '../public/js/' + name + '.json',true);
+    xobj.open('GET', '/page/js/' + name + '.json',true);
     xobj.onreadystatechange=function(){
         if(xobj.readyState==4 && xobj.status=='200')
         {
@@ -70,13 +69,13 @@ function renderComponents(data)
             case 'folder':
             {
                 component.className='folder';
-                graphics.src='../public/images/folder.svg';
+                graphics.src='../page/images/folder.svg';
                 break;
             }
             case 'text-file':
             {
                 component.className='file';
-                graphics.src='../public/images/text-file.svg';
+                graphics.src='../page/images/text-file.svg';
                 break;
             }
         }
