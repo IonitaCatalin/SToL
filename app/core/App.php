@@ -92,6 +92,10 @@ class App
             }
         });
 
+        $router->addRoute('GET','/api/user/authorize/:service',function($service){
+           
+        });
+
         $router->addRoute('POST','/api/user/login',function(){
             $login_controller = new CLogin();
             $login_controller->logInUser();

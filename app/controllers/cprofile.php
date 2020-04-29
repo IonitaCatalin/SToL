@@ -130,26 +130,44 @@ class CProfile extends Controller {
 			}
 			else
 			{
+			 try{
 				if(isset($post_array['username']))
 				{
 					try
 					{	
 						$this->model->updateUsername($post_array['username'],$_SESSION['USER_ID']);
-						$json=new JsonResponse('succes',null,'Profile data update succesfully!');
-						echo $json->response();
 					}
 					catch(UsernameTakenException $exception)
 					{
 						$json=new JsonResponse('error',null,'Username is taken',409);
 						echo $json->response();
 					}
-					catch(PDOException $exception)
+				}
+				if(isset($post_array['newpassword']) && isset($post_array['oldpassword']))
+				{
+					try
 					{
-						$json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+						$this->model->updatePassword($post_array['oldpassword'],$post_array['newpassword'],$_SESSION['USER_ID']);
+					}
+					catch(IncorrectPasswordException $exception)
+					{
+						$json=new JsonResponse('error',null,'Given password is incorrect');
 						echo $json->response();
 					}
 				}
+				else 
+				{
+					$json=new JsonResponse('error',null,'Both old password and new password are required',422);
+					echo $json->response();
+				}
 			}
+			catch(PDOException $exception)
+			{
+				$json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+			}
+			$json=new JsonResponse('succes',null,'Data updated succesfully',200);
+			echo $json->response();
+		}
 	}
 	public function deAuth()
 	{

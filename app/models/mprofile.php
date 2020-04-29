@@ -130,7 +130,7 @@
 
 			if($this->checkExistingUsername($username))
 			{
-				throw new UsernameTakenException('Username is already taken!');
+				throw new UsernameTakenException();
 			}
 			else
 			{
@@ -163,7 +163,7 @@
 			}
 			else
 			{
-				throw new IncorrectPasswordException('The old password introduced is incorrect!');
+				throw new IncorrectPasswordException();
 			}
 		}
 

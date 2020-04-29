@@ -9,6 +9,8 @@ $inputs['raw_input'] = file_get_contents('php://input');
 parse_str($inputs['raw_input'] , $post);
 $inputs = array_merge($inputs,$post);
 
+echo parse_url($inputs['URI'],PHP_URL_QUERY);
+
 $app = new App($inputs);
 $app->run();
 
