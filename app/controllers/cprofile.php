@@ -62,17 +62,17 @@ class CProfile extends Controller {
 			try
 			{
 				$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($code),$_SESSION['USER_ID'],'onedrive');
-				$json=new JsonResponse('succes',null,'Onedrive service authorized succesfully',200);
+				$json = new JsonResponse('succes',null,'Onedrive service authorized succesfully',200);
 				echo $json->response();
 			}
 			catch(OnedriveAuthException $exception)
 			{
-				$json=new JsonResponse('error',null,'Authorization process for onedrive service failed');
+				$json = new JsonResponse('error',null,'Authorization process for onedrive service failed');
 				echo $json->response();
 			}
 			catch(PDOException $exception)
 			{
-				$json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+				$json = new JsonResponse('error',null,'Service temporarly unavailable',500);
 				echo $json->response();
 			}
 		
@@ -82,16 +82,24 @@ class CProfile extends Controller {
 
 	public function authorizeServiceGoogleDrive($code)
 	{
-		$url = "http://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-		if(isset($_GET['code'])){
+		try
+		{
 			$decoded_json = GoogleDriveService::getAccesRefreshToken($code);
 			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'googledrive');
+			$json = new JsonResponse('succes', null, 'GoogleDrive service authorized succesfully', 200);
+			echo $json->response();
+		}
+		catch(GoogledriveAuthException $exception)
+		{
+			$json = new JsonResponse('error', null, 'Authorization process for googledrive service failed');
+			echo $json->response();
+		}
+		catch(PDOException $exception)
+		{
+			$json = new JsonResponse('error', null, 'Service temporarly unavailable - Database Unique Token Per User Id Constraint ?', 500);
+			echo $json->response();
 		}
 
-		if(isset($_GET['error'])){
-			echo "Eroare: " . $_GET['error'] . "<br>";
-			die("Nu s-a putut obtine codul pentru cerere.");
-		}
 	}
 
 

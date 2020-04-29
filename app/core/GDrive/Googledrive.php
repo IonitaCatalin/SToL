@@ -4,7 +4,7 @@
     // le-am numit cu google deoarece e conflict cu cele de la onedrive
     define('GOOGLE_CLIENT_ID', '570482443729-qqchddo5v01cjvnn5r93du9oh34m1jco.apps.googleusercontent.com');
     define('GOOGLE_CLIENT_SECRET', 'eNo_ecjNkFkxJhzvuQ3QsJIF');
-    define('GOOGLE_REDIRECT_URI', 'http://localhost/ProiectTW/public/cprofile/authorizeServiceGoogleDrive/');
+    define('GOOGLE_REDIRECT_URI', 'http://localhost/ProiectTW/api/user/authorize/googledrive');
 
     class GoogleDriveService
     {
@@ -50,9 +50,13 @@
                 //CURLOPT_USERAGENT => 'Stol',
                 CURLOPT_POSTFIELDS => $post_fields
             ]);
-
             $response = curl_exec($curl);
             //print_r(json_decode($response,true));
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            if($httpcode != 200){
+                throw new GoogledriveAuthException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode, json_decode($response, true)['error']);
+            }
             curl_close($curl);
             return json_decode($response,true);
         }

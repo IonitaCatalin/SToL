@@ -65,7 +65,7 @@
             if(isset($response_array['error']))
             {
                 $http_code=null;
-                if(curl_info($get_curl,CURLINFO_HTTP_CODE)!=200 && $response_array['error']['code']=='itemNotFound')
+                if(curl_getinfo($get_curl,CURLINFO_HTTP_CODE)!=200 && $response_array['error']['code']=='itemNotFound')
                 {
                    $post_curl=curl_init();
                    curl_setopt_array($post_curl,[

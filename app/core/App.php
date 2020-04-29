@@ -116,6 +116,20 @@ class App
             }
         });
 
+        // pt gdrive, ruta mai contine scope
+        $router->addRoute('GET','/api/user/authorize/:service/:code/:scope',function($service,$code){
+            if(CSession::isUserAuthorized())
+            {
+                $profile_controller=new CProfile();
+                $profile_controller->authorizeServices($service,$code);
+            }
+            else
+            {
+                $json=new JsonResponse('error',null,'Unauthorized user',401);
+                echo $json->response();
+            }
+        });
+
         $router->addRoute('POST','/api/user/login',function(){
             $login_controller = new CLogin();
             $login_controller->logInUser();

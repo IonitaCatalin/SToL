@@ -21,6 +21,12 @@ class GoogledriveException extends Exception {
 
 }
 
+class GoogledriveAuthException extends GoogledriveException {
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
+    }
+}
+
 class GoogledriveInvalidateAccessTokenException extends GoogledriveException {
     public function __toString() {
         return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
