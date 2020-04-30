@@ -67,12 +67,13 @@ class CProfile extends Controller {
 			}
 			catch(OnedriveAuthException $exception)
 			{
-				$json = new JsonResponse('error',null,'Authorization process for onedrive service failed');
+				$json = new JsonResponse('error',null,'Authorization process for onedrive service failed: ' . $exception->getMessage());
+				//echo $exception->getMessage();
 				echo $json->response();
 			}
 			catch(PDOException $exception)
 			{
-				$json = new JsonResponse('error',null,'Service temporarly unavailable',500);
+				$json = new JsonResponse('error',null,'Service temporarly unavailable - Database Unique Token Per User Id Constraint ?',500);
 				echo $json->response();
 			}
 		
@@ -82,6 +83,14 @@ class CProfile extends Controller {
 
 	public function authorizeServiceGoogleDrive($code)
 	{
+        $global_array = $GLOBALS['array_of_query_string'];
+
+        if(isset($global_array['error'])){
+        	$error = $global_array['error'];
+        	$json = new JsonResponse('error', null, $error, 500);
+			echo $json->response();
+			return;
+        }
 		try
 		{
 			$decoded_json = GoogleDriveService::getAccesRefreshToken($code);
@@ -91,7 +100,7 @@ class CProfile extends Controller {
 		}
 		catch(GoogledriveAuthException $exception)
 		{
-			$json = new JsonResponse('error', null, 'Authorization process for googledrive service failed');
+			$json = new JsonResponse('error', null, 'Authorization process for googledrive service failed: ' . $exception->getMessage());
 			echo $json->response();
 		}
 		catch(PDOException $exception)
@@ -103,18 +112,34 @@ class CProfile extends Controller {
 	}
 
 
-	public function authorizeServiceDropbox()
+	public function authorizeServiceDropbox($code)
 	{
-		if(isset($_GET['code'])){
-			$decoded_json = DropboxService::getAccesRefreshToken($_GET['code']);
+        $global_array = $GLOBALS['array_of_query_string'];
+        
+        if(isset($global_array['error'])){
+        	$error = $global_array['error'] . $global_array['error_description'];
+        	$json = new JsonResponse('error', null, $error, 500);
+			echo $json->response();
+			return;
+        }
+		try
+		{
+			$decoded_json = DropboxService::getAccesRefreshToken($code);
 			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'dropbox');
-			header('Location:'.'http://localhost/ProiectTW/public/cprofile');
+			$json = new JsonResponse('succes', null, 'Dropbox service authorized succesfully', 200);
+			echo $json->response();
 		}
-		if(isset($_GET['error'])){
-			echo "Eroare: " . $_GET['error'] . "<br>";
-			echo "Cod eroare: " . $_GET['error_description'] . "<br>";
-			die("Nu s-a putut obtine codul pentru cerere.");
+		catch(DropboxAuthException $exception)
+		{
+			$json = new JsonResponse('error', null, 'Authorization process for dropbox service failed: ' . $exception->getMessage());
+			echo $json->response();
 		}
+		catch(PDOException $exception)
+		{
+			$json = new JsonResponse('error', null, 'Service temporarly unavailable - Database Unique Token Per User Id Constraint ?', 500);
+			echo $json->response();
+		}
+
 	}
 
 	public function getUser()

@@ -21,13 +21,13 @@ class DropboxException extends Exception {
 
 }
 
-class DropboxListAllFilesException extends DropboxException {
+class DropboxAuthException extends DropboxException {
     public function __toString() {
-        return __CLASS__ . ' ' .$this->path .": [{$this->code}]: {$this->message}";
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
     }
 }
 
-class DropboxAuthException extends DropboxException {
+class DropboxListAllFilesException extends DropboxException {
     public function __toString() {
         return __CLASS__ . ' ' .$this->path .": [{$this->code}]: {$this->message}";
     }

@@ -4,7 +4,7 @@ require_once('DropboxException.php');
 
     define('DROPBOX_APP_KEY','yakh16kscg1cb6o');
     define('DROPBOX_APP_SECRET','9guq9i3k5vibx8x');
-    define('DROPBOX_REDIRECT_URI','http://localhost/ProiectTW/public/cprofile/authorizeServiceDropbox/');
+    define('DROPBOX_REDIRECT_URI','http://localhost/ProiectTW/api/user/authorize/dropbox');
 
     class DropboxService
     {
@@ -24,6 +24,7 @@ require_once('DropboxException.php');
 
         public static function getAccesRefreshToken($code)
         {
+
             $array=[
                 'code' => $code,
                 'grant_type' => 'authorization_code',
@@ -44,6 +45,12 @@ require_once('DropboxException.php');
             ]);
 
             $response = curl_exec($curl);
+            $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            if($httpcode != 200){
+                throw new DropboxAuthException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode, json_decode($response, true)['error'] . ' ' . json_decode($response, true)['error_description']);
+            }
+
             //print_r(json_decode($response,true)); //access_token, token_type, uid, account_id, no refresh token :'(
             curl_close($curl);
             return json_decode($response,true);

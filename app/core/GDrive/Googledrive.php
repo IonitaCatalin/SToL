@@ -260,7 +260,7 @@
             echo ($file);
             return true; //return ca sa nu mai apara si alte lucruri in fisier
             echo "Am terminat de salvat"; //ar trebui sa nu apara in fisier :)
-    
+
         }
 
         public static function uploadFile($token, $path = null) {

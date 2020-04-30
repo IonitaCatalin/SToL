@@ -103,11 +103,15 @@ class App
                 echo $json->response();
             }
         });
-        $router->addRoute('GET','/api/user/authorize/:service/:code',function($service,$code){
+        $router->addRoute('GET', '/api/user/authorize/:service/:code',function($service,$code){
             if(CSession::isUserAuthorized())
             {
-                $profile_controller=new CProfile();
-                $profile_controller->authorizeServices($service,$code);
+                $global_array = $GLOBALS['array_of_query_string'];
+                if(isset($global_array['code'])){
+                    $code = $global_array['code'];
+                    $profile_controller=new CProfile();
+                    $profile_controller->authorizeServices($service, $code);
+                }
             }
             else
             {
@@ -116,26 +120,12 @@ class App
             }
         });
 
-        // pt gdrive, ruta mai contine scope
-        $router->addRoute('GET','/api/user/authorize/:service/:code/:scope',function($service,$code){
-            if(CSession::isUserAuthorized())
-            {
-                $profile_controller=new CProfile();
-                $profile_controller->authorizeServices($service,$code);
-            }
-            else
-            {
-                $json=new JsonResponse('error',null,'Unauthorized user',401);
-                echo $json->response();
-            }
-        });
-
-        $router->addRoute('POST','/api/user/login',function(){
+        $router->addRoute('POST', '/api/user/login',function(){
             $login_controller = new CLogin();
             $login_controller->logInUser();
         });
 
-        $router->addRoute('POST','/api/user/register', function(){
+        $router->addRoute('POST', '/api/user/register', function(){
             $register_controller = new CRegister();
             $register_controller->registerUser();
         });
