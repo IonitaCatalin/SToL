@@ -121,22 +121,17 @@ class App
         });
 
         $router->addRoute('GET','/api/jwt',function(){
-            $authorize_controller=new CAuthorization();
-            if($authorize_controller->validateAuthorization())
+            $authorize=new AuthorizationHandler();
+            if($authorize->validateAuthorization())
             {
-                var_dump($authorize_controller->getDecoded());
-            }
-            else
-            {
-
+                var_dump($authorize->getDecoded());
             }
 
         });
 
         $router->addRoute('POST', '/api/user/login',function(){
             $login_controller = new CLogin();
-            $authorize_controller=new CAuthorization();
-            $user_id=$login_controller->logInUser();
+            $login_controller->logInUser();
         });
 
         $router->addRoute('POST', '/api/user/register', function(){
