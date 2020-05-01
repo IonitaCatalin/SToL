@@ -32,9 +32,11 @@
                 $user_id=$this->model->logInUser($post_array['username'],$post_array['password']);
                 if(!is_null($user_id))
                 {
-                    session_start();
                     $_SESSION['USER_ID']=$user_id;
-                    $json=new JsonResponse('success',null,'User succesfully logged in, session id was provided', 200);
+                    $authorize_controller=new CAuthorization();
+                    $token=$authorize_controller->generateToken($user_id);
+                    setcookie('access_data',$token,time()+3*60*60);
+                    $json=new JsonResponse('success',array('access_token'=>$token),'User succesfully logged in, access token was provided', 200);
                     echo $json->response();
                 }
                 else

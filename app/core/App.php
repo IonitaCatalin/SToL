@@ -120,9 +120,23 @@ class App
             }
         });
 
+        $router->addRoute('GET','/api/jwt',function(){
+            $authorize_controller=new CAuthorization();
+            if($authorize_controller->validateAuthorization())
+            {
+                var_dump($authorize_controller->getDecoded());
+            }
+            else
+            {
+
+            }
+
+        });
+
         $router->addRoute('POST', '/api/user/login',function(){
             $login_controller = new CLogin();
-            $login_controller->logInUser();
+            $authorize_controller=new CAuthorization();
+            $user_id=$login_controller->logInUser();
         });
 
         $router->addRoute('POST', '/api/user/register', function(){
