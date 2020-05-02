@@ -1,5 +1,6 @@
 <?php
     use \Firebase\JWT\JWT;
+
     class AuthorizationHandler
     {
         private $model;
@@ -10,14 +11,13 @@
         private $iat;
         private $nbf;
         private $exp;
-        public function __construct()
+
+        public function generateToken($user_id)
         {
             $iat=time();
             $nbf=$iat;
             $exp=time()+(3*60*60);
-        }
-        public function generateToken($user_id)
-        {
+
             $token=array(
                 "iss"=>$this->iss,
                 "aud"=>$this->aud,
@@ -32,6 +32,7 @@
             $jwt=JWT::encode($token,$this->key);
             return $jwt;
         }
+
         public function validateAuthorization()
         {        
             if(isset(getallheaders()['Authorization']))
@@ -57,6 +58,7 @@
                 return false;
             }
         }
+        
         public function getDecoded()
         {
             return $this->decoded;

@@ -35,7 +35,7 @@ class CProfile extends Controller {
 			}	
 		}
 	}
-	public function authorizeServices($service,$code)
+	public function authorizeServices($service, $code)
 	{
 		$service=strtolower($service);
 		switch($service)
@@ -57,11 +57,11 @@ class CProfile extends Controller {
 			}	
 		}
 	}
-	public function authorizeServiceOneDrive($code)
+	public function authorizeServiceOneDrive($code, $user_id)
 	{
 			try
 			{
-				$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($code),$_SESSION['USER_ID'],'onedrive');
+				$this->model->insertAuthToken(OneDriveService::getAccesRefreshToken($code), $user_id, 'onedrive');
 				$json = new JsonResponse('succes',null,'Onedrive service authorized succesfully',200);
 				echo $json->response();
 			}
@@ -81,7 +81,7 @@ class CProfile extends Controller {
 
 	
 
-	public function authorizeServiceGoogleDrive($code)
+	public function authorizeServiceGoogleDrive($code, $user_id)
 	{
         $global_array = $GLOBALS['array_of_query_string'];
 
@@ -94,7 +94,7 @@ class CProfile extends Controller {
 		try
 		{
 			$decoded_json = GoogleDriveService::getAccesRefreshToken($code);
-			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'googledrive');
+			$this->model->insertAuthToken($decoded_json, $user_id, 'googledrive');
 			$json = new JsonResponse('succes', null, 'GoogleDrive service authorized succesfully', 200);
 			echo $json->response();
 		}
@@ -112,7 +112,7 @@ class CProfile extends Controller {
 	}
 
 
-	public function authorizeServiceDropbox($code)
+	public function authorizeServiceDropbox($code, $user_id)
 	{
         $global_array = $GLOBALS['array_of_query_string'];
         
@@ -125,7 +125,7 @@ class CProfile extends Controller {
 		try
 		{
 			$decoded_json = DropboxService::getAccesRefreshToken($code);
-			$this->model->insertAuthToken($decoded_json, $_SESSION['USER_ID'], 'dropbox');
+			$this->model->insertAuthToken($decoded_json, $user_id, 'dropbox');
 			$json = new JsonResponse('succes', null, 'Dropbox service authorized succesfully', 200);
 			echo $json->response();
 		}
@@ -142,11 +142,11 @@ class CProfile extends Controller {
 
 	}
 
-	public function getUser()
+	public function getUser($user_id)
 	{	
 		try
 		{
-			$data_json=json_encode($this->model->getUserDataArray($_SESSION['USER_ID']));
+			$data_json=json_encode($this->model->getUserDataArray($user_id));
 			$json=new JsonResponse('success',$data_json,'User retrieval succesfully',200);
 			echo $json->response();
 
@@ -158,7 +158,7 @@ class CProfile extends Controller {
 		}
 
 	}
-	public function changeUserData()
+	public function changeUserData($user_id)
 	{
 			$post_array=json_decode(file_get_contents('php://input'),true);
 			if(!is_array($post_array))
@@ -173,7 +173,7 @@ class CProfile extends Controller {
 				{
 					try
 					{	
-						$this->model->updateUsername($post_array['username'],$_SESSION['USER_ID']);
+						$this->model->updateUsername($post_array['username'], $user_id);
 					}
 					catch(UsernameTakenException $exception)
 					{
@@ -185,7 +185,7 @@ class CProfile extends Controller {
 				{
 					try
 					{
-						$this->model->updatePassword($post_array['oldpassword'],$post_array['newpassword'],$_SESSION['USER_ID']);
+						$this->model->updatePassword($post_array['oldpassword'],$post_array['newpassword'], $user_id);
 					}
 					catch(IncorrectPasswordException $exception)
 					{

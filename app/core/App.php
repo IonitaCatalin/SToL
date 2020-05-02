@@ -3,10 +3,12 @@ class App
 {
     private $URI;          
     private $method;       
-    private $raw_input;     
+    private $raw_input;
+    private $authorize;   
 
     function __construct($inputs)
     {
+        $this->authorize = new AuthorizationHandler();
         $this->URI =$this->checkKey('URI', $inputs);
         $this->method =$this->checkKey('method', $inputs);
     }
@@ -18,7 +20,7 @@ class App
     public function run() {
 
         $router = new Router();
-        $authorize=new AuthorizationHandler();
+        //$authorize = new AuthorizationHandler();
 
         $router->addRoute('GET','/page/login',function(){
                 $page_controller=new CPage();
@@ -42,7 +44,7 @@ class App
             }
         });
 
-        $router->addRoute('GET','/page/files',function(){
+        $router->addRoute('GET', '/page/files',function(){
             if(CSession::isUserAuthorized())
             {
                 $page_controller=new CPage();
@@ -54,82 +56,60 @@ class App
             }
         });
 
-        $router->addRoute('POST','/api/user',function(){
-            if(CSession::isUserAuthorized())
+        $router->addRoute('GET', '/api/user', function()
+        {
+            if($this->authorize->validateAuthorization())
             {
-                $register_controller=new CRegister();
-                $register_controller->registerUser();
-            }
-            else
-            {
-                $json=new JsonResponse('error',null,'Unauthorized user',401);
-                echo $json->response();
-            }
-            
-        });
-        $router->addRoute('GET','/api/user',function(){
-            if(CSession::isUserAuthorized())
-            {
-                $profile_controller=new CProfile();
-                $profile_controller->getUser();
-            }
-            else
-            {
-                $json=new JsonResponse('error',null,'Unauthorized user',401);
-                echo $json->response();
-            }
-        });
-        $router->addRoute('PATCH','/api/user',function(){
-            if(CSession::isUserAuthorized())
-            {
-                $profile_controller=new CProfile();
-                $profile_controller->changeUserData();
-            }
-            else
-            {
-                $json=new JsonResponse('error',null,'Unauthorized user',401);
-                echo $json->response();
+                $profile_controller = new CProfile();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $profile_controller->getUser($user_id);
             }
         });
 
-        $router->addRoute('GET','/api/user/authorize/:service',function($service){
-            if(CSession::isUserAuthorized())
+        $router->addRoute('PATCH','/api/user',function()
+        {
+            if($this->authorize->validateAuthorization())
             {
-                $profile_controller=new CProfile();
-                $profile_controller->preAuthorization($service);
-            }
-            else
-            {
-                $json=new JsonResponse('error',null,'Unauthorized user',401);
-                echo $json->response();
+                $profile_controller = new CProfile();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $profile_controller->changeUserData($user_id);
             }
         });
-        $router->addRoute('GET', '/api/user/authorize/:service/:code',function($service,$code){
-            if(CSession::isUserAuthorized())
+
+        $router->addRoute('GET','/api/user/authorize/:service', function($service)
+        {
+            if($this->authorize->validateAuthorization())
             {
+                $profile_controller = new CProfile();
+                $profile_controller->preAuthorization($service);
+            }
+
+        });
+
+        $router->addRoute('GET', '/api/user/authorize/:service/:code',function($service,$code)
+        {
+            // consider ca nu trb verificat jwt tokenul aici deoarece pe calea aceasta se intra de pe unul din servicii dupa redirect, atunci cand intoarce acces token-ul
+            //if($this->authorize->validateAuthorization())
+            //{
                 $global_array = $GLOBALS['array_of_query_string'];
                 if(isset($global_array['code'])){
                     $code = $global_array['code'];
                     $profile_controller=new CProfile();
                     $profile_controller->authorizeServices($service, $code);
                 }
-            }
-            else
+            //}
+        });
+
+        $router->addRoute('GET','/api/jwt',function()
+        {
+            if($this->authorize->validateAuthorization())
             {
-                $json=new JsonResponse('error',null,'Unauthorized user',401);
-                echo $json->response();
+                var_dump($this->authorize->getDecoded());
             }
         });
 
-        $router->addRoute('GET','/api/jwt',function(){
-            if($authorize->validateAuthorization())
-            {
-                var_dump($authorize->getDecoded());
-            }
-
-        });
-
-        $router->addRoute('POST', '/api/user/login',function(){
+        $router->addRoute('POST', '/api/user/login', function()
+        {
             $login_controller = new CLogin();
             $login_controller->logInUser();
         });

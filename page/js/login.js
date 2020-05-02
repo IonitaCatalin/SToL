@@ -1,4 +1,4 @@
-const registerButton = document.getElementById('login_button');
+const loginButton = document.getElementById('login_button');
 
 function toggleAlert(message = null, error = true, disable = false)
 {
@@ -50,7 +50,4 @@ function postLoginData()
 
 }
 
-registerButton.addEventListener('click', postLoginData);
-
-
-
+loginButton.addEventListener('click', postLoginData);

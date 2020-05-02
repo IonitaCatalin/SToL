@@ -32,9 +32,13 @@
                 $user_id=$this->model->logInUser($post_array['username'],$post_array['password']);
                 if(!is_null($user_id))
                 {
+                    session_start();
+                    $_SESSION['USER_ID'] = $user_id;
+                    
                     $authorize=new AuthorizationHandler();
                     $token=$authorize->generateToken($user_id);
-                    setcookie('access_data',$token,time()+3*60*60);
+                    //setcookie('access_data', $token, 10800, "/", null);
+                    setcookie('jwt_token', $token, time()+60*60*24*365, '/'); 
                     $json=new JsonResponse('success',array('access_token'=>$token),'User succesfully logged in, access token was provided', 200);
                     echo $json->response();
                 }
