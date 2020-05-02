@@ -10,49 +10,50 @@ class CProfile extends Controller {
 		$this->model = $this->model('mprofile');	
 	}
 
-	public function preAuthorization($service)
+	public function preAuthorization($service, $user_id)
 	{
 		$service=strtolower($service);
 		switch($service)
 		{
 			case 'onedrive':
 			{
-				http_response_code(307);
-				header('Location:'.OneDriveService::authorizationRedirectURL());
+				$json = new JsonResponse('success', OneDriveService::authorizationRedirectURL($user_id), 'Onedrive Authorization Link', 200);
+				echo $json->response();
 				break;
+
 			}
 			case 'googledrive':
 			{
-				http_response_code(307);
-				header('Location:'.GoogleDriveService::authorizationRedirectURL());
+				$json = new JsonResponse('success', GoogleDriveService::authorizationRedirectURL($user_id), 'GoogleDrive Authorization Link', 200);
+				echo $json->response();
 				break;
 			}
 			case 'dropbox':
 			{
-				http_response_code(307);
-				header('Location:'.DropboxService::authorizationRedirectURL());
+				$json = new JsonResponse('success', DropboxService::authorizationRedirectURL($user_id), 'Dropbox Authorization Link', 200);
+				echo $json->response();
 				break;
 			}	
 		}
 	}
-	public function authorizeServices($service, $code)
+	public function authorizeServices($service, $code, $user_id)
 	{
 		$service=strtolower($service);
 		switch($service)
 		{
 			case 'onedrive':
 			{
-				$this->authorizeServiceOneDrive($code);
+				$this->authorizeServiceOneDrive($code, $user_id);
 				break;
 			}
 			case 'googledrive':
 			{
-				$this->authorizeServiceGoogleDrive($code);
+				$this->authorizeServiceGoogleDrive($code, $user_id);
 				break;
 			}
 			case 'dropbox':
 			{
-				$this->authorizeServiceDropbox($code);
+				$this->authorizeServiceDropbox($code, $user_id);
 				break;
 			}	
 		}
@@ -158,18 +159,31 @@ class CProfile extends Controller {
 		}
 
 	}
+
 	public function changeUserData($user_id)
 	{
-			$post_array=json_decode(file_get_contents('php://input'),true);
-			if(!is_array($post_array))
-            {
-                $json=new JsonResponse('error',null,'Malformed request,JSON could not be interpreted',400);
-                echo $json->response();
-			}
-			else
+		$post_data = file_get_contents('php://input');
+		$post_array = json_decode($post_data, true);
+
+
+		if(!is_array($post_array)) {
+			$json = new JsonResponse('error', null, 'Malformed request,JSON data object could not be parsed', 400);
+			echo $json->response();
+			return;
+		}
+
+		if( (isset($post_array['username']) == false) || 
+        	(isset($post_array['oldpassword']) == false) ||
+        	(isset($post_array['newpassword']) == false) )
+        {
+			$json = new JsonResponse('error', null, 'Malformed request, required fields are missing', 400);
+			echo $json->response();
+        }
+		else {
+
+			try
 			{
-			 try{
-				if(isset($post_array['username']))
+				if($post_array['username'] != '')
 				{
 					try
 					{	
@@ -177,39 +191,38 @@ class CProfile extends Controller {
 					}
 					catch(UsernameTakenException $exception)
 					{
-						$json=new JsonResponse('error',null,'Username is taken',409);
-						echo $json->response();
+						$json=new JsonResponse('error',null,'Username is taken', 409);
+						echo $json->response(); return;
 					}
 				}
-				if(isset($post_array['newpassword']) && isset($post_array['oldpassword']))
+				if($post_array['oldpassword'] != '' && $post_array['newpassword'] != '')
 				{
 					try
 					{
-						$this->model->updatePassword($post_array['oldpassword'],$post_array['newpassword'], $user_id);
+						$this->model->updatePassword($post_array['oldpassword'], $post_array['newpassword'], $user_id);
 					}
 					catch(IncorrectPasswordException $exception)
 					{
-						$json=new JsonResponse('error',null,'Given password is incorrect');
-						echo $json->response();
+						$json=new JsonResponse('error',null,'Given password is incorrect', 422);
+						echo $json->response(); return;
 					}
-				}
-				else 
-				{
-					$json=new JsonResponse('error',null,'Both old password and new password are required',422);
-					echo $json->response();
 				}
 			}
 			catch(PDOException $exception)
 			{
 				$json=new JsonResponse('error',null,'Service temporarly unavailable',500);
 			}
-			$json=new JsonResponse('succes',null,'Data updated succesfully',200);
-			echo $json->response();
 		}
-	}
-	public function deAuth()
-	{
 		
+		$json=new JsonResponse('success', null, 'Data updated succesfully',200);
+		echo $json->response();
+	}
+
+	public function deAuth($service, $user_id)
+	{
+		$this->model->invalidateService($user_id, $service);
+		$json = new JsonResponse('success', null, 'Serice succesfully unauthorized',200);
+		echo $json->response();
 	}
 
 }

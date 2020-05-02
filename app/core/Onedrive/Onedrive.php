@@ -12,9 +12,9 @@
     class OneDriveService
     {
         private $drive_id;
-        public static function authorizationRedirectURL()
+        public static function authorizationRedirectURL($user_id)
         {
-            return 'https://login.microsoftonline.com/'.TENANT.'/oauth2/v2.0/authorize?client_id='.CLIENT_ID.'&response_type=code&redirect_uri='.REDIRECT_URI_AUTH.'&response_mode=query&scope='.SCOPE;
+            return 'https://login.microsoftonline.com/'.TENANT.'/oauth2/v2.0/authorize?client_id='.CLIENT_ID.'&response_type=code&redirect_uri='.REDIRECT_URI_AUTH.'&response_mode=query&scope='.SCOPE.'&state='.$user_id;
         }
         
         public static function getAccesRefreshToken($auth_code)

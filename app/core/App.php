@@ -76,28 +76,40 @@ class App
             }
         });
 
+        $router->addRoute('DELETE', '/api/user/deauthorize/:service', function($service)
+        {
+            if($this->authorize->validateAuthorization())
+            {
+                $profile_controller = new CProfile();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $profile_controller-> deAuth($service, $user_id);
+            }
+        });
+
+
         $router->addRoute('GET','/api/user/authorize/:service', function($service)
         {
             if($this->authorize->validateAuthorization())
             {
                 $profile_controller = new CProfile();
-                $profile_controller->preAuthorization($service);
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $profile_controller-> preAuthorization($service, $user_id);
             }
 
         });
 
-        $router->addRoute('GET', '/api/user/authorize/:service/:code',function($service,$code)
+        $router->addRoute('GET', '/api/user/authorize/:service/:code', function($service,$code)
         {
-            // consider ca nu trb verificat jwt tokenul aici deoarece pe calea aceasta se intra de pe unul din servicii dupa redirect, atunci cand intoarce acces token-ul
-            //if($this->authorize->validateAuthorization())
-            //{
-                $global_array = $GLOBALS['array_of_query_string'];
-                if(isset($global_array['code'])){
-                    $code = $global_array['code'];
-                    $profile_controller=new CProfile();
-                    $profile_controller->authorizeServices($service, $code);
-                }
-            //}
+
+            $global_array = $GLOBALS['array_of_query_string'];
+            if(isset($global_array['code'])){
+                $code = $global_array['code'];
+                $user_id = $global_array['state'];                        // !!!! trebuie verificat  pt alte servicii
+                $profile_controller=new CProfile();
+                $profile_controller->authorizeServices($service, $code, $user_id);
+                header('Location: http://localhost/ProiectTW/page/profile');
+            }
+
         });
 
         $router->addRoute('GET','/api/jwt',function()

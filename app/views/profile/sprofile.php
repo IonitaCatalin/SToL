@@ -16,10 +16,11 @@
 			
 			<article>
 				<div class="rows_group">
-					<div class="alert">
+					<div class="alert" style="display:none">
 						  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
 						  <p id="alert_text"></p>
 					</div>
+
 					<div class="generic_row">
 					
 						<div id="text_profile"><h2>Profile</h2></div>
@@ -71,7 +72,7 @@
 						<button id="button-dropbox" class="button_log_in" type="submit">Authorize</button>
 					</div>
 					<div class="generic_row">
-						<button id="cancel_changes_button" onclick="location.href='cfiles'">Go Back</button>
+						<button id="cancel_changes_button" onclick="location.href='http://localhost/ProiectTW/page/files'">Go Back</button>
 						<button id="save_changes_button">Save</button>
 					</div>
 				</div>
@@ -81,7 +82,7 @@
 			<footer>
 				Footer
 			</footer>
-			<script src='../page/js/profile.js'></script>
+			    <script src='../page/js/profile.js'></script>
 		</div>
 	</body>
 </html>

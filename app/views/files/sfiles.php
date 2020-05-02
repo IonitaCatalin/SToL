@@ -15,7 +15,7 @@
 			<header>
 				<div>
 					<h1>Stol - Universal Storage Tool</h1>
-					<a href="cprofile">
+					<a href="http://localhost/ProiectTW/page/profile">
 						<img src="images/avatar.png" alt="avatar">
 					</a>
 				</div>
