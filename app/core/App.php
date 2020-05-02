@@ -18,6 +18,7 @@ class App
     public function run() {
 
         $router = new Router();
+        $authorize=new AuthorizationHandler();
 
         $router->addRoute('GET','/page/login',function(){
                 $page_controller=new CPage();
@@ -121,7 +122,6 @@ class App
         });
 
         $router->addRoute('GET','/api/jwt',function(){
-            $authorize=new AuthorizationHandler();
             if($authorize->validateAuthorization())
             {
                 var_dump($authorize->getDecoded());

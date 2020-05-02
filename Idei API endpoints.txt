@@ -1,0 +1,54 @@
+Ideii API:
+
+
+Operatii suportate:
+0.Vizualizare continut in drive(fisiere si foldere pentru un anumit parent-id)
+1.Create(Folder) si Update(fisier)
+2.Stergere pentru ambele
+3.Redenumire pentru ambele
+4.Mutare pentru ambele
+5.Upload pentru fisier
+6.Download pentru fisier
+
+<Vizualizare> GET localhost/api/items/[{item-id}] - Fara parent-id va returna toate items din folderul root al userului
+<Creare> POST localhost/api/items/{parent-id} - Va creea un folder sub parent-ul specificat prin parent-id
+<Stergere> DELETE localhost/api/items/{item-id} - Va sterge fie fisierul fie folderul specificat ca si parent-id
+<Redenumire> PATCH localhost/api/items/{item-id} - Va redenumii resursa respectiva ,eventual vom pune noul nume ca si continut in request-body
+<Mutare> PUT localhost/api/items/{item-id}/{new-parent-id} - Va muta resursa respectiva de la locatia curenta la noul parent-id,practic doar schimbam in baza de date aspectul asta de parent-id
+<Upload> POST localhost/api/items/upload - Va uploada resursa respective pe container-ul de storage al user-ului specificat prin user-id
+<Download> GET localhost/api/items/download/{item-id} - Doar fisier,foldere nu sunt suportate
+
+
+
+Idee suplimentare care nu se cere implementata:In loc de item-id sau parent-id fiecare api call ar putea sa contina path-ul absolut catre resursa la care ne referim spre exemplu localhost/api/items/root:/fisier1/fisier2
+
+
+
+Cum sa arate baza de date:
+
+TABLE Items(
+		user_id - id-ul din tabela cu accounts,
+		item_id - un id unic probabil un ,
+		content_type - folder sau file)
+TABLE Folders(user_id,
+				item_id - item_id din tabela cu items,
+				parent_id - un item_id din aceeasi tabela(Folders) care sa arate relatie de child-parent pentru un folder,
+				name - numele folderului,
+				description[optional])
+				last_modified[optional]
+				create[optional]
+TABLE Files(user_id,
+			item_id,
+			folder_id[corespunde item_id din Folders],
+			mode,
+			from_service,
+			file_service_id,
+			fragmented_id)
+Fragments(user_id,
+		  fragmented_id,
+		  onedrive_id,
+		  dropbox_id,
+		  googledrive_id,
+		  onedrive_offset,
+		  googledrive_offset,
+		  dropbox_offset)
