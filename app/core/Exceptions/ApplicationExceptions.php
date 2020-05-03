@@ -27,13 +27,13 @@ class IncorrectPasswordException extends ApplicationExceptions
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 }
-class InvalidParentId extends ApplicationExceptions
+class InvalidItemId extends ApplicationExceptions
 {
     public function __toString() {
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 }
-class FolderNameTaken extends ApplicationExceptions
+class ItemNameTaken extends ApplicationExceptions
 {
     public function __toString() {
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";

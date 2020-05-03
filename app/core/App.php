@@ -96,7 +96,6 @@ class App
                 $profile_controller->authorizeServices($service, $code, $user_id);
                 header('Location: http://localhost/ProiectTW/page/profile');
             }
-
         });
 
         $router->addRoute('GET','/api/jwt',function()
@@ -112,7 +111,6 @@ class App
             $login_controller = new CLogin();
             $login_controller->logInUser();
         });
-
         $router->addRoute('POST', '/api/user/register', function(){
             $register_controller = new CRegister();
             $register_controller->registerUser();
@@ -123,6 +121,23 @@ class App
                 $items_controller=new CItems();
                 $items_controller->createFolderItem($this->authorize->getDecoded()['user_id'],$parent_id);
             }
+        });
+        $router->addRoute('POST','/api/items/',function(){
+            if($this->authorize->validateAuthorization())
+            {
+                $items_controller=new CItems();
+                $items_controller->createFolderItemToRoot($this->authorize->getDecoded()['user_id']);
+            }
+        });
+        $router->addRoute('PATCH','/api/items/:item_id',function($item_id){
+            if($this->authorize->validateAuthorization())
+            {
+                $items_controller=new CItems();
+                $items_controller->updateItem($this->authorize->getDecoded()['user_id'],$item_id);
+            }
+        });
+        $router->addRoute('GET','/api/test/root:/:path',function($path){
+            echo $path;
         });
 
         $router->run($this->method, $this->URI);
