@@ -147,6 +147,7 @@
 		public function updatePassword($oldpass,$newpass,$id)
 		{
 			$get_sql="SELECT password FROM ACCOUNTS WHERE id=:userid";
+			echo $id;
 			$get_pass_stmt=DB::getConnection()->prepare($get_sql);
 			$get_pass_stmt->execute([
 				'userid'=>$id

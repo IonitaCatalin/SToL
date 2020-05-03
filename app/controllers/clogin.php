@@ -15,39 +15,47 @@
                 $json=new JsonResponse('error',null,'Only application/json content-type allowed',415);
                 echo $json->response();
             }
-            $post_data=file_get_contents('php://input');
-            $post_array=json_decode($post_data,true);
-            if(!is_array($post_array))
+            else
             {
-                $json=new JsonResponse('error',null,'Malformed request,JSON data object could not be parsed',400);
-                echo $json->response();
-            }
-            if(isset($post_array['username'])==false || isset($post_array['password'])==false)
-            {
-                    $json=new JsonResponse('error',null,'Malformed request,required fields are missing',400);
-                    echo $json->response();
-            }
-           else
-           {
-                $user_id=$this->model->logInUser($post_array['username'],$post_array['password']);
-                if(!is_null($user_id))
+                $post_data=file_get_contents('php://input');
+                $post_array=json_decode($post_data,true);
+                if(!is_array($post_array))
                 {
-                    session_start();
-                    $_SESSION['USER_ID'] = $user_id;
-                    
-                    $authorize=new AuthorizationHandler();
-                    $token=$authorize->generateToken($user_id);
-                    //setcookie('access_data', $token, 10800, "/", null);
-                    setcookie('jwt_token', $token, time()+60*60*24*365, '/'); 
-                    $json=new JsonResponse('success',array('access_token'=>$token),'User succesfully logged in, access token was provided', 200);
+                    $json=new JsonResponse('error',null,'Malformed request,JSON data object could not be parsed',400);
                     echo $json->response();
+                }
+                if(isset($post_array['username'])==false || isset($post_array['password'])==false)
+                {
+                        $json=new JsonResponse('error',null,'Malformed request,required fields are missing',400);
+                        echo $json->response();
                 }
                 else
                 {
-                    $json=new JsonResponse('error',null,'Invalid credentials or user does not exist',401);
-                    echo $json->response();
+                    try
+                    {
+                        $user_id=$this->model->logInUser($post_array['username'],$post_array['password']);
+                        if(!is_null($user_id))
+                        {   
+                            echo $user_id;  
+                            $authorize=new AuthorizationHandler();
+                            $token=$authorize->generateToken($user_id);
+                            setcookie('jwt_token', $token, time()+60*60*24*365, '/'); 
+                            $json=new JsonResponse('success',array('access_token'=>$token),'User succesfully logged in, access token was provided', 200);
+                            echo $json->response();
+                        }
+                        else
+                        {
+                            $json=new JsonResponse('error',null,'Invalid credentials or user does not exist',401);
+                            echo $json->response();
+                        }
+                    }
+                    catch(PDOException $exception)
+                    {
+                        $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                        echo $json->response();
+                    }
                 }
-           }
+            }
         }
     }
 ?>

@@ -18,8 +18,9 @@ require_once 'core/GDrive/GoogledriveException.php';
 require_once 'core/Dropbox/Dropbox.php';
 require_once 'core/Dropbox/DropboxException.php';
 require_once 'core/JsonResponse.php';
-require_once 'core/Exceptions/CredentialsExceptions.php';
+require_once 'core/Exceptions/ApplicationExceptions.php';
 require_once 'core/AuthorizationHandler.php';
+
 require_once ROOT_PATH.'\\vendor\\autoload.php';
 
 ?>

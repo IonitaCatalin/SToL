@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 24, 2020 at 12:30 AM
+-- Generation Time: May 03, 2020 at 03:35 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.2
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `accounts` (
-  `id` int(11) NOT NULL,
+  `id` varchar(200) NOT NULL,
   `email` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -42,8 +42,10 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`id`, `email`, `username`, `password`, `created_at`, `updated_at`) VALUES
-(25, 'abcdef@yahoo.com', 'abcdef', 'abcdef', '2020-04-13 08:54:46', '2020-04-13 08:54:46'),
-(26, 'testify@test.com', 'testify', 'testify', '2020-04-21 05:33:24', '2020-04-22 13:58:16');
+('2d83d91251e51c642e8d17388b27accc', 'ceva@altcevaaaa2ssa.com', 'unuser223', 'unuser', '2020-05-03 12:32:40', '2020-05-03 12:32:40'),
+('5e1dd85b9454f9180e494d402137da92', 'ceva@altceva2a.com', 'unuser2', 'unuser', '2020-05-03 12:25:36', '2020-05-03 12:25:36'),
+('753b57edd6a31482b1615c1ad992f274', 'ceva@altcevaaa2ssa.com', 'unuser22', 'unuser', '2020-05-03 12:27:39', '2020-05-03 12:27:39'),
+('91e4ba71454dbc6f6043e14121f7bcec', 'ceva@altcev2a.com', 'unuser', 'unuser', '2020-05-03 11:59:22', '2020-05-03 11:59:22');
 
 -- --------------------------------------------------------
 
@@ -52,16 +54,63 @@ INSERT INTO `accounts` (`id`, `email`, `username`, `password`, `created_at`, `up
 --
 
 CREATE TABLE `dropbox_service` (
-  `user_id` int(11) NOT NULL,
+  `user_id` varchar(200) NOT NULL,
   `access_token` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `dropbox_service`
+-- Table structure for table `files`
 --
 
-INSERT INTO `dropbox_service` (`user_id`, `access_token`) VALUES
-(26, 'RfMDs1XUrTAAAAAAAAAALOuWABJ0tmI2xG88R5D2LZG4AENmlpyn3_t8apogcFeq');
+CREATE TABLE `files` (
+  `id` int(11) NOT NULL,
+  `item_id` varchar(200) NOT NULL,
+  `folder_id` varchar(200) NOT NULL,
+  `mode` varchar(10) NOT NULL,
+  `from_service` varchar(20) NOT NULL,
+  `file_service_id` varchar(200) NOT NULL,
+  `fragments_id` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `folders`
+--
+
+CREATE TABLE `folders` (
+  `id` int(11) NOT NULL,
+  `item_id` varchar(200) NOT NULL,
+  `parent_id` varchar(200) DEFAULT NULL,
+  `name` varchar(200) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `folders`
+--
+
+INSERT INTO `folders` (`id`, `item_id`, `parent_id`, `name`, `created_at`) VALUES
+(1, '98aa51fcd877ebcc0f3daf71680b081a', NULL, 'root', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `fragments`
+--
+
+CREATE TABLE `fragments` (
+  `fragments_id` int(11) NOT NULL,
+  `file_id` int(11) NOT NULL,
+  `onedrive_id` int(11) DEFAULT NULL,
+  `dropbox_id` int(11) DEFAULT NULL,
+  `googledrive_id` int(11) DEFAULT NULL,
+  `onedrive_offset` varchar(80) NOT NULL,
+  `googledrive_offset` varchar(80) NOT NULL,
+  `dorpbox_offset` varchar(80) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -70,19 +119,32 @@ INSERT INTO `dropbox_service` (`user_id`, `access_token`) VALUES
 --
 
 CREATE TABLE `googledrive_service` (
-  `user_id` int(11) NOT NULL,
+  `user_id` varchar(200) NOT NULL,
   `access_token` varchar(200) NOT NULL,
   `refresh_token` varchar(200) DEFAULT NULL,
   `expires_in` int(11) NOT NULL,
   `generated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `googledrive_service`
+-- Table structure for table `items`
 --
 
-INSERT INTO `googledrive_service` (`user_id`, `access_token`, `refresh_token`, `expires_in`, `generated_at`) VALUES
-(26, 'ya29.a0Ae4lvC1KZm5RHj6HqaOiaJmJAs3AGRuS7QkcVyyH2cZfG4efonBknbxHlhhpEr1hyOyrUR7hHxgaEKuejd1m6fEnrjzuxMaUPcrrBgZRwGraKEdlKSwWRp_A_WqBdcKQvxmy5qWL2145cBpxG8tP48gapiiJDe4SahY', '1//098BQk42kT5bZCgYIARAAGAkSNwF-L9IrT0oUTuR1E6mzKVbBnWsr7XYIwle-xf9a8HPD236y1cbT6zqMKNpOFFHp4J-mT_i2REo', 3599, '2020-04-22 21:41:31');
+CREATE TABLE `items` (
+  `user_id` varchar(200) NOT NULL,
+  `item_id` varchar(200) NOT NULL,
+  `content_type` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `items`
+--
+
+INSERT INTO `items` (`user_id`, `item_id`, `content_type`) VALUES
+('2d83d91251e51c642e8d17388b27accc', '98aa51fcd877ebcc0f3daf71680b081a', 'folder'),
+('753b57edd6a31482b1615c1ad992f274', 'c4458bd9eeb79d933cca6be82bb73434', 'folder');
 
 -- --------------------------------------------------------
 
@@ -91,19 +153,12 @@ INSERT INTO `googledrive_service` (`user_id`, `access_token`, `refresh_token`, `
 --
 
 CREATE TABLE `onedrive_service` (
-  `user_id` int(11) NOT NULL,
+  `user_id` varchar(200) NOT NULL,
   `access_token` varchar(1500) NOT NULL,
   `refresh_token` varchar(1500) NOT NULL,
   `expires_in` int(11) NOT NULL,
   `generated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `onedrive_service`
---
-
-INSERT INTO `onedrive_service` (`user_id`, `access_token`, `refresh_token`, `expires_in`, `generated_at`) VALUES
-(26, 'EwCAA8l6BAAUO9chh8cJscQLmU+LSWpbnr0vmwwAAS0ewaRa4HagAKzopwPkMtZQ4+OtdN5+FVrKLWk8pu/IYpekAoEeKd9tz79jmL2Jo613m8d78FdbBaBs8g18dD+Yyy6bK/BEwEbSImrwbfgruuW018giL+1oiM80fk5e4VW4KefYC8ya9HwyEvdTgISV667Qgf2pZ8FyXyD6EVCWqKPJYruKUQ+mYaA/qhla97T03p4nv68Z/qKn2CWwPxoi1nArTXSs9Rv61RyWlNOIqvTYkX9gaOCY6HrRK5lgXHZH720VNvOuE1uyDDrqIfDPy0jjE4gsVrO0x0NuXp9LJHes3qm12fIoDjHpu+zDSDv4Vv8gd0ah1y7hnoSEcFYDZgAACMQjrwHuVNGCUAItMCArN0OYYMD/z4LgzLXXku9qL0ZsEeKEfy/MB3NyZAsEcXFUiya8VPo7OZ1L9/wY5K2TsC9Sn7QOrThQwEFoird3ZzRi1wbgSWOhFZtUhp78EAXK8xuBplFEx3cNr05RtP087NsKF+sAkPurdVzetHpgdVCiY463r/ktY0+D2D6QZyW+/hbhksDgGaPwmk0XXsMN+Au1cSGGoUliEkfvsOUJzoskHJLNOQQrsV+u8ysFnFoZ1TOJLnO0sZ7PXyFz1VjqUUz6a+ZeVp4u2/PsiUQaGrzxUfa2h5Us8740M3nOpRTvxQeDHVT+YNOt8uU6R6uC4kgrFoLv2EHMWJtTZ9HdAGSE/I507S2N/p70Dzors/QfALdXdae7loKB8tw5DVwQBvuyLH9/LMHHDbXLdWV6UcV69Oix0TKuF0lr1XMKCqtrY1Ilf1V82vqAdi7xc7GKhBpNGIQ4/pjsmCN5IIytkVaqrFuLy77qbfsZi8jwQk0L5EIdb3eXosSagS/o5/i2BhjW3I8XqzdKtMQgZCCLQAPmLD/hXB5zYwnWfidho9iISdR4+vjvkGv9PjiX4oPy7e6SPEm56TQWDhGo4bNNuedSWk5yMZe29KcdsxpteG4Yl0rRQsM4LMQt6JUuLorLZBfK4yPYgKahIanZZ0GSAtfyX7g1ORZtphHEK4jY2krEIDYuNb6PWsX34RIhCAyv9eoJ5pFCAdCn9SdD6C4eGTrzsXDOa29MJ1E5H4HIYCrDBYvfnwybEJbKIAmXTFrk5Ald05qxLG3t2Zb0kQI=', 'MCfPdCq3BOTZT!2s4atyWCkdgxrZ5G8TsBfiyZL3dwyBD36Dj3WeSq4YvG6rrDMIpsfJhNQY*54hHV5oL8VMRD3b5G!i0Kgi1Bi6Mb0OYhiRnH6EjmOdHqEs5vvo8pQVi79EDNXkYyRpjfI7osZt7uzK8uqFCIV0I8ByQ0no*WfDQ8REfXor7g5W4b9Pg5Mke0a4ICatWmp61z1FUhjAr6*xhLo!WFYZabkEnhR2nCFeSE1QBfKiGNePe9mWfyBxbsJ3ZWgtt9wqA1r6ntX4PU!DM3HxdXsm8E3zJD*xQ0mZ8kz8ot5F8TODXZSsdAVyF4I3exrIXMdrQiQbvXM7!tJ3OABbOOACoP!6*fcT48WUnhRiaty6Ubvr8whIT6M6Sh*R4xdPmkFHftFWjjY1glj8$', 3600, '2020-04-23 22:27:28');
 
 --
 -- Indexes for dumped tables
@@ -122,10 +177,39 @@ ALTER TABLE `dropbox_service`
   ADD PRIMARY KEY (`user_id`);
 
 --
+-- Indexes for table `files`
+--
+ALTER TABLE `files`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `fragments_id` (`fragments_id`),
+  ADD KEY `fk_folder_id` (`folder_id`),
+  ADD KEY `fk_files_item_id` (`item_id`);
+
+--
+-- Indexes for table `folders`
+--
+ALTER TABLE `folders`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_item_id` (`item_id`);
+
+--
+-- Indexes for table `fragments`
+--
+ALTER TABLE `fragments`
+  ADD PRIMARY KEY (`fragments_id`);
+
+--
 -- Indexes for table `googledrive_service`
 --
 ALTER TABLE `googledrive_service`
   ADD PRIMARY KEY (`user_id`);
+
+--
+-- Indexes for table `items`
+--
+ALTER TABLE `items`
+  ADD PRIMARY KEY (`item_id`),
+  ADD KEY `fk_user _id` (`user_id`);
 
 --
 -- Indexes for table `onedrive_service`
@@ -138,10 +222,22 @@ ALTER TABLE `onedrive_service`
 --
 
 --
--- AUTO_INCREMENT for table `accounts`
+-- AUTO_INCREMENT for table `files`
 --
-ALTER TABLE `accounts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+ALTER TABLE `files`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `folders`
+--
+ALTER TABLE `folders`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `fragments`
+--
+ALTER TABLE `fragments`
+  MODIFY `fragments_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -151,19 +247,38 @@ ALTER TABLE `accounts`
 -- Constraints for table `dropbox_service`
 --
 ALTER TABLE `dropbox_service`
-  ADD CONSTRAINT `fk_acccounts_dropbox` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`);
+  ADD CONSTRAINT `fk_accounts_id` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `files`
+--
+ALTER TABLE `files`
+  ADD CONSTRAINT `fk_files_item_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `fk_folder_id` FOREIGN KEY (`folder_id`) REFERENCES `folders` (`item_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `folders`
+--
+ALTER TABLE `folders`
+  ADD CONSTRAINT `fk_item_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`item_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `googledrive_service`
 --
 ALTER TABLE `googledrive_service`
-  ADD CONSTRAINT `fk_accounts_google` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`);
+  ADD CONSTRAINT `fk_account_id` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `items`
+--
+ALTER TABLE `items`
+  ADD CONSTRAINT `fk_user _id` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `onedrive_service`
 --
 ALTER TABLE `onedrive_service`
-  ADD CONSTRAINT `fk_acccounts_onedrive` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`);
+  ADD CONSTRAINT `fk_onedrive_user_id` FOREIGN KEY (`user_id`) REFERENCES `accounts` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

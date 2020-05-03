@@ -1,6 +1,5 @@
 <?php
 
-
 class CProfile extends Controller {
 
 	private $model;
@@ -69,12 +68,11 @@ class CProfile extends Controller {
 			catch(OnedriveAuthException $exception)
 			{
 				$json = new JsonResponse('error',null,'Authorization process for onedrive service failed: ' . $exception->getMessage());
-				//echo $exception->getMessage();
 				echo $json->response();
 			}
 			catch(PDOException $exception)
 			{
-				$json = new JsonResponse('error',null,'Service temporarly unavailable - Database Unique Token Per User Id Constraint ?',500);
+				$json = new JsonResponse('error',null,'Service temporarly unavailable',500);
 				echo $json->response();
 			}
 		
@@ -106,7 +104,7 @@ class CProfile extends Controller {
 		}
 		catch(PDOException $exception)
 		{
-			$json = new JsonResponse('error', null, 'Service temporarly unavailable - Database Unique Token Per User Id Constraint ?', 500);
+			$json = new JsonResponse('error', null, 'Service temporarly unavailable', 500);
 			echo $json->response();
 		}
 
@@ -137,7 +135,7 @@ class CProfile extends Controller {
 		}
 		catch(PDOException $exception)
 		{
-			$json = new JsonResponse('error', null, 'Service temporarly unavailable - Database Unique Token Per User Id Constraint ?', 500);
+			$json = new JsonResponse('error', null, 'Service temporarly unavailable', 500);
 			echo $json->response();
 		}
 
@@ -162,61 +160,78 @@ class CProfile extends Controller {
 
 	public function changeUserData($user_id)
 	{
-		$post_data = file_get_contents('php://input');
-		$post_array = json_decode($post_data, true);
-
-
-		if(!is_array($post_array)) {
-			$json = new JsonResponse('error', null, 'Malformed request,JSON data object could not be parsed', 400);
-			echo $json->response();
-			return;
-		}
-
-		if( (isset($post_array['username']) == false) || 
-        	(isset($post_array['oldpassword']) == false) ||
-        	(isset($post_array['newpassword']) == false) )
-        {
-			$json = new JsonResponse('error', null, 'Malformed request, required fields are missing', 400);
-			echo $json->response();
-        }
-		else {
-
-			try
-			{
-				if($post_array['username'] != '')
+		$content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
+            if (stripos($content_type, 'application/json') === false) {
+                $json=new JsonResponse('error',null,'Only application/json content-type allowed',415);
+                echo $json->response();
+            }
+		else
+		{
+			$post_data = file_get_contents('php://input');
+			$post_array = json_decode($post_data, true);
+			if(!is_array($post_array)) {
+				$json = new JsonResponse('error', null, 'Malformed request,JSON data object could not be parsed', 400);
+				echo $json->response();
+			}
+			else if( (isset($post_array['username']) == false) && 
+				(isset($post_array['oldpassword']) == false) &&
+				(isset($post_array['newpassword']) == false) )
 				{
-					try
-					{	
-						$this->model->updateUsername($post_array['username'], $user_id);
-					}
-					catch(UsernameTakenException $exception)
-					{
-						$json=new JsonResponse('error',null,'Username is taken', 409);
-						echo $json->response(); return;
-					}
+					$json = new JsonResponse('error', null, 'Malformed request, required fields are missing', 400);
+					echo $json->response();
 				}
-				if($post_array['oldpassword'] != '' && $post_array['newpassword'] != '')
+			else {
+
+				try
 				{
-					try
+					if($post_array['username'] != '')
 					{
-						$this->model->updatePassword($post_array['oldpassword'], $post_array['newpassword'], $user_id);
+						try
+						{	
+							$this->model->updateUsername($post_array['username'], $user_id);
+						}
+						catch(UsernameTakenException $exception)
+						{
+							$json=new JsonResponse('error',null,'Username is taken', 409);
+							echo $json->response(); 
+							die();
+						}
 					}
-					catch(IncorrectPasswordException $exception)
+					if(isset($post_array['oldpassword']))
 					{
-						$json=new JsonResponse('error',null,'Given password is incorrect', 422);
-						echo $json->response(); return;
+						if(isset($post_array['newpassword']))
+						{
+							try
+							{
+								$this->model->updatePassword($post_array['oldpassword'], $post_array['newpassword'], $user_id);
+							}
+							catch(IncorrectPasswordException $exception)
+							{
+								$json=new JsonResponse('error',null,'Given password is incorrect', 422);
+								echo $json->response();
+								die();
+							}
+						}
+						else
+						{
+							$json=new JsonResponse('error',null,'Both old password and new password are needed to update user password field', 422);
+							echo $json->response(); 
+							die();
+						}
 					}
+					$json=new JsonResponse('success', null, 'Data updated succesfully',200);
+					echo $json->response();
+						
+				}
+				catch(PDOException $exception)
+				{
+					$json=new JsonResponse('error',null,'Service temporarly unavailable',500);
 				}
 			}
-			catch(PDOException $exception)
-			{
-				$json=new JsonResponse('error',null,'Service temporarly unavailable',500);
-			}
 		}
-		
-		$json=new JsonResponse('success', null, 'Data updated succesfully',200);
-		echo $json->response();
 	}
+		
+		
 
 	public function deAuth($service, $user_id)
 	{
