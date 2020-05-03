@@ -37,8 +37,8 @@ function postLoginData()
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState === 4) {
 			const response = JSON.parse(xhr.responseText);
-
 			if(xhr.status == 200 && response.status == 'success') {
+				console.log('Reust');
 				//toggleAlert(response.message, false);
 				location.href = 'http://localhost/ProiectTW/page/files';
 			}

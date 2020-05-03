@@ -33,7 +33,7 @@
 			$insert_root_folder_stmt=DB::getConnection()->prepare($insert_root_folder_sql);
 			$insert_root_folder_stmt->execute([
 				'item_id'=>$item_id,
-				'created_at'=>time()
+				'created_at'=>date('Y-m-d H:i:s')
 			]);
 		}
 

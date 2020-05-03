@@ -37,9 +37,11 @@
 
 		private function isOneDriveAuthorized($id)
 		{
-			$get_onedrive_query = "SELECT user_id FROM onedrive_service WHERE user_id = ${id}";
+			$get_onedrive_query = "SELECT user_id FROM onedrive_service WHERE user_id = :id";
 			$get_onedrive_stmt = DB::getConnection()->prepare($get_onedrive_query);
-			$get_onedrive_stmt->execute();
+			$get_onedrive_stmt->execute([
+				'id'=>$id
+			]);
 			if($get_onedrive_stmt->rowCount() > 0)
 				return true;
 			else
@@ -48,9 +50,11 @@
 
 		private function isGoogleDriveAuthorized($id)
 		{
-			$get_googledrive_query = "SELECT user_id FROM googledrive_service WHERE user_id = ${id}";
+			$get_googledrive_query = "SELECT user_id FROM googledrive_service WHERE user_id = :id";
 			$get_googledrive_stmt = DB::getConnection()->prepare($get_googledrive_query);
-			$get_googledrive_stmt->execute();
+			$get_googledrive_stmt->execute([
+				'id'=>$id
+			]);
 			if($get_googledrive_stmt->rowCount()>0)
 				return true;
 			else
@@ -59,9 +63,11 @@
 
 		private function isDropboxAuthorized($id)
 		{
-			$get_dropbox_query = "SELECT user_id FROM dropbox_service WHERE user_id = ${id}";
+			$get_dropbox_query = "SELECT user_id FROM dropbox_service WHERE user_id = :id";
 			$get_dropbox_stmt = DB::getConnection()->prepare($get_dropbox_query);
-			$get_dropbox_stmt->execute();
+			$get_dropbox_stmt->execute([
+				'id'=>$id
+			]);
 			if($get_dropbox_stmt->rowCount()>0)
 				return true;
 			else
@@ -73,17 +79,19 @@
 			$sql = '';
 			switch ($service) {
 				case 'onedrive':
-					$sql = "SELECT access_token FROM onedrive_service WHERE user_id = ${id}";
+					$sql = "SELECT access_token FROM onedrive_service WHERE user_id = :id";
 					break;
 				case 'googledrive':
-					$sql = "SELECT access_token FROM googledrive_service WHERE user_id = ${id}";
+					$sql = "SELECT access_token FROM googledrive_service WHERE user_id = :id";
 					break;
 				case 'dropbox':
-					$sql = "SELECT access_token FROM dropbox_service WHERE user_id = ${id}";
+					$sql = "SELECT access_token FROM dropbox_service WHERE user_id = :id";
 					break;
 			}
 			$stmt = DB::getConnection()->prepare($sql);
-			$stmt->execute();
+			$stmt->execute([
+				'id'=>$id
+			]);
 			if($stmt->rowCount() > 0) {
 				$result = $stmt->fetch();
 				return $result['access_token'];
@@ -96,9 +104,11 @@
 		public function getUserDataArray($user_id)
 		{
 			$result_array = array();
-			$get_query = "SELECT username, email FROM accounts WHERE id = ${user_id}";
+			$get_query = "SELECT username, email FROM accounts WHERE id = :user_id";
 			$get_stmt=DB::getConnection()->prepare($get_query);
-			$get_stmt->execute();
+			$get_stmt->execute([
+				'user_id'=>$user_id
+			]);
 			$result_array += $get_stmt->fetch(PDO::FETCH_ASSOC);
 
 			$onedrive_status=$this->isOneDriveAuthorized($user_id);

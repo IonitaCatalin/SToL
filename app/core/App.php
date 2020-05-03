@@ -21,7 +21,6 @@ class App
 
         $router = new Router();
         //$authorize = new AuthorizationHandler();
-
         $router->addRoute('GET','/page/login',function(){
                 $page_controller=new CPage();
                 $page_controller->renderLogin();
@@ -33,27 +32,15 @@ class App
         });
 
         $router->addRoute('GET','/page/profile',function(){
-            if(CSession::isUserAuthorized())
-            {
-                $page_controller=new CPage();
-                $page_controller->renderProfile();
-            }
-            else
-            {
-                header('Location:'.'http://localhost/ProiectTW/page/login');
-            }
+            $page_controller=new CPage();
+            $page_controller->renderProfile();
+                // header('Location:'.'http://localhost/ProiectTW/page/login');
         });
 
         $router->addRoute('GET', '/page/files',function(){
-            if(CSession::isUserAuthorized())
-            {
                 $page_controller=new CPage();
                 $page_controller->renderFiles();
-            }
-            else
-            {
-                header('Location:'.'http://localhost/ProiectTW/page/login');
-            }
+                //  header('Location:'.'http://localhost/ProiectTW/page/login');
         });
 
         $router->addRoute('GET', '/api/user', function()
@@ -129,6 +116,13 @@ class App
         $router->addRoute('POST', '/api/user/register', function(){
             $register_controller = new CRegister();
             $register_controller->registerUser();
+        });
+        $router->addRoute('POST','/api/items/:parent_id',function($parent_id){
+            if($this->authorize->validateAuthorization())
+            {
+                $items_controller=new CItems();
+                $items_controller->createFolderItem($this->authorize->getDecoded()['user_id'],$parent_id);
+            }
         });
 
         $router->run($this->method, $this->URI);

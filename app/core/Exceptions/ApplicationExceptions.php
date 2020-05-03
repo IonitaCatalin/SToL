@@ -27,5 +27,16 @@ class IncorrectPasswordException extends ApplicationExceptions
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 }
-
+class InvalidParentId extends ApplicationExceptions
+{
+    public function __toString() {
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    }
+}
+class FolderNameTaken extends ApplicationExceptions
+{
+    public function __toString() {
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    }
+}
 ?>

@@ -36,7 +36,6 @@
                         $user_id=$this->model->logInUser($post_array['username'],$post_array['password']);
                         if(!is_null($user_id))
                         {   
-                            echo $user_id;  
                             $authorize=new AuthorizationHandler();
                             $token=$authorize->generateToken($user_id);
                             setcookie('jwt_token', $token, time()+60*60*24*365, '/'); 

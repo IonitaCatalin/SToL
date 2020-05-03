@@ -10,6 +10,7 @@ require_once 'controllers/cregister.php';
 require_once 'controllers/csession.php';
 require_once 'controllers/cprofile.php';
 require_once 'controllers/cpage.php';
+require_once 'controllers/citems.php';
 
 require_once 'core/Onedrive/Onedrive.php';
 require_once 'core/Onedrive/OnedriveException.php';
