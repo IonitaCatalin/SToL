@@ -26,27 +26,27 @@
                 {
                     if(isset($post_array['foldername']))
                     {
-
-                            try
-                            {
-                                $this->model->createFolderToParent($user_id,$parent_id,$post_array['foldername']);
-                                $json=new JsonResponse('success',null,'Folder item created succesfully',201);
-                            }
-                            catch(PDOException $exception)
-                            {
-                                $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
-                                echo $json->response();
-                            }
-                            catch(ItemNameTaken $exception)
-                            {
-                                $json=new JsonResponse('error',null,'Folder name already taken in the respective container with specified id',409);
-                                echo $json->response();
-                            }
-                            catch(InvalidtemId $exception)
-                            {
-                                $json=new JsonResponse('error',null,'Specified reference parent id is invalid',400);
-                                echo $json->response();
-                            }
+                        try
+                        {
+                            $this->model->createFolderToParent($user_id,$parent_id,$post_array['foldername']);
+                            $json=new JsonResponse('success',null,'Folder item created succesfully',201);
+                            echo $json->response();
+                        }
+                        catch(PDOException $exception)
+                        {
+                            $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                            echo $json->response();
+                        }
+                        catch(ItemNameTaken $exception)
+                        {
+                            $json=new JsonResponse('error',null,'Folder name already taken in the respective container with specified id',409);
+                            echo $json->response();
+                        }
+                        catch(InvalidItemId $exception)
+                        {
+                            $json=new JsonResponse('error',null,'Specified reference parent id is invalid',400);
+                            echo $json->response();
+                        }
                     }
                     else 
                     {
@@ -76,21 +76,22 @@
                 {
                     if(isset($post_array['foldername']))
                     {
-                            try
-                            {
-                                $this->model->createFolderToRoot($user_id,$post_array['foldername']);
-                                $json=new JsonResponse('success',null,'Folder item created succesfully',201);
-                            }
-                            catch(PDOException $exception)
-                            {
-                                $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
-                                echo $json->response();
-                            }
-                            catch(ItemNameTaken $exception)
-                            {
-                                $json=new JsonResponse('error',null,'Folder name already taken in the respective container with specified id',409);
-                                echo $json->response();
-                            }
+                        try
+                        {
+                            $this->model->createFolderToRoot($user_id,$post_array['foldername']);
+                            $json=new JsonResponse('success',null,'Folder item created succesfully',201);
+                            echo $json->response();
+                        }
+                        catch(PDOException $exception)
+                        {
+                            $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                            echo $json->response();
+                        }
+                        catch(ItemNameTaken $exception)
+                        {
+                            $json=new JsonResponse('error',null,'Folder name already taken in the respective container with specified id',409);
+                            echo $json->response();
+                        }
                     }
                     else 
                     {
@@ -128,6 +129,7 @@
                         }
                         catch(PDOException $exception)
                         {
+                            echo $exception;
                             $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
                             echo $json->response();
                         }
@@ -143,6 +145,43 @@
                         echo $json->response();
                     }
                 }
+            }
+        }
+
+        public function getItemsFromFolder($user_id, $parent_id)
+        {
+            try
+            {
+                $data_json = json_encode($this->model->getItemsListFromFolder($user_id, $parent_id));
+                $json = new JsonResponse('success', $data_json, 'Items succesfully retrieved',200);
+                echo $json->response();
+            }
+            catch(PDOException $exception)
+            {
+                echo $exception;
+                $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                echo $json->response();
+            }
+            catch(InvalidItemId $exception)
+            {
+                $json = new JsonResponse('error',null,'Specified reference parent id is invalid',400);
+                echo $json->response();
+            }
+        }
+
+        public function getItemsFromRoot($user_id)
+        {
+            try
+            {
+                $data_json = json_encode($this->model->getItemsListFromRoot($user_id));
+                $json = new JsonResponse('success', $data_json, 'Items succesfully retrieved',200);
+                echo $json->response();
+            }
+            catch(PDOException $exception)
+            {
+                echo $exception;
+                $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                echo $json->response();
             }
         }
 

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 03, 2020 at 03:35 PM
+-- Generation Time: May 04, 2020 at 02:43 PM
 -- Server version: 10.4.11-MariaDB
--- PHP Version: 7.4.2
+-- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -42,10 +42,7 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`id`, `email`, `username`, `password`, `created_at`, `updated_at`) VALUES
-('2d83d91251e51c642e8d17388b27accc', 'ceva@altcevaaaa2ssa.com', 'unuser223', 'unuser', '2020-05-03 12:32:40', '2020-05-03 12:32:40'),
-('5e1dd85b9454f9180e494d402137da92', 'ceva@altceva2a.com', 'unuser2', 'unuser', '2020-05-03 12:25:36', '2020-05-03 12:25:36'),
-('753b57edd6a31482b1615c1ad992f274', 'ceva@altcevaaa2ssa.com', 'unuser22', 'unuser', '2020-05-03 12:27:39', '2020-05-03 12:27:39'),
-('91e4ba71454dbc6f6043e14121f7bcec', 'ceva@altcev2a.com', 'unuser', 'unuser', '2020-05-03 11:59:22', '2020-05-03 11:59:22');
+('c9526e3221d689b48c621d1babe0bb87', 'abcdef@yahoo.com', 'abcdef', 'abcdef', '2020-05-04 08:03:14', '2020-05-04 08:03:14');
 
 -- --------------------------------------------------------
 
@@ -68,6 +65,7 @@ CREATE TABLE `files` (
   `id` int(11) NOT NULL,
   `item_id` varchar(200) NOT NULL,
   `folder_id` varchar(200) NOT NULL,
+  `name` varchar(200) NOT NULL,
   `mode` varchar(10) NOT NULL,
   `from_service` varchar(20) NOT NULL,
   `file_service_id` varchar(200) NOT NULL,
@@ -93,7 +91,11 @@ CREATE TABLE `folders` (
 --
 
 INSERT INTO `folders` (`id`, `item_id`, `parent_id`, `name`, `created_at`) VALUES
-(1, '98aa51fcd877ebcc0f3daf71680b081a', NULL, 'root', '0000-00-00 00:00:00');
+(7, 'e86edca146bbefd773838a7e7955b521', NULL, 'root', '2020-05-04 08:03:14'),
+(8, '67b6e87381a8fb18c96c7acca3b6c35d', 'e86edca146bbefd773838a7e7955b521', 'NewFolder1', '2020-05-04 08:09:14'),
+(9, 'b5908118157cff12d8d1f1ae6ed4c104', 'e86edca146bbefd773838a7e7955b521', 'NewFolder2', '2020-05-04 09:52:15'),
+(10, '0f6ead903e13eba64c624a45afba9184', 'b5908118157cff12d8d1f1ae6ed4c104', 'Folder3InFolder2', '2020-05-04 08:32:54'),
+(11, '5d01e0d78f34e59bd72d866f63ecfc72', 'e86edca146bbefd773838a7e7955b521', 'NewFolder4', '2020-05-04 11:29:01');
 
 -- --------------------------------------------------------
 
@@ -143,8 +145,11 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`user_id`, `item_id`, `content_type`) VALUES
-('2d83d91251e51c642e8d17388b27accc', '98aa51fcd877ebcc0f3daf71680b081a', 'folder'),
-('753b57edd6a31482b1615c1ad992f274', 'c4458bd9eeb79d933cca6be82bb73434', 'folder');
+('c9526e3221d689b48c621d1babe0bb87', '0f6ead903e13eba64c624a45afba9184', 'folder'),
+('c9526e3221d689b48c621d1babe0bb87', '5d01e0d78f34e59bd72d866f63ecfc72', 'folder'),
+('c9526e3221d689b48c621d1babe0bb87', '67b6e87381a8fb18c96c7acca3b6c35d', 'folder'),
+('c9526e3221d689b48c621d1babe0bb87', 'b5908118157cff12d8d1f1ae6ed4c104', 'folder'),
+('c9526e3221d689b48c621d1babe0bb87', 'e86edca146bbefd773838a7e7955b521', 'folder');
 
 -- --------------------------------------------------------
 
@@ -231,7 +236,7 @@ ALTER TABLE `files`
 -- AUTO_INCREMENT for table `folders`
 --
 ALTER TABLE `folders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `fragments`

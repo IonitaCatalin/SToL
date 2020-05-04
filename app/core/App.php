@@ -115,6 +115,7 @@ class App
             $register_controller = new CRegister();
             $register_controller->registerUser();
         });
+        // creeaza un folder in alt folder
         $router->addRoute('POST','/api/items/:parent_id',function($parent_id){
             if($this->authorize->validateAuthorization())
             {
@@ -122,6 +123,7 @@ class App
                 $items_controller->createFolderItem($this->authorize->getDecoded()['user_id'],$parent_id);
             }
         });
+        // creeaza un folder in root
         $router->addRoute('POST','/api/items/',function(){
             if($this->authorize->validateAuthorization())
             {
@@ -129,6 +131,25 @@ class App
                 $items_controller->createFolderItemToRoot($this->authorize->getDecoded()['user_id']);
             }
         });
+        // obtine fisiere dintr-un folder
+        $router->addRoute('GET','/api/items/:parent_id',function($parent_id){
+            if($this->authorize->validateAuthorization())
+            {
+                $items_controller=new CItems();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $items_controller->getItemsFromFolder($user_id, $parent_id);
+            }
+        });
+        // obtine fisiere din root
+        $router->addRoute('GET','/api/items/',function(){
+            if($this->authorize->validateAuthorization())
+            {
+                $items_controller=new CItems();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $items_controller->getItemsFromRoot($user_id);
+            }
+        });
+        // rename pt files sau foldere
         $router->addRoute('PATCH','/api/items/:item_id',function($item_id){
             if($this->authorize->validateAuthorization())
             {
