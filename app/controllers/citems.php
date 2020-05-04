@@ -123,11 +123,17 @@
                         try
                         {
                             $this->model->updateItemName($user_id,$item_id,$post_array['newname']);
+                            $json=new JsonResponse('success',null,'Data updated successfully',200);
+                            echo $json->response();
                         }
                         catch(PDOException $exception)
                         {
-                            echo $exception;
                             $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                            echo $json->response();
+                        }
+                        catch(ItemNameTaken $exception)
+                        {
+                            $json=new JsonResponse('error',null,'New name for specified item is already taken');
                             echo $json->response();
                         }
                     }
