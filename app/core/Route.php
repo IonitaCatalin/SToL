@@ -13,7 +13,6 @@ class Route
 		$this->method = array_shift($args);
 		$this->pattern = array_shift($args);
 		$this->function = array_pop($args);
-		$this->optional_functions = $args;
 		$this->param = array();
 	}
 
@@ -53,10 +52,6 @@ class Route
 	}
 
 	public function run() {
-		foreach ($this->optional_functions as $function) {
-			if (is_callable($function))
-				call_user_func($function);
-		}
 
 		if (is_callable($this->function)) {
 		    call_user_func_array($this->function, array_values($this->param));
