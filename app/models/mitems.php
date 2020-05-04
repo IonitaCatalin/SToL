@@ -105,8 +105,12 @@
             {
                 if($result_list['content_type']=='folder')
                 {
-                    $check_name_sql='SELECT item_id FROM FOLDERS WHERE item_id=:item AND name=:new_name';
+                    $check_name_sql="SELECT item_id FROM FOLDERS WHERE item_id=:item AND name=:new_name'";
                     $check_name_stmt=DB::getConnection()->prepare($check_name_sql);
+                    $check_name_stmt->execute([
+                        'item'=>$item_id,
+                        'new_name'=>$new_name
+                    ]);
                     if($check_name_stmt->rowCount()==0)
                     {
                         $update_name_sql='UPDATE FOLDERS SET name=:new_name WHERE item_id=:item';
@@ -125,6 +129,10 @@
                 {
                     $check_name_sql='SELECT item_id FROM FILES WHERE item_id=:item_id AND name=:new_name';
                     $check_name_stmt=DB::getConnection()->prepare($check_name_sql);
+                    $check_name_stmt->execute([
+                        'item_id'=>$item_id,
+                        'new_name'=>$new_name
+                    ]);
                     if($check_name_sql->rowCount()==0)
                     {
                         $update_name_sql='UPDATE FILES SET name=:new_name WHERE item_id=:item_id AND user_id=:user_id';
