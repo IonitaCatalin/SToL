@@ -33,10 +33,23 @@ class InvalidItemId extends ApplicationExceptions
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 }
+class InvalidItemParentId extends ApplicationExceptions
+{
+    public function __toString() {
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    }
+}
 class ItemNameTaken extends ApplicationExceptions
 {
     public function __toString() {
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 }
+class MoveInvalidNameAndType extends ApplicationExceptions
+{
+    public function __toString() {
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    }
+}
+
 ?>

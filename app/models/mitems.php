@@ -253,7 +253,6 @@
 
         public function deleteItem($user_id, $item_id)
         {
-
             $search_folder_exists_sql = "SELECT item_id FROM ITEMS WHERE user_id=:user_id AND item_id=:item_id AND content_type='folder'";
             $search_folder_exists_stmt = DB::getConnection()->prepare($search_folder_exists_sql);
             $search_folder_exists_stmt->execute([
@@ -264,7 +263,6 @@
 
             if($search_folder_exists_stmt->rowCount() > 0)
             {
-                //echo "Urmeaza sa sterg un folder";
                 $this->deleteFolder($user_id, $item_id);
                 return; // !!!
             }
@@ -279,7 +277,6 @@
 
             if($search_file_exists_stmt->rowCount() > 0)
             {
-                //echo "Urmeaza sa sterg un fisier";
                 $this->deleteFile($item_id);
                 return; // !!!
             }
@@ -292,36 +289,152 @@
         {
             $delete_file_sql = "DELETE FROM files WHERE item_id=:item_id";
             $delete_file_stmt = DB::getConnection()->prepare($delete_file_sql);
-            //$delete_file_stmt->execute(['item_id' => $item_id]);
-            echo "deleteFile - file: $item_id";
+            $delete_file_stmt->execute(['item_id' => $item_id]);
+            echo "Deleted $item_id from files.";
 
             $delete_item_sql = "DELETE FROM items WHERE item_id=:item_id";
             $delete_item_stmt = DB::getConnection()->prepare($delete_item_sql);
-            //$delete_item_stmt->execute(['item_id' => $item_id]);
-            echo "deleteFile - item: $item_id";
+            $delete_item_stmt->execute(['item_id' => $item_id]);
+            echo "Deleted $item_id from items.";
 
             $services_ids_sql = "SELECT onedrive_id, dropbox_id, googledrive_id FROM FRAGMENTS WHERE file_id=:item_id";
             $services_ids_stmt = DB::getConnection()->prepare($services_ids_sql);
             $services_ids_stmt->execute(['item_id' => $item_id]);
+
+            // !!!! de tratat situatia cand fisierul e stocat redundant sau nu e stocat simplu(fara tabela fragments sau redundant)
             if($services_ids_stmt->rowCount()>0)
             {
                 $row = $services_ids_stmt->fetch(PDO::FETCH_ASSOC);
-                echo "OnedriveId: ".$row['onedrive_id']."GoogledriveId: ".$row['googledrive_id']."DropboxId: ".$row['dropbox_id'];
-                // OneDriveService::deleteFileById($row['onedrive_id']);
-                // GoogleDriveService::deleteFileById($row['googledrive_id']);
-                // DropboxService::deleteFileById($row['dropbox_id']);
+                if($row['onedrive_id'] != ''){
+                    echo "Deleted file $item_id fragment from Onedrive.";
+                    // OneDriveService::deleteFileById($row['onedrive_id']);
+                }
+                if($row['googledrive_id'] != ''){
+                    echo "Deleted file $item_id fragment from Googledrive.";
+                    // GoogleDriveService::deleteFileById($row['googledrive_id']);
+                }
+                if($row['dropbox_id'] != ''){
+                    echo "Deleted file $item_id fragment from Dropbox.";
+                    // DropboxService::deleteFileById($row['dropbox_id']);
+                }
+                
             }
 
             $delete_fragment_sql = "DELETE FROM `fragments` WHERE `file_id`=:item_id";
             $delete_fragment_stmt = DB::getConnection()->prepare($delete_fragment_sql);
-            //$delete_fragment_stmt->execute(['item_id' => $item_id]);
-            echo "deleteFile - fragment: $item_id";
+            $delete_fragment_stmt->execute(['item_id' => $item_id]);
+            echo "Deleted $item_id from fragments.";
         }
 
         public function deleteFolder($user_id, $item_id)
         {
-            print_r($this->getItemsListFromFolder($user_id, $item_id));
-            // de iterat prin rezultat, la fisiere se face delete File, la foldere se apeleaza deleteItem, de vazut celelalte cazuri
+            $files_in_folder = $this->getItemsListFromFolder($user_id, $item_id);
+            //print_r($files_in_folder);
+            foreach($files_in_folder as $key => $file){ //key e index-ul 0, 1, 2...
+                if($file['content_type'] == 'file'){
+                    $this->deleteFile($file['item_id']);
+                }
+                else if($file['content_type'] == 'folder'){
+                    $this->deleteFolder($user_id, $file['item_id']);
+                }
+            }
+
+            $delete_folder_sql = "DELETE FROM folders WHERE item_id=:item_id";
+            $delete_folder_stmt = DB::getConnection()->prepare($delete_folder_sql);
+            $delete_folder_stmt->execute(['item_id' => $item_id]);
+            echo "Deleted $item_id from folders.";
+
+            $delete_item_sql = "DELETE FROM items WHERE item_id=:item_id";
+            $delete_item_stmt = DB::getConnection()->prepare($delete_item_sql);
+            $delete_item_stmt->execute(['item_id' => $item_id]);
+            echo "Deleted $item_id from items.";
+        }
+
+        public function moveItem($user_id, $item_id, $new_parent_id)
+        {
+            echo "MUT $item_id IN $new_parent_id";
+
+            // verific existenta item-ului
+            $search_file_exists_sql = "SELECT item_id FROM ITEMS WHERE user_id=:user_id AND item_id=:item_id";
+            $search_file_exists_stmt = DB::getConnection()->prepare($search_file_exists_sql);
+            $search_file_exists_stmt->execute([
+                'user_id' => $user_id,
+                'item_id' => $item_id
+            ]);
+            $search_file_exists_result = $search_file_exists_stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($search_file_exists_stmt->rowCount() == 0) {
+                throw new InvalidItemId();
+            }
+
+            // verific existenta parent-ului
+            $search_new_parent_exists_sql = "SELECT item_id FROM ITEMS WHERE user_id=:user_id AND item_id=:item_id AND content_type='folder'";
+            $search_new_parent_exists_stmt = DB::getConnection()->prepare($search_new_parent_exists_sql);
+            $search_new_parent_exists_stmt->execute([
+                'user_id' => $user_id,
+                'item_id' => $new_parent_id
+            ]);
+            $search_new_parent_exists_result = $search_new_parent_exists_stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($search_new_parent_exists_stmt->rowCount() == 0) {
+                throw new InvalidItemParentId();
+            }
+
+            // verific daca in noul parent exista un folder cu acelasi nume
+            $file_data = $this->getDataAboutFile($user_id, $item_id);
+            //print_r($file_data);
+            $files_in_new_parent = $this->getItemsListFromFolder($user_id, $new_parent_id);
+            //print_r($files_in_new_parent);
+            foreach($files_in_new_parent as $key => $new_parent_file){ //key e index-ul 0, 1, 2...
+                if($new_parent_file['name'] == $file_data['name'] && $new_parent_file['content_type'] == $file_data['content_type']){
+                    throw new MoveInvalidNameAndType();
+                }
+            }
+
+            // schimb parent-ul fisierului sau folderului curent
+            if($file_data["content_type"] == "file") {
+                $change_parent_sql = "UPDATE files SET folder_id=:new_parent_id WHERE item_id=:item_id";
+                $change_parent_stmt = DB::getConnection()->prepare($change_parent_sql);
+                $change_parent_stmt->execute([
+                    'new_parent_id' => $new_parent_id,
+                    'item_id' => $item_id
+                ]);
+            }
+            else if($file_data["content_type"] == "folder") {
+                $change_parent_sql = "UPDATE folders SET parent_id=:new_parent_id WHERE item_id=:item_id";
+                $change_parent_stmt = DB::getConnection()->prepare($change_parent_sql);
+                $change_parent_stmt->execute([
+                    'new_parent_id' => $new_parent_id,
+                    'item_id' => $item_id
+                ]);
+            }
+        }
+
+        public function getDataAboutFile($user_id, $item_id)
+        {
+            // date despre folder
+            $check_folder_sql = "SELECT flds.item_id, flds.name, itms.content_type FROM ITEMS itms JOIN FOLDERS flds ON itms.item_id = flds.item_id WHERE user_id=:user_id AND flds.item_id=:item_id";
+            $check_folder_stmt = DB::getConnection()->prepare($check_folder_sql);
+            $check_folder_stmt->execute([
+                'user_id' => $user_id,
+                'item_id' => $item_id
+            ]);
+            if($check_folder_stmt->rowCount()>0)
+            {
+                return $check_folder_stmt->fetch(PDO::FETCH_ASSOC);
+            }
+
+            // sau date despre fisier
+            $check_item_sql = "SELECT fls.item_id, fls.name, itms.content_type FROM ITEMS itms JOIN FILES fls ON itms.item_id = fls.item_id WHERE user_id=:user_id AND fls.item_id=:item_id";
+            $check_item_stmt = DB::getConnection()->prepare($check_item_sql);
+            $check_item_stmt->execute([
+                'user_id' => $user_id,
+                'item_id' => $item_id
+            ]);
+            if($check_item_stmt->rowCount()>0)
+            {
+                return $check_item_stmt->fetch(PDO::FETCH_ASSOC);
+            }
         }
 
 

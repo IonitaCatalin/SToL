@@ -206,6 +206,37 @@
             }
         }
 
+        public function moveItem($user_id, $item_id, $new_parent_id)
+        {
+            try
+            {
+                $this->model->moveItem($user_id, $item_id, $new_parent_id);
+                $json = new JsonResponse('success', null, 'Item succesfully moved',200);
+                echo $json->response();
+            }
+            catch(PDOException $exception)
+            {
+                echo $exception;
+                $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                echo $json->response();
+            }
+            catch(InvalidItemId $exception)
+            {
+                $json = new JsonResponse('error',null,'Specified reference item id is invalid',400);
+                echo $json->response();
+            }
+            catch(InvalidItemParentId $exception)
+            {
+                $json = new JsonResponse('error',null,'Specified reference new parent id is invalid or not a folder',400);
+                echo $json->response();
+            }
+            catch(MoveInvalidNameAndType $exception)
+            {
+                $json = new JsonResponse('error',null,'There is already a file with same name and type in target directory',400);
+                echo $json->response();
+            }
+        }
+
 
 
     }

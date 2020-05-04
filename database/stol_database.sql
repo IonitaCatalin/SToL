@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 04, 2020 at 06:01 PM
+-- Generation Time: May 04, 2020 at 07:58 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -167,7 +167,6 @@ INSERT INTO `items` (`user_id`, `item_id`, `content_type`) VALUES
 ('c9526e3221d689b48c621d1babe0bb87', '2', 'file'),
 ('c9526e3221d689b48c621d1babe0bb87', '3', 'file'),
 ('c9526e3221d689b48c621d1babe0bb87', '4', 'file'),
-('c9526e3221d689b48c621d1babe0bb87', '5d01e0d78f34e59bd72d866f63ecfc72', 'folder'),
 ('c9526e3221d689b48c621d1babe0bb87', '67b6e87381a8fb18c96c7acca3b6c35d', 'folder'),
 ('c9526e3221d689b48c621d1babe0bb87', 'b5908118157cff12d8d1f1ae6ed4c104', 'folder'),
 ('c9526e3221d689b48c621d1babe0bb87', 'd2617194116dea57dd6ca65498f01ee7', 'folder'),

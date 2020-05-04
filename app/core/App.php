@@ -165,7 +165,14 @@ class App
                 $items_controller->deleteItem($this->authorize->getDecoded()['user_id'], $item_id);
             }
         });
-
+        // mutare fisier sau folder sub un nou parinte
+        $router->addRoute('PUT','/api/items/:item_id/:new_parent_id', function($item_id, $new_parent_id){
+            if($this->authorize->validateAuthorization())
+            {
+                $items_controller=new CItems();
+                $items_controller->moveItem($this->authorize->getDecoded()['user_id'], $item_id, $new_parent_id);
+            }
+        });
         $router->addRoute('GET','/api/test/root:/:path',function($path){
             echo $path;
         });
