@@ -185,5 +185,28 @@
             }
         }
 
+        public function deleteItem($user_id, $item_id)
+        {
+            try
+            {
+                $this->model->deleteItem($user_id, $item_id);
+                $json = new JsonResponse('success', null, 'Items succesfully deleted',200);
+                echo $json->response();
+            }
+            catch(PDOException $exception)
+            {
+                echo $exception;
+                $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                echo $json->response();
+            }
+            catch(InvalidItemId $exception)
+            {
+                $json = new JsonResponse('error',null,'Specified reference parent id is invalid',400);
+                echo $json->response();
+            }
+        }
+
+
+
     }
 ?>

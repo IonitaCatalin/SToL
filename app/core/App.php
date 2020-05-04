@@ -157,6 +157,15 @@ class App
                 $items_controller->updateItem($this->authorize->getDecoded()['user_id'],$item_id);
             }
         });
+        // delete file or folder
+        $router->addRoute('DELETE','/api/items/:item_id',function($item_id){
+            if($this->authorize->validateAuthorization())
+            {
+                $items_controller=new CItems();
+                $items_controller->deleteItem($this->authorize->getDecoded()['user_id'], $item_id);
+            }
+        });
+
         $router->addRoute('GET','/api/test/root:/:path',function($path){
             echo $path;
         });

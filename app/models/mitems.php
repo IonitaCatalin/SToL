@@ -249,10 +249,80 @@
             }
 
             return $result_array;
+        }
+
+        public function deleteItem($user_id, $item_id)
+        {
+
+            $search_folder_exists_sql = "SELECT item_id FROM ITEMS WHERE user_id=:user_id AND item_id=:item_id AND content_type='folder'";
+            $search_folder_exists_stmt = DB::getConnection()->prepare($search_folder_exists_sql);
+            $search_folder_exists_stmt->execute([
+                'user_id' => $user_id,
+                'item_id' => $item_id
+            ]);
+            $search_folder_exists_result = $search_folder_exists_stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($search_folder_exists_stmt->rowCount() > 0)
+            {
+                //echo "Urmeaza sa sterg un folder";
+                $this->deleteFolder($user_id, $item_id);
+                return; // !!!
+            }
+
+            $search_file_exists_sql = "SELECT item_id FROM ITEMS WHERE user_id=:user_id AND item_id=:item_id AND content_type='file'";
+            $search_file_exists_stmt = DB::getConnection()->prepare($search_file_exists_sql);
+            $search_file_exists_stmt->execute([
+                'user_id' => $user_id,
+                'item_id' => $item_id
+            ]);
+            $search_file_exists_result = $search_file_exists_stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($search_file_exists_stmt->rowCount() > 0)
+            {
+                //echo "Urmeaza sa sterg un fisier";
+                $this->deleteFile($item_id);
+                return; // !!!
+            }
+
+            throw new InvalidItemId();
 
         }
 
+        public function deleteFile($item_id)
+        {
+            $delete_file_sql = "DELETE FROM files WHERE item_id=:item_id";
+            $delete_file_stmt = DB::getConnection()->prepare($delete_file_sql);
+            //$delete_file_stmt->execute(['item_id' => $item_id]);
+            echo "deleteFile - file: $item_id";
 
+            $delete_item_sql = "DELETE FROM items WHERE item_id=:item_id";
+            $delete_item_stmt = DB::getConnection()->prepare($delete_item_sql);
+            //$delete_item_stmt->execute(['item_id' => $item_id]);
+            echo "deleteFile - item: $item_id";
+
+            $services_ids_sql = "SELECT onedrive_id, dropbox_id, googledrive_id FROM FRAGMENTS WHERE file_id=:item_id";
+            $services_ids_stmt = DB::getConnection()->prepare($services_ids_sql);
+            $services_ids_stmt->execute(['item_id' => $item_id]);
+            if($services_ids_stmt->rowCount()>0)
+            {
+                $row = $services_ids_stmt->fetch(PDO::FETCH_ASSOC);
+                echo "OnedriveId: ".$row['onedrive_id']."GoogledriveId: ".$row['googledrive_id']."DropboxId: ".$row['dropbox_id'];
+                // OneDriveService::deleteFileById($row['onedrive_id']);
+                // GoogleDriveService::deleteFileById($row['googledrive_id']);
+                // DropboxService::deleteFileById($row['dropbox_id']);
+            }
+
+            $delete_fragment_sql = "DELETE FROM `fragments` WHERE `file_id`=:item_id";
+            $delete_fragment_stmt = DB::getConnection()->prepare($delete_fragment_sql);
+            //$delete_fragment_stmt->execute(['item_id' => $item_id]);
+            echo "deleteFile - fragment: $item_id";
+        }
+
+        public function deleteFolder($user_id, $item_id)
+        {
+            print_r($this->getItemsListFromFolder($user_id, $item_id));
+            // de iterat prin rezultat, la fisiere se face delete File, la foldere se apeleaza deleteItem, de vazut celelalte cazuri
+        }
 
 
     }

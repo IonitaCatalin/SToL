@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 04, 2020 at 02:43 PM
+-- Generation Time: May 04, 2020 at 06:01 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -72,6 +72,16 @@ CREATE TABLE `files` (
   `fragments_id` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `files`
+--
+
+INSERT INTO `files` (`id`, `item_id`, `folder_id`, `name`, `mode`, `from_service`, `file_service_id`, `fragments_id`) VALUES
+(1, '1', '67b6e87381a8fb18c96c7acca3b6c35d', 'file1', '', '', '', '1'),
+(2, '2', 'b5908118157cff12d8d1f1ae6ed4c104', 'file2', '', '', '', '2'),
+(3, '3', '0f6ead903e13eba64c624a45afba9184', 'file3', '', '', '', '3'),
+(4, '4', 'd2617194116dea57dd6ca65498f01ee7', 'file4', '', '', '', '4');
+
 -- --------------------------------------------------------
 
 --
@@ -95,7 +105,7 @@ INSERT INTO `folders` (`id`, `item_id`, `parent_id`, `name`, `created_at`) VALUE
 (8, '67b6e87381a8fb18c96c7acca3b6c35d', 'e86edca146bbefd773838a7e7955b521', 'NewFolder1', '2020-05-04 08:09:14'),
 (9, 'b5908118157cff12d8d1f1ae6ed4c104', 'e86edca146bbefd773838a7e7955b521', 'NewFolder2', '2020-05-04 09:52:15'),
 (10, '0f6ead903e13eba64c624a45afba9184', 'b5908118157cff12d8d1f1ae6ed4c104', 'Folder3InFolder2', '2020-05-04 08:32:54'),
-(11, '5d01e0d78f34e59bd72d866f63ecfc72', 'e86edca146bbefd773838a7e7955b521', 'NewFolder4', '2020-05-04 11:29:01');
+(12, 'd2617194116dea57dd6ca65498f01ee7', '0f6ead903e13eba64c624a45afba9184', 'Folder4InFolder3', '2020-05-04 13:07:10');
 
 -- --------------------------------------------------------
 
@@ -111,8 +121,15 @@ CREATE TABLE `fragments` (
   `googledrive_id` int(11) DEFAULT NULL,
   `onedrive_offset` varchar(80) NOT NULL,
   `googledrive_offset` varchar(80) NOT NULL,
-  `dorpbox_offset` varchar(80) NOT NULL
+  `dropbox_offset` varchar(80) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `fragments`
+--
+
+INSERT INTO `fragments` (`fragments_id`, `file_id`, `onedrive_id`, `dropbox_id`, `googledrive_id`, `onedrive_offset`, `googledrive_offset`, `dropbox_offset`) VALUES
+(3, 3, 123, 456, 789, '', '', '');
 
 -- --------------------------------------------------------
 
@@ -146,9 +163,14 @@ CREATE TABLE `items` (
 
 INSERT INTO `items` (`user_id`, `item_id`, `content_type`) VALUES
 ('c9526e3221d689b48c621d1babe0bb87', '0f6ead903e13eba64c624a45afba9184', 'folder'),
+('c9526e3221d689b48c621d1babe0bb87', '1', 'file'),
+('c9526e3221d689b48c621d1babe0bb87', '2', 'file'),
+('c9526e3221d689b48c621d1babe0bb87', '3', 'file'),
+('c9526e3221d689b48c621d1babe0bb87', '4', 'file'),
 ('c9526e3221d689b48c621d1babe0bb87', '5d01e0d78f34e59bd72d866f63ecfc72', 'folder'),
 ('c9526e3221d689b48c621d1babe0bb87', '67b6e87381a8fb18c96c7acca3b6c35d', 'folder'),
 ('c9526e3221d689b48c621d1babe0bb87', 'b5908118157cff12d8d1f1ae6ed4c104', 'folder'),
+('c9526e3221d689b48c621d1babe0bb87', 'd2617194116dea57dd6ca65498f01ee7', 'folder'),
 ('c9526e3221d689b48c621d1babe0bb87', 'e86edca146bbefd773838a7e7955b521', 'folder');
 
 -- --------------------------------------------------------
@@ -230,19 +252,19 @@ ALTER TABLE `onedrive_service`
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `folders`
 --
 ALTER TABLE `folders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `fragments`
 --
 ALTER TABLE `fragments`
-  MODIFY `fragments_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `fragments_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
