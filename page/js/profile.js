@@ -97,7 +97,6 @@ function deauthorizeService(serviceName) {
             if(response.status=='success' && xhr.status==200) {
                 fetchUserData();
                 toggleAlert(response.message, false);
-                console.log('Abcdef??');
             }
             else {
                 toggleAlert(response.message, true);
