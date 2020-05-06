@@ -5,7 +5,7 @@ class App
     private $method;       
     private $raw_input;
     private $authorize;   
-    private $max_upload_chunk=2000000;
+    private $max_upload_chunk=1000000;
 
     function __construct($inputs)
     {

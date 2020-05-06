@@ -62,7 +62,7 @@ class CUpload extends Controller
         try
         {
             $done=$this->model->uploadFile($upload_id,$chunk_size);
-            if($done==1)
+            if($done)
             {
                 $json=new JsonResponse('success',null,'Data file uploaded succesfully',201);
                 echo $json->response();
@@ -70,7 +70,7 @@ class CUpload extends Controller
             else
             {
                 $json=new JsonResponse('success',null,'Chunk upload succesfully',200);  
-                echo $json->response;
+                echo $json->response();
             }
         }
         catch(PDOException $exception)

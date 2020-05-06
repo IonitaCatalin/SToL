@@ -117,16 +117,18 @@ function uploadSingleFile(file)
         )
         .then(res=>res.json()
                     .then(data=>{
-                        if(res.status=-200)
+                        if(res.status=200)
                         {
                             sendFileByChunks(file,0,data.data.chunk,data.data.url);
                         }
                         else if(res.status==409)
                         {
+                            console.log('aaa');
                             //Nume deja luat
                         }
                         else if(res.status==400)
                         {
+                            console.log('bbb');
                             //Parent id nu e bun
                         }
                     }));   
@@ -140,6 +142,7 @@ function sendFileByChunks(file,start,chunkSize,url)
         console.log("Start:"+start+"/"+"End:"+(start+chunkSize));
         fetch(url, {method: 'put', body: chunk})
         .then(res => {
+            console.log(res.text());
             console.log(res.status);
             if(res.status==200)
             {
@@ -147,11 +150,11 @@ function sendFileByChunks(file,start,chunkSize,url)
             }
             else if(res.status==201)
             {
-                
+                console.log('Gata transferul');
             }
             else if(res.status==413)
             {
-                
+                console.log('ccc');
             }
            
         })

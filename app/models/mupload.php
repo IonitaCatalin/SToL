@@ -60,14 +60,15 @@
             }
             else
             {
+                
                 $upload_array=$check_upload_stmt->fetch(PDO::FETCH_ASSOC);
                 $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$upload_array['file_reference'];
-                file_put_contents($path,$post_data);
+                file_put_contents($path,$post_data,FILE_APPEND);
                 if(filesize($path)==$upload_array['expected_size'])
                 {
-                    return 1;
+                    return true;
                 }
-                else return 0;    
+                else return false;    
             }
         }
         else
