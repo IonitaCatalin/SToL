@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 04, 2020 at 07:58 PM
+-- Generation Time: May 06, 2020 at 06:14 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -80,7 +80,8 @@ INSERT INTO `files` (`id`, `item_id`, `folder_id`, `name`, `mode`, `from_service
 (1, '1', '67b6e87381a8fb18c96c7acca3b6c35d', 'file1', '', '', '', '1'),
 (2, '2', 'b5908118157cff12d8d1f1ae6ed4c104', 'file2', '', '', '', '2'),
 (3, '3', '0f6ead903e13eba64c624a45afba9184', 'file3', '', '', '', '3'),
-(4, '4', 'd2617194116dea57dd6ca65498f01ee7', 'file4', '', '', '', '4');
+(4, '4', 'd2617194116dea57dd6ca65498f01ee7', 'file4', '', '', '', '4'),
+(5, '5', 'e86edca146bbefd773838a7e7955b521', 'root.txt', '', '', '', '5');
 
 -- --------------------------------------------------------
 
@@ -167,6 +168,7 @@ INSERT INTO `items` (`user_id`, `item_id`, `content_type`) VALUES
 ('c9526e3221d689b48c621d1babe0bb87', '2', 'file'),
 ('c9526e3221d689b48c621d1babe0bb87', '3', 'file'),
 ('c9526e3221d689b48c621d1babe0bb87', '4', 'file'),
+('c9526e3221d689b48c621d1babe0bb87', '5', 'file'),
 ('c9526e3221d689b48c621d1babe0bb87', '67b6e87381a8fb18c96c7acca3b6c35d', 'folder'),
 ('c9526e3221d689b48c621d1babe0bb87', 'b5908118157cff12d8d1f1ae6ed4c104', 'folder'),
 ('c9526e3221d689b48c621d1babe0bb87', 'd2617194116dea57dd6ca65498f01ee7', 'folder'),
@@ -251,7 +253,7 @@ ALTER TABLE `onedrive_service`
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `folders`

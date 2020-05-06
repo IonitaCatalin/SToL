@@ -157,7 +157,6 @@
 		public function updatePassword($oldpass,$newpass,$id)
 		{
 			$get_sql="SELECT password FROM ACCOUNTS WHERE id=:userid";
-			echo $id;
 			$get_pass_stmt=DB::getConnection()->prepare($get_sql);
 			$get_pass_stmt->execute([
 				'userid'=>$id
@@ -178,23 +177,24 @@
 			}
 		}
 
-		public function invalidateService($id,$service)
+		public function invalidateService($user_id, $service)
 		{
 			$delete_sql = '';
 			switch ($service) {
 				case 'onedrive':
-					$delete_sql = "DELETE FROM onedrive_service WHERE user_id = ${id}";
+					$delete_sql = "DELETE FROM onedrive_service WHERE user_id=:user_id";
 					break;
 				case 'googledrive':
-					$delete_sql = "DELETE FROM googledrive_service WHERE user_id = ${id}";
+					$delete_sql = "DELETE FROM googledrive_service WHERE user_id=:user_id";
 					break;
 				case 'dropbox':
-					$delete_sql="DELETE FROM dropbox_service WHERE user_id=${id}";
+					$delete_sql="DELETE FROM dropbox_service WHERE user_id=:user_id";
 					break;
-
 			}
 			$stmt = DB::getConnection()->prepare($delete_sql);
-			$stmt->execute();
+			$stmt->execute([
+				'user_id' => $user_id
+			]);
 		}
 	}
 	

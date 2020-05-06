@@ -162,30 +162,34 @@ class CProfile extends Controller {
 	public function changeUserData($user_id)
 	{
 		$content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
-            if (stripos($content_type, 'application/json') === false) {
-                $json=new JsonResponse('error',null,'Only application/json content-type allowed',415);
-                echo $json->response();
-            }
+        if (stripos($content_type, 'application/json') === false)
+        {
+            $json=new JsonResponse('error',null,'Only application/json content-type allowed',415);
+            echo $json->response();
+        }
 		else
 		{
 			$post_data = file_get_contents('php://input');
 			$post_array = json_decode($post_data, true);
-			if(!is_array($post_array)) {
+
+			if(!is_array($post_array))
+			{
 				$json = new JsonResponse('error', null, 'Malformed request,JSON data object could not be parsed', 400);
 				echo $json->response();
 			}
-			else if( (isset($post_array['username']) == false) && 
+			else if(
+				(isset($post_array['username']) == false) && 
 				(isset($post_array['oldpassword']) == false) &&
 				(isset($post_array['newpassword']) == false) )
 				{
 					$json = new JsonResponse('error', null, 'Malformed request, required fields are missing', 400);
 					echo $json->response();
 				}
-			else {
-
+			else
+			{
 				try
 				{
-					if($post_array['username'] != '')
+					if(!empty($post_array['username']))
 					{
 						try
 						{	
@@ -198,9 +202,9 @@ class CProfile extends Controller {
 							die();
 						}
 					}
-					if(isset($post_array['oldpassword']))
+					if(!empty($post_array['oldpassword']))
 					{
-						if(isset($post_array['newpassword']))
+						if(!empty($post_array['newpassword']))
 						{
 							try
 							{
@@ -236,9 +240,16 @@ class CProfile extends Controller {
 
 	public function deAuth($service, $user_id)
 	{
-		$this->model->invalidateService($user_id, $service);
-		$json = new JsonResponse('success', null, 'Serice succesfully unauthorized',200);
-		echo $json->response();
+		try {
+			$this->model->invalidateService($user_id, $service);
+			$json = new JsonResponse('success', null, 'Serice succesfully unauthorized',200);
+			echo $json->response();
+		}
+		catch(PDOException $exception)
+		{
+			$json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+			echo $json->response();
+		}
 	}
 
 }

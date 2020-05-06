@@ -97,7 +97,6 @@ function deauthorizeService(serviceName) {
             if(response.status=='success' && xhr.status==200) {
                 fetchUserData();
                 toggleAlert(response.message, false);
-                console.log('Abcdef??');
             }
             else {
                 toggleAlert(response.message, true);
@@ -233,6 +232,9 @@ function updateUserData()
                     if(xhr.status==200 && response.status=='success')
                     {
                         fetchUserData();
+                        document.getElementById('new-name').value = '';
+                        document.getElementById('old-password').value = '';
+                        document.getElementById('new-password').value = '';
                         toggleAlert(response.message,false);
                     }
                     if(xhr.status==409)
