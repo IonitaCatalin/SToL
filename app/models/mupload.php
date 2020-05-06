@@ -56,7 +56,7 @@
             $post_data=file_get_contents('php://input');
             if(strlen($post_data)>$chunk_size)
             {
-                $json=new JsonResponse('error',null,'Chunk size not supported',413);
+                throw new UnsupportedChunkSize();
             }
             else
             {
@@ -65,16 +65,14 @@
                 file_put_contents($path,$post_data);
                 if(filesize($path)==$upload_array['expected_size'])
                 {
-                    $json=new JsonResponse('success',null,'Data file uploaded succesfully',201);
-                    echo $json->response();
+                    return 1;
                 }
-                $json=new JsonResponse('success',null,'Chunk upload succesfully',200);  
-                echo $json->response;
+                else return 0;    
             }
         }
         else
         {
-            $json=new JsonResponse('error',null,'Invalid upload endpoint',400);
+            throw new InvalidUploadId();
         }
     }
 }

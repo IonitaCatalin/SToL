@@ -57,5 +57,11 @@ class InvalidUploadId extends ApplicationExceptions
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 }
+class UnsupportedChunkSize extends ApplicationExceptions
+{
+    public function __toString() {
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    }
+}
 
 ?>

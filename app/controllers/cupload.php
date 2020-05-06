@@ -59,8 +59,37 @@ class CUpload extends Controller
     }
     public function uploadFile($upload_id,$chunk_size)
     {
-        $this->model->uploadFile($upload_id,$chunk_size);
+        try
+        {
+            $done=$this->model->uploadFile($upload_id,$chunk_size);
+            if($done==1)
+            {
+                $json=new JsonResponse('success',null,'Data file uploaded succesfully',201);
+                echo $json->response();
+            }
+            else
+            {
+                $json=new JsonResponse('success',null,'Chunk upload succesfully',200);  
+                echo $json->response;
+            }
+        }
+        catch(PDOException $exception)
+        {
+            $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+            echo $json->response;
+        }
+        catch(InvalidUploadId $exception)
+        {
+            $json=new JsonResponse('error',null,'Invalid upload endpoint',400);
+            echo $json->response;
+        }
+        catch(UnsupportedChunkSize $exception)
+        {
+            $json=new JsonResponse('error',null,'Chunk size not supported',413);
+            echo $json->response;
+        }
     }
+
 }
 
 ?>

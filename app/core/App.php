@@ -179,6 +179,11 @@ class App
             $upload_controller->uploadFile($upload_id,$this->max_upload_chunk);
         });
 
+        $router->addRoute('DELETE','/api/fileupload/:upload_file',function($upload_id){
+            $upload_controller=new CUpload();
+            $upload_controller->deleteUpload($upload_id);
+        });
+
         $router->run($this->method, $this->URI);
     }
 }

@@ -149,7 +149,10 @@ function sendFileByChunks(file,start,chunkSize,url)
             {
                 
             }
-            else if(res.status==)
+            else if(res.status==413)
+            {
+                
+            }
            
         })
     }
