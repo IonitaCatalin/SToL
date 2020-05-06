@@ -5,6 +5,7 @@ class App
     private $method;       
     private $raw_input;
     private $authorize;   
+    private $max_upload_chunk=2000000;
 
     function __construct($inputs)
     {
@@ -20,7 +21,6 @@ class App
     public function run() {
 
         $router = new Router();
-        //$authorize = new AuthorizationHandler();
         $router->addRoute('GET','/page/login',function(){
                 $page_controller=new CPage();
                 $page_controller->renderLogin();
@@ -34,13 +34,11 @@ class App
         $router->addRoute('GET','/page/profile',function(){
             $page_controller=new CPage();
             $page_controller->renderProfile();
-                // header('Location:'.'http://localhost/ProiectTW/page/login');
         });
 
         $router->addRoute('GET', '/page/files',function(){
                 $page_controller=new CPage();
                 $page_controller->renderFiles();
-                //  header('Location:'.'http://localhost/ProiectTW/page/login');
         });
 
         $router->addRoute('GET', '/api/user', function()
@@ -95,14 +93,6 @@ class App
                 $profile_controller=new CProfile();
                 $profile_controller->authorizeServices($service, $code, $user_id);
                 header('Location: http://localhost/ProiectTW/page/profile');
-            }
-        });
-
-        $router->addRoute('GET','/api/jwt',function()
-        {
-            if($this->authorize->validateAuthorization())
-            {
-                var_dump($this->authorize->getDecoded());
             }
         });
 
@@ -173,8 +163,20 @@ class App
                 $items_controller->moveItem($this->authorize->getDecoded()['user_id'], $item_id, $new_parent_id);
             }
         });
-        $router->addRoute('GET','/api/test/root:/:path',function($path){
-            echo $path;
+        $router->addRoute('PUT','/api/items/:item_id/:new_parent_id', function($item_id, $new_parent_id){
+                $items_controller=new CItems();
+                $items_controller->moveItem($this->authorize->getDecoded()['user_id'], $item_id, $new_parent_id);
+        });
+        $router->addRoute('POST','/api/upload/:parent_id',function($parent_id){
+            if($this->authorize->validateAuthorization())
+            {
+                $upload_controller=new CUpload();
+                $upload_controller->createUpload($this->authorize->getDecoded()['user_id'],$parent_id,$this->max_upload_chunk);
+            }
+        });
+        $router->addRoute('PUT','/api/fileupload/:upload_id',function($upload_id){
+            $upload_controller=new CUpload();
+            $upload_controller->uploadFile($upload_id,$this->max_upload_chunk);
         });
 
         $router->run($this->method, $this->URI);

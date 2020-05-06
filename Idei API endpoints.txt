@@ -52,3 +52,21 @@ Fragments(user_id,
 		  onedrive_offset,
 		  googledrive_offset,
 		  dropbox_offset)
+
+
+
+POST localhost/ProiectTW/api/
+upload name:asdd,parent_id:asdaasd,md5:,size:
+
+uploads -> asjdkasdl12313asd
+
+asdd
+Content-Range:bytes 0-200/256
+Content-Length:200
+Body:
+POST localhost/ProiectTW/api/uploadSession/asjdkasdl12313asd
+
+201 Created
+
+
+
