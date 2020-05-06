@@ -232,6 +232,9 @@ function updateUserData()
                     if(xhr.status==200 && response.status=='success')
                     {
                         fetchUserData();
+                        document.getElementById('new-name').value = '';
+                        document.getElementById('old-password').value = '';
+                        document.getElementById('new-password').value = '';
                         toggleAlert(response.message,false);
                     }
                     if(xhr.status==409)

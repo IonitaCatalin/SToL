@@ -8,13 +8,14 @@ require_once('DropboxException.php');
 
     class DropboxService
     {
-        public static function authorizationRedirectURL()
+        public static function authorizationRedirectURL($user_id)
         {
             $endpoint = "https://www.dropbox.com/oauth2/authorize";
             $params = [
                 'response_type' => 'code',
                 'client_id' => DROPBOX_APP_KEY,
-                'redirect_uri' => DROPBOX_REDIRECT_URI
+                'redirect_uri' => DROPBOX_REDIRECT_URI,
+                'state' => $user_id
             ];
             $query_string = http_build_query($params);
             $request_authorization_url = $endpoint . '?' . $query_string;

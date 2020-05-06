@@ -34,13 +34,11 @@ class App
         $router->addRoute('GET','/page/profile',function(){
             $page_controller=new CPage();
             $page_controller->renderProfile();
-                // header('Location:'.'http://localhost/ProiectTW/page/login');
         });
 
         $router->addRoute('GET', '/page/files',function(){
                 $page_controller=new CPage();
                 $page_controller->renderFiles();
-                //  header('Location:'.'http://localhost/ProiectTW/page/login');
         });
 
         $router->addRoute('GET', '/api/user', function()

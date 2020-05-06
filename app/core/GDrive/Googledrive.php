@@ -8,7 +8,7 @@
 
     class GoogleDriveService
     {
-        public static function authorizationRedirectURL() {
+        public static function authorizationRedirectURL($user_id) {
 
             $endpoint = "https://accounts.google.com/o/oauth2/v2/auth";
 
@@ -18,7 +18,8 @@
                 'access_type' => "offline",
                 'response_type' => "code",
                 'redirect_uri' => GOOGLE_REDIRECT_URI,
-                'client_id' => GOOGLE_CLIENT_ID
+                'client_id' => GOOGLE_CLIENT_ID,
+                'state' => $user_id
             ];
 
             $query_string = http_build_query($params);
