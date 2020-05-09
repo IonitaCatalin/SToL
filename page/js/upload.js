@@ -3,14 +3,17 @@ var closeModalButton = document.querySelector('#modal-btn-close');
 var dropArea=document.querySelector('#modal-file-drop');
 var fileSelector=document.querySelector('#file-selector');  
 var chooseFilesButton=document.querySelector('#modal-btn-files');
-var addFolder=document.querySelector('#btn-new-folder');
 var uploadFilesButton=document.querySelector('#modal-btn-upload');
-var files;
 
-var isOpened=false;
 var activeTransfer=false;
 var currentTransferId;
-var uploadedFiles;
+var uploadedFilesCount;
+var files;
+
+dropArea.addEventListener('dragenter',preventDefaults,false);
+dropArea.addEventListener('dragover',preventDefaults,false);
+dropArea.addEventListener('dragleave',preventDefaults,false);
+dropArea.addEventListener('drop',preventDefaults,false);
 
 function toggleModal(disable = false)
 {
@@ -24,6 +27,7 @@ function toggleModal(disable = false)
         modal.style.visibility='visible';
         
     } else {
+        files.splice(0,files.length);
         activeTransfer=false;
         document.getElementById('modal-file-drop').innerHTML='';
         backdrop.style.opacity='0';
@@ -38,81 +42,58 @@ uploadButton.onclick=function(){
 uploadFilesButton.onclick=function()
 {
     console.log(files);
-    uploadedFiles=0;
+    console.log(document.getElementsByClassName('up-elem-list').length);    
+    uploadedFilesCount=0;
     activeTransfer=true;
     for(i=0;i<files.length;i++)
     {
-       console.log("Upload:"+activeTransfer);  
-        if(activeTransfer)
-        {
+        console.log("Upload:"+activeTransfer);  
+        if(activeTransfer) {
             uploadSingleFile(files[i]);
         }
     }
 }
 closeModalButton.onclick=function(){
-    if(activeTransfer==true)
-    {
-        if(uploadedFiles!=files.length)
-        {
+    if(activeTransfer) {
+        if(uploadedFilesCount!=files.length){
             activeTransfer=false;   
             fetch('http://localhost/ProiectTW/api/upload/'+currentTransferId,{method:'delete'});
             toggleModal(false);
         }
-        else
-        {
+        else {
             toggleModal(false);
         }
     }
-    else
-    {
+    else {
         toggleModal(false);
     }
-
     const parent=document.getElementById('modal-file-drop');
-    while(parent.firstChild)
-    {
-            parent.firstChild.remove();
-    }
     const parentReducedView=document.getElementById('modal-up-list');
-    while(parentReducedView.firstChild)
-    {
+    while(parent.firstChild){
+        parent.firstChild.remove();
+    }
+    while(parentReducedView.firstChild){
         parentReducedView.firstChild.remove();
     }
 }
 
-//  addFolder.onclick=function(){
-//      let container=document.createElement('div');
-//      container.className='empty-folder';
-//      let img=document.createElement('img');
-//      img.src='images/empty-folder.svg';
-//      let text=document.createElement('p');
-//      text.innerHTML = 'New Folder';
-//      container.appendChild(img);
-//      container.appendChild(text);
-//      document.querySelector('.main-container').appendChild(container);
-//  }
-
 chooseFilesButton.onclick=function()
 {
     fileSelector.click();
-    console.log(fileSelector.files);
     fileSelector.onchange=function(event){
-        let files=fileSelector.files;
+        files=Array.from(fileSelector.files);
         handleFiles(files);
     }
 }
 dropArea.onclick=function(){
     fileSelector.click();
     fileSelector.onchange=function(event){
-        files=fileSelector.files;
+        files=Array.from(fileSelector.files);
         handleFiles(files);
     }
 }
 
-dropArea.addEventListener('dragenter',preventDefaults,false);
-dropArea.addEventListener('dragover',preventDefaults,false);
-dropArea.addEventListener('dragleave',preventDefaults,false);
-dropArea.addEventListener('drop',preventDefaults,false);
+
 
 function getCookieValue(name) {
     let value = "; " + document.cookie;
@@ -144,35 +125,29 @@ function handleFiles(files)
 
 function uploadSingleFile(file)
 {
-    const uploadBody = {
+    const requestBody = {
         filename:file.name,
         filesize:file.size
     }
-    fetch('http://localhost/ProiectTW/api/upload/67b6e87381a8fb18c96c7acca3b6c35d',
-    {
-        method:'post',body:JSON.stringify(uploadBody), headers:{
+    fetch('http://localhost/ProiectTW/api/upload/67b6e87381a8fb18c96c7acca3b6c35d',{
+        method:'post',body:JSON.stringify(requestBody), headers:{
         'Content-Type': 'application/json',
-        'Authorization':'Bearer ' + getCookieValue('jwt_token')}}
-        )
-        .then(res=>res.json()
-                    .then(data=>{
-                        currentTransferId=data.data.url.split("/")[6];
-                        console.log(currentTransferId); 
-                        if(res.status=200)
-                        {
-                                sendFileByChunks(file,0,data.data.chunk,data.data.url);
-                        }
-                        else if(res.status==409)
-                        {
-                            console.log('aaa');
-                            //Nume deja luat
-                        }
-                        else if(res.status==400)
-                        {
-                            console.log('bbb');
-                            //Parent id nu e bun
-                        }
-                    }));   
+        'Authorization':'Bearer ' + getCookieValue('jwt_token')}})
+        .then(response=>response.json()
+        .then(data=>{
+            currentTransferId=data.data.url.split("/")[6];
+            console.log(currentTransferId); 
+            if(response.status=200) {
+                sendFileByChunks(file,0,data.data.chunk,data.data.url);
+            }
+            else if(response.status==409) {
+                console.log('aaa');
+                //Nume deja luat
+            }
+            else if(response.status==400) {
+                console.log('bbb');
+                //Parent id nu e bun
+            }}));   
 }
 
 function sendFileByChunks(file,start,chunkSize,url)
@@ -185,24 +160,19 @@ function sendFileByChunks(file,start,chunkSize,url)
         .then(res => {
             console.log(res.text());
             console.log(res.status);
-            if(res.status==200)
-            {
-                if(activeTransfer)
-                {
+            if(res.status==200) {
+                if(activeTransfer) {
                     sendFileByChunks(file,start+chunkSize,chunkSize,url);
                 }
-                else
-                {
+                else {
                     console.log('Intrerupere tranfer');
                 }
             }
-            else if(res.status==201)
-            {
+            else if(res.status==201) {
                 console.log('Gata transferul');
-                uploadedFiles++;
+                uploadedFilesCount++;
             }
-            else if(res.status==413)
-            {
+            else if(res.status==413) {
                 console.log('ccc');
             }
            
@@ -222,16 +192,16 @@ function previewFileOnUp(file)
         var aboutFile=document.createElement('div');
         aboutFile.className="up-elem-meta";
         div.className="up-elem-list";
-        var extension=document.createElement('p');
         var name=document.createElement('p');
-        var size=document.createElement('p');
+        var status=document.createElement('p');
+        status.id="up-elem-status";
         var previewImg=document.createElement('img');
-        extension.textContent="Extension:."+reader.fileName.split('.').pop();
-        name.textContent="Name:"+reader.fileName;
-        size.textContent="Size:"+Math.ceil(reader.fileSize/1024)+"KB";
+        name.textContent=reader.fileName;
+        status.textContent='Status:Ready for uploading';
+        status.style.color='#00cc00';
+        status.style.textAlign='center';
         aboutFile.appendChild(name);
-        aboutFile.appendChild(size);
-        aboutFile.appendChild(extension);
+        aboutFile.appendChild(status);
         previewImg.src=reader.result;
         div.appendChild(previewImg );
         div.appendChild(aboutFile);
