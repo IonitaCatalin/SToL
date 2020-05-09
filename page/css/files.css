@@ -256,6 +256,31 @@ article h1 {
 	text-align: center;
 }
 
+.hovered {
+	background-color: lightblue;
+	border: 1px dashed;
+	padding-top: -1px;
+	padding-right: -1px;
+	padding-bottom: -1px;
+	padding-left: -1px;
+/*	margin-left:30px;
+	margin-right: 5px;
+	margin-bottom: 10px;
+    flex-grow: 0;
+    flex-shrink: 1;
+	flex-basis: 168px;
+	display:flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-content: flex-start;
+    align-items: center;*/
+}
+
+.invisible {
+	display: none;
+}
+
 .backdrop {
 	opacity:0;
 	display: block;

@@ -210,15 +210,17 @@
 
         public function getItemsListFromRoot($user_id)
         {
-            $get_root_sql = "SELECT fold.item_id FROM ITEMS itms JOIN FOLDERS fold ON fold.item_id=itms.item_id WHERE user_id=:id AND parent_id IS NULL";
+            $get_root_sql = "SELECT flds.item_id, flds.name, itms.content_type FROM ITEMS itms JOIN FOLDERS flds ON itms.item_id = flds.item_id WHERE user_id=:user_id AND parent_id IS NULL";
             $get_root_stmt = DB::getConnection()->prepare($get_root_sql);
             $get_root_stmt->execute([
-                'id'=>$user_id,
+                'user_id' => $user_id,
             ]);
 
-            $root_id = $get_root_stmt->fetch(PDO::FETCH_ASSOC)['item_id'];
+            $root_row = $get_root_stmt->fetch(PDO::FETCH_ASSOC);
+            $root_id = $root_row['item_id'];
             $result_array = array();
-            $count = 0;
+            $result_array[0] = $root_row;   //pun si root id in datele trimise, e util
+            $count = 1;
 
             $list_folders_sql = "SELECT flds.item_id, flds.name, itms.content_type FROM ITEMS itms JOIN FOLDERS flds ON itms.item_id = flds.item_id WHERE user_id=:user_id AND parent_id=:parent_id";
             $list_folders_stmt = DB::getConnection()->prepare($list_folders_sql);
@@ -352,8 +354,6 @@
 
         public function moveItem($user_id, $item_id, $new_parent_id)
         {
-            echo "MUT $item_id IN $new_parent_id";
-
             // verific existenta item-ului
             $search_file_exists_sql = "SELECT item_id FROM ITEMS WHERE user_id=:user_id AND item_id=:item_id";
             $search_file_exists_stmt = DB::getConnection()->prepare($search_file_exists_sql);

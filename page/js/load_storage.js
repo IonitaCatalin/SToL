@@ -13,7 +13,11 @@ function getCookieValue(name) {
 
 function loadFiles(current_folder = '')
 {
-    folder_parents.push(current_folder);
+
+    if((folder_parents.length >= 1)  && (folder_parents[folder_parents.length - 1] != current_folder)) {
+        folder_parents.push(current_folder);
+    }
+
     backButton.onclick = function() { folder_parents.pop(); loadFiles(folder_parents.pop()); };
 
     let xhr = new XMLHttpRequest();
@@ -31,8 +35,12 @@ function loadFiles(current_folder = '')
             //console.log(items_data);
 
             if(response.status=='success' && xhr.status==200) {
-                // render data
                 console.log('Am incarcat datele pentru ' + current_folder);
+                if(current_folder == ''){   // cererea pt date in root
+                    let root_data = items_data.shift();
+                    folder_parents.push(root_data.item_id);
+                }
+                // render data
                 renderComponents(items_data);
             }
             else {
@@ -54,6 +62,7 @@ function renderComponents(data)
         function(element)
         {
             let component = document.createElement('div');
+            component.setAttribute("id", element['item_id']);
             let graphics = document.createElement('img');
             let title = document.createElement('p');
             title.textContent = element['name'];
@@ -79,7 +88,7 @@ function renderComponents(data)
             container.appendChild(component);
         }
     );
-
+    drag_n_drop_apply_listeners();   // e importanta ordinea executiei scripturilor
 }
 
 window.onload = function(){  

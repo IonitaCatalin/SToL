@@ -104,6 +104,7 @@
 				Footer
 			</footer>
 		</div>
+		<script async src="../page/js/drag_and_drop.js"></script>
 		<script async src="../page/js/upload.js"></script>
 		<script async src="../page/js/context_menu.js"></script>
 		<script async src="../page/js/load_storage.js"></script>
