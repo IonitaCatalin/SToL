@@ -64,12 +64,16 @@ class CUpload extends Controller
             $done=$this->model->uploadFile($upload_id,$chunk_size);
             if($done)
             {
+                //Inainte de acest raspuns cu 201 v-a venii logica de upload pentru diferite servicii,vei putea sa intrerupi download-ul numai cand se uploadeaza explicit catre server nu si catre servicii
+                //Dupa upload-ul pe servicii se va trimite ca si cod de success 201-Content Created
+                //Nu vom vrea sa stergem upload-ul curent decat la cererea clientului doar de pe server,de pe servicii nu se va putea in decursul upload-ului
+                //Propun ca inainte sa inceapa upload-ul pe servicii sa verificam inca o data existenta sesiune de upload in baza de date ca sa ne asiguram ca user-ul nu a intrerupt sesiunea intre timp astfel sa avem un fail-safe
                 $json=new JsonResponse('success',null,'Data file uploaded succesfully',201);
                 echo $json->response();
             }
             else
             {
-                $json=new JsonResponse('success',null,'Chunk upload succesfully',200);  
+                $json=new JsonResponse('success',null,'Chunk upload successfully',200);  
                 echo $json->response();
             }
         }
@@ -86,6 +90,26 @@ class CUpload extends Controller
         catch(UnsupportedChunkSize $exception)
         {
             $json=new JsonResponse('error',null,'Chunk size not supported',413);
+            echo $json->response;
+        }
+    }
+    public function deleteUpload($upload_id)
+    {
+        try
+        {
+            $this->model->deletePublicUpload($upload_id);
+            $json=new JsonResponse('success',null,'Upload revoked successfully',200);
+            echo $json->response();
+        }
+        catch(PDOException $exception)
+        {
+            echo $exception;
+            $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+            echo $json->response();
+        }
+        catch(InvalidUploadId $exception)
+        {
+            $json=new JsonResponse('error',null,'Invalid upload id supplied',400);
             echo $json->response;
         }
     }

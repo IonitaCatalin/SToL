@@ -76,5 +76,28 @@
             throw new InvalidUploadId();
         }
     }
+    public function deletePublicUpload($upload_id)
+    {
+        $check_upload_sql="SELECT * FROM UPLOADS WHERE upload_id=:id";
+        $check_upload_stmt=DB::getConnection()->prepare($check_upload_sql);
+        $check_upload_stmt->execute([
+            'id'=>$upload_id
+        ]);
+        if($check_upload_stmt->rowCount()>0)
+        {
+            $result_upload=$check_upload_stmt->fetch(PDO::FETCH_ASSOC);
+            echo $result_upload['file_reference'];
+            unlink($_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$result_upload['file_reference']);
+            $delete_upload_sql="DELETE FROM uploads WHERE upload_id=:id";
+            $delete_upload_stmt=DB::getConnection()->prepare($delete_upload_sql);
+            $delete_upload_stmt->execute([
+                'id'=>$upload_id
+            ]);
+        }   
+        else
+        {
+            throw new InvalidUploadId();
+        }
+    }
 }
 ?>
