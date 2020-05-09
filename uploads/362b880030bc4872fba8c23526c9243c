@@ -1,0 +1,155 @@
+//Pentru managerrequest
+async function validateUsername(user, pass) {
+	
+		console.log("Find "+user+" "+pass);
+		var userReference = db.ref("/users/");		
+	try {
+		const snapshot = await ref.orderByChild("username").equalTo(user).once('value');
+		console.log(snapshot.val());
+		{
+			if (!snapshot.exists()) {
+				console.log("username doesn't exist");
+				return 2001;//username doesn't exist
+
+			}
+			else {
+				const password = snapshot.child(user).val().userpassword;
+				console.log(password);
+				if (password != pass) {
+					console.log("incorect password");
+					return 2002;//incorect password
+       			}
+				else
+				    return 0;
+			
+			}
+		}
+	}
+	catch (error) {
+			console.error(error);
+		}
+
+	
+}
+
+async function validateManagerRequest(req) {
+	console.log(req);
+	const schemaForGeneralRequest = Joi.object(
+		{
+			username: Joi.string().required(),
+			password: Joi.string().required(),
+			command: Joi.string().required(),
+			arguments: Joi.array().required()
+		});
+	commands = ["maxNoPlayers", "newGame", "addPlayer", "startGame", "startTurn"];
+	console.log(schemaForGeneralRequest.validate(req));
+	const valid = schemaForGeneralRequest.validate(req);
+	var response;
+	if (valid.error)
+		response = { code: 2004, status: 102, arguments: [valid.error.message] };
+	else {
+		if (commands.indexOf(req.command) == -1)
+			response = { code: 2003, status: 102, arguments: ["Incorrect command"] };
+		else {
+			var cod = await validateUsername(req.username, req.password);
+			var Status = 100;
+			console.log(cod);
+			var argument = [];
+			if (cod != 0)
+				response = { code: cod, status: 102, arguments: ["Incorrect username/password"] };
+			else
+			response = { code: cod, status: Status, arguments: [] };
+			console.log(Status);
+		}
+    }
+	return response;
+}
+//Pentru player
+async function validateGameId(game) {
+
+	console.log("Find " + game);
+	var gameReference = db.ref("/lobbies/");
+	try {
+		const snapshot = await gameReference.orderByKey().equalTo(game).once('value');
+		console.log(snapshot.val());
+		{
+			if (!snapshot.exists()) {
+				console.log("game doesn't exist");
+				return 2006;//game doesn't exist
+
+			}
+			else {
+				return 0;
+
+			}
+		}
+	}
+	catch (error) {
+		console.error(error);
+	}
+
+
+}
+async function validateUserId(user) {
+
+	console.log("Find " + user);
+	var userReference = db.ref("/users/");
+	try {
+		const snapshot = await ref.orderByChild("id").equalTo(user).once('value');
+		console.log(snapshot.val());
+		{
+			if (!snapshot.exists()) {
+				console.log("user doesn't exist");
+				return 2001;//username doesn't exist
+
+			}
+			else {
+				return 0;
+
+			}
+		}
+	}
+	catch (error) {
+		console.error(error);
+	}
+
+
+}
+async function validateUserRequest2(req) {
+	console.log(req);
+	const schemaForGeneralRequest = Joi.object(
+		{
+			gameID: Joi.string().required(),
+			playerID: Joi.string().required(),
+			command: Joi.string().required(),
+			arguments: Joi.array()
+		});
+	commands = ["rollDice", "moveRobber", "stealResource", "playerTrade", "wantToTrade", "selectTrade", "acceptTrade", "bankTrade", "portTrade", "buildRoad", "buildSettlement", "buildCity", "buyDevelopment", "useKnight", "useMonopoly", "useRoadBuilding", "useYearOfPlenty", "endTurn"];
+	console.log(schemaForGeneralRequest.validate(req));
+	const valid = schemaForGeneralRequest.validate(req);
+	var response;
+	if (valid.error)
+		response = { code: 2004, status: 102, arguments: [valid.error.message] };
+	else {
+		if (commands.indexOf(req.command) == -1)
+			response = { code: 2003, status: 102, arguments: ["Incorrect command"] };
+		else {
+			var cod = await validateUserId(req.playerID);
+			var Status = 100;
+			console.log(cod);
+			var argument = [];
+			if (cod != 0) {
+				Status = 102; arguments = ["UserId doesn't exist"];
+			}
+			else {
+				cod = await validateGameId(req.gameID);
+				if (cod != 0) {
+					Status = 102; arguments = ["GameId doesn't exist"];
+				}
+			}
+			response = { code: cod, status: Status, arguments: arguments };
+			console.log(Status);
+		}
+	}
+	return response;
+}

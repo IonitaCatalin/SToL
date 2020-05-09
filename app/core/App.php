@@ -5,7 +5,7 @@ class App
     private $method;       
     private $raw_input;
     private $authorize;   
-    private $max_upload_chunk=1000000;
+    private $max_upload_chunk=256;
 
     function __construct($inputs)
     {
@@ -174,12 +174,12 @@ class App
                 $upload_controller->createUpload($this->authorize->getDecoded()['user_id'],$parent_id,$this->max_upload_chunk);
             }
         });
-        $router->addRoute('PUT','/api/fileupload/:upload_id',function($upload_id){
+        $router->addRoute('PUT','/api/upload/:upload_id',function($upload_id){
             $upload_controller=new CUpload();
             $upload_controller->uploadFile($upload_id,$this->max_upload_chunk);
         });
 
-        $router->addRoute('DELETE','/api/fileupload/:upload_file',function($upload_id){
+        $router->addRoute('DELETE','/api/upload/:upload_file',function($upload_id){
             $upload_controller=new CUpload();
             $upload_controller->deleteUpload($upload_id);
         });

@@ -1,5 +1,3 @@
-var backdrop = document.querySelector('.backdrop');
-var modal = document.querySelector('.upload-modal');
 var uploadButton = document.querySelector('#btn-upload');
 var closeModalButton = document.querySelector('#modal-btn-close');
 var dropArea=document.querySelector('#modal-file-drop');
@@ -7,29 +5,69 @@ var fileSelector=document.querySelector('#file-selector');
 var chooseFilesButton=document.querySelector('#modal-btn-files');
 var addFolder=document.querySelector('#btn-new-folder');
 var uploadFilesButton=document.querySelector('#modal-btn-upload');
-var files;8
+var files;
 
-let isOpened=false;
+var isOpened=false;
+var activeTransfer=false;
+var currentTransferId;
+var uploadedFiles;
 
+function toggleModal(disable = false)
+{
+    let backdrop = document.querySelector('.backdrop');
+    let modal = document.querySelector('.upload-modal');
+
+    if(disable == true) {
+        backdrop.style.opacity="1";
+        backdrop.style.visibility='visible';
+        modal.style.opacity='1';
+        modal.style.visibility='visible';
+        
+    } else {
+        activeTransfer=false;
+        document.getElementById('modal-file-drop').innerHTML='';
+        backdrop.style.opacity='0';
+        backdrop.style.visibility='hidden';
+        modal.style.opacity='0';
+        modal.style.visibility='hidden';
+    }
+}
 uploadButton.onclick=function(){
-    backdrop.style.opacity="1";
-    backdrop.style.visibility='visible';
-    modal.style.opacity='1';
-    modal.style.visibility='visible';
+    toggleModal(true);
 }
 uploadFilesButton.onclick=function()
 {
+    console.log(files);
+    uploadedFiles=0;
+    activeTransfer=true;
     for(i=0;i<files.length;i++)
     {
-        uploadSingleFile(files[i]);
+       console.log("Upload:"+activeTransfer);  
+        if(activeTransfer)
+        {
+            uploadSingleFile(files[i]);
+        }
     }
 }
 closeModalButton.onclick=function(){
-  //  backdrop.style.display='none';
-    backdrop.style.opacity='0';
-    backdrop.style.visibility='hidden';
-    modal.style.opacity='0';
-    modal.style.visibility='hidden';
+    if(activeTransfer==true)
+    {
+        if(uploadedFiles!=files.length)
+        {
+            activeTransfer=false;   
+            fetch('http://localhost/ProiectTW/api/upload/'+currentTransferId,{method:'delete'});
+            toggleModal(false);
+        }
+        else
+        {
+            toggleModal(false);
+        }
+    }
+    else
+    {
+        toggleModal(false);
+    }
+
     const parent=document.getElementById('modal-file-drop');
     while(parent.firstChild)
     {
@@ -42,17 +80,17 @@ closeModalButton.onclick=function(){
     }
 }
 
- addFolder.onclick=function(){
-     let container=document.createElement('div');
-     container.className='empty-folder';
-     let img=document.createElement('img');
-     img.src='images/empty-folder.svg';
-     let text=document.createElement('p');
-     text.innerHTML = 'New Folder';
-     container.appendChild(img);
-     container.appendChild(text);
-     document.querySelector('.main-container').appendChild(container);
- }
+//  addFolder.onclick=function(){
+//      let container=document.createElement('div');
+//      container.className='empty-folder';
+//      let img=document.createElement('img');
+//      img.src='images/empty-folder.svg';
+//      let text=document.createElement('p');
+//      text.innerHTML = 'New Folder';
+//      container.appendChild(img);
+//      container.appendChild(text);
+//      document.querySelector('.main-container').appendChild(container);
+//  }
 
 chooseFilesButton.onclick=function()
 {
@@ -77,8 +115,8 @@ dropArea.addEventListener('dragleave',preventDefaults,false);
 dropArea.addEventListener('drop',preventDefaults,false);
 
 function getCookieValue(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
+    let value = "; " + document.cookie;
+    let  parts = value.split("; " + name + "=");
     if (parts.length == 2)
         return parts.pop().split(";").shift();
 }
@@ -111,15 +149,18 @@ function uploadSingleFile(file)
         filesize:file.size
     }
     fetch('http://localhost/ProiectTW/api/upload/67b6e87381a8fb18c96c7acca3b6c35d',
-    {method:'post',body:JSON.stringify(uploadBody), headers:{
+    {
+        method:'post',body:JSON.stringify(uploadBody), headers:{
         'Content-Type': 'application/json',
         'Authorization':'Bearer ' + getCookieValue('jwt_token')}}
         )
         .then(res=>res.json()
                     .then(data=>{
+                        currentTransferId=data.data.url.split("/")[6];
+                        console.log(currentTransferId); 
                         if(res.status=200)
                         {
-                            sendFileByChunks(file,0,data.data.chunk,data.data.url);
+                                sendFileByChunks(file,0,data.data.chunk,data.data.url);
                         }
                         else if(res.status==409)
                         {
@@ -146,11 +187,19 @@ function sendFileByChunks(file,start,chunkSize,url)
             console.log(res.status);
             if(res.status==200)
             {
-                sendFileByChunks(file,start+chunkSize,chunkSize,url);
+                if(activeTransfer)
+                {
+                    sendFileByChunks(file,start+chunkSize,chunkSize,url);
+                }
+                else
+                {
+                    console.log('Intrerupere tranfer');
+                }
             }
             else if(res.status==201)
             {
                 console.log('Gata transferul');
+                uploadedFiles++;
             }
             else if(res.status==413)
             {

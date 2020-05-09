@@ -36,8 +36,6 @@
 					<div id="modal-storage">
 						<input type="radio" id="redundant" name="storage-type" value="redundant">
 						<label for="redundant">Redundant</label><br>
-						<input type="radio" id="fragmented" name="storage-type" value="fragmented">
-						<label for="fragmented">Fragmented</label><br>
 					</div>
 					<span id="modal-btn-close">&times;</span>
 					<div id="modal-file-drop">
@@ -106,7 +104,7 @@
 				Footer
 			</footer>
 		</div>
-		<script async src="../page/js/upload_content.js"></script>
+		<script async src="../page/js/upload.js"></script>
 		<script async src="../page/js/context_menu.js"></script>
 		<script async src="../page/js/load_storage.js"></script>
 		<script async src="../page/js/collapsible_menu.js"></script>

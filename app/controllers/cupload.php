@@ -29,7 +29,7 @@ class CUpload extends Controller
                     $upload_id=uniqid("",true);
                     try{
                         $this->model->startUpload($upload_id,$user_id,$parent_id,$post_array['filename'],$post_array['filesize']);
-                        $upload_url=array('url'=>'http://'.$_SERVER['HTTP_HOST'].'/ProiectTW/api/fileupload/'.$upload_id,'chunk'=>$chunk_size);
+                        $upload_url=array('url'=>'http://'.$_SERVER['HTTP_HOST'].'/ProiectTW/api/upload/'.$upload_id,'chunk'=>$chunk_size);
                         $json=new JsonResponse('success',$upload_url,'Upload endpoint generated succesfully',200);
                         echo $json->response();
                     }
@@ -68,6 +68,7 @@ class CUpload extends Controller
                 //Dupa upload-ul pe servicii se va trimite ca si cod de success 201-Content Created
                 //Nu vom vrea sa stergem upload-ul curent decat la cererea clientului doar de pe server,de pe servicii nu se va putea in decursul upload-ului
                 //Propun ca inainte sa inceapa upload-ul pe servicii sa verificam inca o data existenta sesiune de upload in baza de date ca sa ne asiguram ca user-ul nu a intrerupt sesiunea intre timp astfel sa avem un fail-safe
+                $this->model->statusChangeToSplitting($upload_id);
                 $json=new JsonResponse('success',null,'Data file uploaded succesfully',201);
                 echo $json->response();
             }
@@ -79,6 +80,7 @@ class CUpload extends Controller
         }
         catch(PDOException $exception)
         {
+            echo $exception;
             $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
             echo $json->response;
         }
@@ -111,6 +113,12 @@ class CUpload extends Controller
         {
             $json=new JsonResponse('error',null,'Invalid upload id supplied',400);
             echo $json->response;
+        }
+        catch(DeleteSplittingFile $exception)
+        {
+
+            $json=new JsonResponse('error',null,'Deleting a file in the process of splitting to associated services is not permitted',400);
+            echo $json->response();
         }
     }
 

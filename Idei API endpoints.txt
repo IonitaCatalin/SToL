@@ -15,8 +15,10 @@ Operatii suportate:
 <Stergere> DELETE localhost/api/items/{item-id} - Va sterge fie fisierul fie folderul specificat ca si parent-id
 <Redenumire> PATCH localhost/api/items/{item-id} - Va redenumii resursa respectiva ,eventual vom pune noul nume ca si continut in request-body
 <Mutare> PUT localhost/api/items/{item-id}/{new-parent-id} - Va muta resursa respectiva de la locatia curenta la noul parent-id,practic doar schimbam in baza de date aspectul asta de parent-id
-<Upload> POST localhost/api/items/upload - Va uploada resursa respective pe container-ul de storage al user-ului specificat prin user-id
+<Upload> POST localhost/api/items/upload/{parent-id} - Va uploada resursa respective pe container-ul de storage al user-ului specificat prin user-id
+<Upload> PUT localhost/api/fileupload/{upload_id <din request de api/items/upload>}
 <Download> GET localhost/api/items/download/{item-id} - Doar fisier,foldere nu sunt suportate
+
 
 
 

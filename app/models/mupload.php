@@ -20,7 +20,7 @@
                 {
                     $bytes=random_bytes(16);
                     $file_reference=bin2hex($bytes);
-                    $insert_upload_sql='INSERT INTO UPLOADS(user_id,upload_id,parent_id,file_reference,name,expected_size) VALUES (:user_id,:upload_id,:parent_id,:file_reference,:name,:expected_size)';
+                    $insert_upload_sql="INSERT INTO UPLOADS(user_id,upload_id,parent_id,file_reference,name,expected_size,status) VALUES (:user_id,:upload_id,:parent_id,:file_reference,:name,:expected_size,'chunking')";
                     $insert_upload_stmt=DB::getConnection()->prepare($insert_upload_sql);
                     $insert_upload_stmt->execute([
                         'user_id'=>$user_id,
@@ -85,19 +85,34 @@
         ]);
         if($check_upload_stmt->rowCount()>0)
         {
+            
             $result_upload=$check_upload_stmt->fetch(PDO::FETCH_ASSOC);
-            echo $result_upload['file_reference'];
-            unlink($_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$result_upload['file_reference']);
-            $delete_upload_sql="DELETE FROM uploads WHERE upload_id=:id";
-            $delete_upload_stmt=DB::getConnection()->prepare($delete_upload_sql);
-            $delete_upload_stmt->execute([
-                'id'=>$upload_id
-            ]);
+            if($result_upload['status']=='chunking')
+            {
+                unlink($_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$result_upload['file_reference']);
+                $delete_upload_sql="DELETE FROM uploads WHERE upload_id=:id";
+                $delete_upload_stmt=DB::getConnection()->prepare($delete_upload_sql);
+                $delete_upload_stmt->execute([
+                    'id'=>$upload_id
+                ]);
+            }
+            else
+            {
+                throw new DeleteSplittingFile();
+            }
         }   
         else
         {
             throw new InvalidUploadId();
         }
+    }
+    public function statusChangeToSplitting($upload_id)
+    {
+        $change_status_sql="UPDATE uploads SET status='splitting' WHERE upload_id=:id";
+        $change_status_stmt=DB::getConnection()->prepare($change_status_sql);
+        $change_status_stmt->execute([
+            'id'=>$upload_id
+        ]);
     }
 }
 ?>
