@@ -444,9 +444,9 @@ article h1 {
 	margin:auto;
 }
 
-.contxt-general {
+.context-general-menu {
 	display: none;
-	opacity:0;
+/*	opacity:0;*/
 	width: 160px;
 	z-index:100;
 	position:absolute;
@@ -455,10 +455,10 @@ article h1 {
 	transition: opacity 0.3s ease-in-out	;
 	
 }
-.contxt-component
+.context-file-menu
 {
 	display: none;
-	opacity:0;
+/*	opacity:0;*/
 	width: 160px;
 	z-index:100;
 	position:absolute;
@@ -483,6 +483,10 @@ article h1 {
 
 .contxt-option:hover {
 	background: rgba(0, 0, 0, 0.2);
+}
+
+.context-selected {
+	background-color: lightblue;    /* !!! nu uitaaaaa */
 }
 
 @media only screen and (max-width: 850px) {

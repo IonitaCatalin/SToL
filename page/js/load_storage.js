@@ -89,6 +89,7 @@ function renderComponents(data)
         }
     );
     drag_n_drop_apply_listeners();   // e importanta ordinea executiei scripturilor
+    context_menu_apply_listeners();     
 }
 
 window.onload = function(){  
