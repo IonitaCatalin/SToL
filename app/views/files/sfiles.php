@@ -90,10 +90,15 @@
 					<button class="contxt-option"><i class="ri-file-upload-line"></i>Upload</button>
 				</div>
 				<div class="context-file-menu" style="display:none">
-					<button id="comp_download_opt" class="contxt-option"><i class="ri-folder-add-line"></i>Download</button>
-					<button id="comp_rename_opt" class="contxt-option"><i class="ri-text"></i>Rename</button>
-					<button id="comp_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button>
-					<button id="comp_remove_opt"class="contxt-option"><i class="ri-eraser-line"></i>Remove</button>
+					<button id="file_download_opt" class="contxt-option"><i class="ri-folder-add-line"></i>Download</button>
+					<button id="file_rename_opt" class="contxt-option"><i class="ri-text"></i>Rename</button>
+					<button id="file_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button>
+					<button id="file_remove_opt"class="contxt-option"><i class="ri-eraser-line"></i>Remove</button>
+				</div>
+				<div class="context-folder-menu" style="display:none">
+					<button id="folder_rename_opt" class="contxt-option"><i class="ri-text"></i>Rename</button>
+					<button id="folder_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button>
+					<button id="folder_remove_opt"class="contxt-option"><i class="ri-eraser-line"></i>Remove</button>
 				</div>
 				<div class="main-container">	
 				</div>

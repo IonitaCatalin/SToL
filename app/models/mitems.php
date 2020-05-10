@@ -93,7 +93,7 @@
 
         public function updateItemName($user_id,$item_id,$new_name)
         {
-            $check_item_existence_sql='SELECT item_id,content_type FROM ITEMS WHERE item_id=:item AND user_id=:user';
+            $check_item_existence_sql="SELECT item_id,content_type FROM ITEMS WHERE item_id=:item AND user_id=:user";
             $check_item_existence_stmt=DB::getConnection()->prepare($check_item_existence_sql);
             $check_item_existence_stmt->execute([
                 'item'=>$item_id,
@@ -105,7 +105,7 @@
             {
                 if($result_list['content_type']=='folder')
                 {
-                    $check_name_sql="SELECT item_id FROM FOLDERS WHERE item_id=:item AND name=:new_name'";
+                    $check_name_sql="SELECT item_id FROM FOLDERS WHERE item_id=:item AND name=:new_name";
                     $check_name_stmt=DB::getConnection()->prepare($check_name_sql);
                     $check_name_stmt->execute([
                         'item'=>$item_id,
@@ -113,7 +113,7 @@
                     ]);
                     if($check_name_stmt->rowCount()==0)
                     {
-                        $update_name_sql='UPDATE FOLDERS SET name=:new_name WHERE item_id=:item';
+                        $update_name_sql="UPDATE FOLDERS SET name=:new_name WHERE item_id=:item";
                         $update_name_stmt=DB::getConnection()->prepare($update_name_sql);
                         $update_name_stmt->execute([
                             'new_name'=>$new_name,
@@ -127,20 +127,19 @@
                 }
                 else if($result_list['content_type']=='file')
                 {
-                    $check_name_sql='SELECT item_id FROM FILES WHERE item_id=:item_id AND name=:new_name';
+                    $check_name_sql="SELECT item_id FROM FILES WHERE item_id=:item_id AND name=:new_name";
                     $check_name_stmt=DB::getConnection()->prepare($check_name_sql);
                     $check_name_stmt->execute([
                         'item_id'=>$item_id,
                         'new_name'=>$new_name
                     ]);
-                    if($check_name_sql->rowCount()==0)
+                    if($check_name_stmt->rowCount()==0)
                     {
-                        $update_name_sql='UPDATE FILES SET name=:new_name WHERE item_id=:item_id AND user_id=:user_id';
+                        $update_name_sql="UPDATE FILES SET name=:new_name WHERE item_id=:item_id";
                         $update_name_stmt=DB::getConnection()->prepare($update_name_sql);
                         $update_name_stmt->execute([
                             'new_name'=>$new_name,
-                            'item_id'=>$item_id,
-                            'user_id'=>$user_id
+                            'item_id'=>$item_id
                         ]);
                     }
                     else
@@ -148,10 +147,10 @@
                         throw new ItemNameTaken();
                     }
                 }
-                else
-                {
-                    throw new InvalidItemId();
-                }
+            }
+            else
+            {
+                throw new InvalidItemId();
             }
         }
     
@@ -292,12 +291,12 @@
             $delete_file_sql = "DELETE FROM files WHERE item_id=:item_id";
             $delete_file_stmt = DB::getConnection()->prepare($delete_file_sql);
             $delete_file_stmt->execute(['item_id' => $item_id]);
-            echo "Deleted $item_id from files.";
+            //echo "Deleted $item_id from files.";
 
             $delete_item_sql = "DELETE FROM items WHERE item_id=:item_id";
             $delete_item_stmt = DB::getConnection()->prepare($delete_item_sql);
             $delete_item_stmt->execute(['item_id' => $item_id]);
-            echo "Deleted $item_id from items.";
+            //echo "Deleted $item_id from items.";
 
             $services_ids_sql = "SELECT onedrive_id, dropbox_id, googledrive_id FROM FRAGMENTS WHERE file_id=:item_id";
             $services_ids_stmt = DB::getConnection()->prepare($services_ids_sql);
@@ -308,15 +307,15 @@
             {
                 $row = $services_ids_stmt->fetch(PDO::FETCH_ASSOC);
                 if($row['onedrive_id'] != ''){
-                    echo "Deleted file $item_id fragment from Onedrive.";
+                    //echo "Deleted file $item_id fragment from Onedrive.";
                     // OneDriveService::deleteFileById($row['onedrive_id']);
                 }
                 if($row['googledrive_id'] != ''){
-                    echo "Deleted file $item_id fragment from Googledrive.";
+                    //echo "Deleted file $item_id fragment from Googledrive.";
                     // GoogleDriveService::deleteFileById($row['googledrive_id']);
                 }
                 if($row['dropbox_id'] != ''){
-                    echo "Deleted file $item_id fragment from Dropbox.";
+                    //echo "Deleted file $item_id fragment from Dropbox.";
                     // DropboxService::deleteFileById($row['dropbox_id']);
                 }
                 
@@ -325,7 +324,7 @@
             $delete_fragment_sql = "DELETE FROM `fragments` WHERE `file_id`=:item_id";
             $delete_fragment_stmt = DB::getConnection()->prepare($delete_fragment_sql);
             $delete_fragment_stmt->execute(['item_id' => $item_id]);
-            echo "Deleted $item_id from fragments.";
+            //echo "Deleted $item_id from fragments.";
         }
 
         public function deleteFolder($user_id, $item_id)
@@ -344,12 +343,12 @@
             $delete_folder_sql = "DELETE FROM folders WHERE item_id=:item_id";
             $delete_folder_stmt = DB::getConnection()->prepare($delete_folder_sql);
             $delete_folder_stmt->execute(['item_id' => $item_id]);
-            echo "Deleted $item_id from folders.";
+            //echo "Deleted $item_id from folders.";
 
             $delete_item_sql = "DELETE FROM items WHERE item_id=:item_id";
             $delete_item_stmt = DB::getConnection()->prepare($delete_item_sql);
             $delete_item_stmt->execute(['item_id' => $item_id]);
-            echo "Deleted $item_id from items.";
+            //echo "Deleted $item_id from items.";
         }
 
         public function moveItem($user_id, $item_id, $new_parent_id)
