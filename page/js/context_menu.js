@@ -13,6 +13,10 @@ const folder_rename_opt = document.getElementById('folder_rename_opt');
 const folder_add_fav_opt = document.getElementById('folder_add_fav_opt');
 const folder_remove_opt = document.getElementById('folder_remove_opt');
 
+const general_new_folder_opt = document.getElementById('general_new_folder_opt');
+const general_refresh_opt = document.getElementById('general_refresh_opt');
+const general_upload_opt = document.getElementById('general_upload_opt');
+
 var selected_item_id = null; // folder sau fisier selectat
 
 function toggleGeneralMenu(mode = 'none', top, left) {
@@ -144,6 +148,54 @@ function menu_item_remove(event) {
     toggleFolderMenu('none');
 }
 
+function menu_general_new_folder() {
+
+    let current_folder = folder_parents[folder_parents.length - 1];
+    console.log(folder_parents);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://localhost/ProiectTW/api/items/' + current_folder);
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + getCookieValue('jwt_token'));
+    const params = { foldername: 'New Folder' }
+    xhr.send(JSON.stringify(params));
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4)
+        {
+            //console.log(xhr.responseText);
+            const response = JSON.parse(xhr.responseText);
+
+            if(response.status=='success' && xhr.status==201) {
+                // render data
+                console.log('Am creat un nou folder');
+                loadFiles(folder_parents[folder_parents.length - 1]); // reafisez datele din folderul curent
+            }
+            else {
+                console.log('NU am reusit sa creez un nou folder');
+            }
+        }
+    }
+
+    toggleGeneralMenu('none');
+}
+
+function menu_general_refresh() {
+    location.reload();
+    toggleGeneralMenu('none');
+}
+
+function menu_general_upload() {
+    document.getElementById('btn-upload').click();
+    toggleGeneralMenu('none');
+}
+
+function initializeGeneralMenu() {
+    general_new_folder_opt.addEventListener('click', menu_general_new_folder);
+    general_refresh_opt.addEventListener('click', menu_general_refresh);
+    general_upload_opt.addEventListener('click', menu_general_upload);
+}
+
 function initializeFileMenu() {
     file_download_opt.addEventListener('click', menu_file_download);
     file_rename_opt.addEventListener('click', menu_item_rename);
@@ -159,30 +211,22 @@ function showGeneralMenu(event) {
     event.preventDefault();
     if (container != event.target && componentsContainer != event.target) return; // previne aparitia celui general in loc de cel de files sau folder
     toggleSelectedItemHighlight('off');
-    console.log('am afisat meniul general');
     toggleGeneralMenu('show', event.pageY, event.pageX);
-    console.log(event.pageX+' '+event.pageY);
 }
 
 function showFileMenu(event) {
     event.preventDefault();
-    console.log('am afisat file meniu');
-
     toggleSelectedItemHighlight('off'); // elimin highlight pt penultimul lucru selectat
     selected_item_id = this.id;
     toggleSelectedItemHighlight('on');
-
     toggleFileMenu('show', event.pageY, event.pageX);
 }
 
 function showFolderMenu(event) {
     event.preventDefault();
-    console.log('am afisat folder meniu');
-
     toggleSelectedItemHighlight('off'); // elimin highlight pt penultimul lucru selectat
     selected_item_id = this.id;
     toggleSelectedItemHighlight('on');
-
     toggleFolderMenu('show', event.pageY, event.pageX);
 }
 
@@ -205,6 +249,8 @@ function toggleSelectedItemHighlight(mode = 'off') {
 }
 
 function context_menu_apply_listeners() {
+
+    selected_item_id = null;
 
     window.addEventListener('contextmenu', event => event.preventDefault()); // hmm.. previne click dreapta pe unde n-ar trebui..
 
@@ -229,6 +275,7 @@ function context_menu_apply_listeners() {
         }
     );
 
+    initializeGeneralMenu();
     initializeFileMenu();
     initializeFolderMenu();
     //alert("context menu listeners applied");

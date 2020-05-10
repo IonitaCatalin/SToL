@@ -18,7 +18,7 @@ function loadFiles(current_folder = '')
         folder_parents.push(current_folder);
     }
 
-    backButton.onclick = function() { folder_parents.pop(); loadFiles(folder_parents.pop()); };
+    backButton.onclick = function() { folder_parents.pop(); loadFiles(folder_parents[folder_parents.length - 1]); };
 
     let xhr = new XMLHttpRequest();
     xhr.open('GET', 'http://localhost/ProiectTW/api/items/' + current_folder);
@@ -49,6 +49,9 @@ function loadFiles(current_folder = '')
 
         }
     }
+    
+    // console.log(folder_parents);
+    // console.log(folder_parents.length);
 }
 
 

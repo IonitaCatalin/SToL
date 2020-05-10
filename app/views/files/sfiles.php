@@ -85,9 +85,9 @@
 				<h2>Files</h2>
 				<hr>
 				<div class="context-general-menu contxt-options">
-					<button class="contxt-option"><i class="ri-folder-add-line"></i>New Folder</button>
-					<button class="contxt-option"><i class="ri-refresh-line"></i>Refresh</button>
-					<button class="contxt-option"><i class="ri-file-upload-line"></i>Upload</button>
+					<button id="general_new_folder_opt" class="contxt-option"><i class="ri-folder-add-line"></i>New Folder</button>
+					<button id="general_refresh_opt" class="contxt-option"><i class="ri-refresh-line"></i>Refresh</button>
+					<button id="general_upload_opt" class="contxt-option"><i class="ri-file-upload-line"></i>Upload</button>
 				</div>
 				<div class="context-file-menu" style="display:none">
 					<button id="file_download_opt" class="contxt-option"><i class="ri-folder-add-line"></i>Download</button>
