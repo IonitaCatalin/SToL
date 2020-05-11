@@ -41,15 +41,16 @@ uploadButton.onclick=function(){
 }
 uploadFilesButton.onclick=function()
 {
-    console.log(files);
-    console.log(document.getElementsByClassName('up-elem-list').length);    
     uploadedFilesCount=0;
     activeTransfer=true;
     for(i=0;i<files.length;i++)
     {
+        document.getElementsByClassName('up-elem-status')[i].textContent="Uploading.Please wait";
+        document.getElementsByClassName('up-elem-status')[i].style.color='#e8b910'
+        
         console.log("Upload:"+activeTransfer);  
         if(activeTransfer) {
-            uploadSingleFile(files[i]);
+            uploadSingleFile(files[i],i);
         }
     }
 }
@@ -123,7 +124,7 @@ function handleFiles(files)
     files.forEach(previewFileOnUp);
 }
 
-function uploadSingleFile(file)
+function uploadSingleFile(file,index)
 {
     const requestBody = {
         filename:file.name,
@@ -136,21 +137,19 @@ function uploadSingleFile(file)
         .then(response=>response.json()
         .then(data=>{
             currentTransferId=data.data.url.split("/")[6];
-            console.log(currentTransferId); 
             if(response.status=200) {
-                sendFileByChunks(file,0,data.data.chunk,data.data.url);
+                sendFileByChunks(file,0,data.data.chunk,data.data.url,index);
             }
             else if(response.status==409) {
-                console.log('aaa');
+
                 //Nume deja luat
             }
             else if(response.status==400) {
-                console.log('bbb');
                 //Parent id nu e bun
             }}));   
 }
 
-function sendFileByChunks(file,start,chunkSize,url)
+function sendFileByChunks(file,start,chunkSize,url,index)
 {
     if(start<file.size)
     {
@@ -162,14 +161,15 @@ function sendFileByChunks(file,start,chunkSize,url)
             console.log(res.status);
             if(res.status==200) {
                 if(activeTransfer) {
-                    sendFileByChunks(file,start+chunkSize,chunkSize,url);
+                    sendFileByChunks(file,start+chunkSize,chunkSize,url,index);
                 }
                 else {
                     console.log('Intrerupere tranfer');
                 }
             }
             else if(res.status==201) {
-                console.log('Gata transferul');
+                document.getElementsByClassName('up-elem-status')[index].textContent="Uploaded succesfully!";
+                document.getElementsByClassName('up-elem-status')[index].style.color='#094AB2'
                 uploadedFilesCount++;
             }
             else if(res.status==413) {
@@ -194,12 +194,13 @@ function previewFileOnUp(file)
         div.className="up-elem-list";
         var name=document.createElement('p');
         var status=document.createElement('p');
-        status.id="up-elem-status";
+        status.className="up-elem-status";
         var previewImg=document.createElement('img');
         name.textContent=reader.fileName;
-        status.textContent='Status:Ready for uploading';
+        status.textContent='Ready for uploading';
         status.style.color='#00cc00';
         status.style.textAlign='center';
+        status.style.fontWeight='bold';
         aboutFile.appendChild(name);
         aboutFile.appendChild(status);
         previewImg.src=reader.result;
