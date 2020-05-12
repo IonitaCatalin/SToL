@@ -10,10 +10,10 @@
 			$user_id=$id;
 			switch ($service) {
 				case 'onedrive':
-					$sql = "INSERT INTO onedrive_service (user_id,refresh_token,access_token,expires_in,generated_at) VALUES (:id, :refresh, :access, :expires,SYSDATE())";
+					$sql = "INSERT INTO onedrive_service (user_id,refresh_token,access_token,expires_in,generated_at) VALUES (:id, :refresh, :access, :expires,:time)";
 					break;
 				case 'googledrive':
-					$sql = "INSERT INTO googledrive_service (user_id,refresh_token,access_token,expires_in,generated_at) VALUES (:id, :refresh, :access, :expires,SYSDATE())";
+					$sql = "INSERT INTO googledrive_service (user_id,refresh_token,access_token,expires_in,generated_at) VALUES (:id, :refresh, :access, :expires,:time)";
 					break;
 				case 'dropbox':
 					$sql = "INSERT INTO dropbox_service (user_id, access_token) VALUES (:id, :access)";
@@ -27,6 +27,7 @@
 					'refresh' => $refresh_token,
 					'access' => $access_token,
 					'expires' => $expires,
+					'time'=>date("Y-m-d H:i:s",time())
 				]);
 			else
 				return $insert_request -> execute([
@@ -74,33 +75,6 @@
 				return false;
 		}
 
-		public function getAccessToken($id, $service)
-		{
-			$sql = '';
-			switch ($service) {
-				case 'onedrive':
-					$sql = "SELECT access_token FROM onedrive_service WHERE user_id = :id";
-					break;
-				case 'googledrive':
-					$sql = "SELECT access_token FROM googledrive_service WHERE user_id = :id";
-					break;
-				case 'dropbox':
-					$sql = "SELECT access_token FROM dropbox_service WHERE user_id = :id";
-					break;
-			}
-			$stmt = DB::getConnection()->prepare($sql);
-			$stmt->execute([
-				'id'=>$id
-			]);
-			if($stmt->rowCount() > 0) {
-				$result = $stmt->fetch();
-				return $result['access_token'];
-			}
-			else
-				echo 'Id-ul nu are niciun token asociat';
-		}
-
-
 		public function getUserDataArray($user_id)
 		{
 			$result_array = array();
@@ -135,6 +109,31 @@
 				return false;
 		}
 
+		public function getAccessToken($id, $service)
+        {
+            $sql = '';
+            switch ($service) {
+                case 'onedrive':
+                    $sql = "SELECT access_token FROM onedrive_service WHERE user_id = :id";
+                    break;
+                case 'googledrive':
+                    $sql = "SELECT access_token FROM googledrive_service WHERE user_id = :id";
+                    break;
+                case 'dropbox':
+                    $sql = "SELECT access_token FROM dropbox_service WHERE user_id = :id";
+                    break;
+            }
+            $stmt = DB::getConnection()->prepare($sql);
+            $stmt->execute([
+                'id'=>$id
+            ]);
+            if($stmt->rowCount() > 0) {
+                $result = $stmt->fetch();
+                return $result['access_token'];
+			}
+			else return null;
+        }
+
 		public function updateUsername($username,$id)
 		{
 
@@ -153,6 +152,8 @@
 				]);
 			}
 		}
+
+
 
 		public function updatePassword($oldpass,$newpass,$id)
 		{
@@ -186,6 +187,7 @@
 					break;
 				case 'googledrive':
 					$delete_sql = "DELETE FROM googledrive_service WHERE user_id=:user_id";
+					GoogleDriveService::removeAccessRefreshToken($this->getAccessToken($user_id,'googledrive'));
 					break;
 				case 'dropbox':
 					$delete_sql="DELETE FROM dropbox_service WHERE user_id=:user_id";

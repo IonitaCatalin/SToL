@@ -119,7 +119,7 @@
             }
 
             $asoc_array = json_decode($result, true);
-            $access_token=$asoc_array['access_token'];
+            $access_token=$asoc_array;
             return $access_token;
 
         }

@@ -5,7 +5,7 @@ class App
     private $method;       
     private $raw_input;
     private $authorize;   
-    private $max_upload_chunk=256;
+    private $max_upload_chunk=2000000;
 
     function __construct($inputs)
     {
@@ -180,6 +180,7 @@ class App
             $upload_controller=new CUpload();
             $upload_controller->deleteUpload($upload_id);
         });
+
 
         $router->run($this->method, $this->URI);
     }

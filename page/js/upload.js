@@ -27,7 +27,8 @@ function toggleModal(disable = false)
         modal.style.visibility='visible';
         
     } else {
-        files.splice(0,files.length);
+        if(files!=null)
+            files.splice(0,files.length);
         activeTransfer=false;
         document.getElementById('modal-file-drop').innerHTML='';
         backdrop.style.opacity='0';
@@ -130,7 +131,7 @@ function uploadSingleFile(file,index)
         filename:file.name,
         filesize:file.size
     }
-    fetch('http://localhost/ProiectTW/api/upload/67b6e87381a8fb18c96c7acca3b6c35d',{
+    fetch('http://localhost/ProiectTW/api/upload/'+folder_parents[folder_parents.length - 1],{
         method:'post',body:JSON.stringify(requestBody), headers:{
         'Content-Type': 'application/json',
         'Authorization':'Bearer ' + getCookieValue('jwt_token')}})

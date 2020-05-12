@@ -1,6 +1,105 @@
 <?php
     class MUpload
     {
+        public function getAccessToken($user_id,$service)
+        {
+            switch($service)
+            {
+                case 'onedrive':
+                {
+                    $get_onedrive_sql='SELECT * FROM onedrive_service WHERE user_id=:id';
+                    $get_onedrive_stmt=DB::getConnection()->prepare($get_onedrive_sql);
+                    $get_onedrive_stmt->execute([
+                        'id'=>$user_id
+                    ]);
+                    if($get_onedrive_stmt->rowCount()>0)
+                    {
+                        $result_array=$get_onedrive_stmt->fetch(PDO::FETCH_ASSOC);
+                        $generated_at=date("Y-m-d H:i:s",strtotime($result_array['generated_at']));
+                        $current_time=date("Y-m-d H:i:s",time());
+                        $seconds_diff=strtotime($current_time)-strtotime($generated_at);
+                        if($seconds_diff<$result_array['expires_in'])
+                        {
+                            return $result_array['access_token'];
+                        }
+                        else
+                        {
+                            $renewed_tokens=OneDriveService::renewTokens($result_array['refresh_token']);
+                            $update_tokens_sql="UPDATE onedrive_service SET access_token=:access_token,refresh_token=:refresh_token,generated_at=:generated_at,expires_in=:expires_in";
+                            $update_tokens_stmt=DB::getConnection()->prepare($update_tokens_sql);
+                            $update_tokens_stmt->execute([
+                                'access_token'=>$renewed_tokens['access_token'],
+                                'refresh_token'=>$renewed_tokens['refresh_token'],
+                                'generated_at'=>date("Y-m-d H:i:s"),
+                                'expires_in'=>$renewed_tokens['expires_in']
+                            ]);
+                            return $renewed_tokens['access_token'];
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    break;
+                }
+                case 'googledrive':
+                {
+                    $get_gdrive_sql='SELECT * FROM googledrive_service WHERE user_id=:id';
+                    $get_gdrive_stmt=DB::getConnection()->prepare($get_gdrive_sql);
+                    $get_gdrive_stmt->execute([
+                        'id'=>$user_id
+                    ]);
+                    if($get_gdrive_stmt->rowCount()>0)
+                    {
+                       
+                        $result_array=$get_gdrive_stmt->fetch(PDO::FETCH_ASSOC);
+                        var_dump($result_array);
+                        $generated_at=date("Y-m-d H:i:s",strtotime($result_array['generated_at']));
+                        $current_time=date("Y-m-d H:i:s",time());
+                        $seconds_diff=strtotime($current_time)-strtotime($generated_at);
+                        if($seconds_diff<$result_array['expires_in'])
+                        {
+                            return $result_array['access_token'];
+                        }
+                        else
+                        {
+                            $renewed_tokens=GoogleDriveService::renewAccessToken($result_array['refresh_token']);
+                            $update_tokens_sql="UPDATE googledrive_service SET access_token=:access_token,generated_at=:generated_at,expires_in=:expires_in";
+                            $update_tokens_stmt=DB::getConnection()->prepare($update_tokens_sql);
+                            $update_tokens_stmt->execute([
+                                'access_token'=>$renewed_tokens['access_token'],
+                                'generated_at'=>date("Y-m-d H:i:s"),
+                                'expires_in'=>$renewed_tokens['expires_in']
+                            ]);
+                            return $renewed_tokens['access_token'];
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    break;
+                }
+                case 'dropbox':
+                {
+                    $get_dropbox_sql='SELECT * FROM dropbox_service WHERE user_id=:id';
+                    $get_dropbox_stmt=DB::getConnection()->prepare($get_dropbox_sql);
+                    $get_dropbox_stmt->execute([
+                        'id'=>$user_id
+                    ]);
+                    if($get_dropbox_stmt->rowCount()>0)
+                    {
+                        $result_array=$get_dropbox_stmt->fetch(PDO::FETCH_ASSOC);
+                        return $result_array['access_token'];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    break;
+                }
+        }
+    }
         public function startUpload($upload_id,$user_id,$parent_id,$filename,$filesize)
         {
             $check_parent_sql='SELECT item_id FROM FOLDERS WHERE item_id=:id';
@@ -44,7 +143,7 @@
                 throw new InvalidItemParentId();
             }
         }
-    public function uploadFile($upload_id,$chunk_size)
+    public function appendChunks($upload_id,$chunk_size)
     {
         $check_upload_id="SELECT * FROM UPLOADS WHERE upload_id=:id";
         $check_upload_stmt=DB::getConnection()->prepare($check_upload_id);
@@ -59,8 +158,7 @@
                 throw new UnsupportedChunkSize();
             }
             else
-            {
-                
+            {   
                 $upload_array=$check_upload_stmt->fetch(PDO::FETCH_ASSOC);
                 $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$upload_array['file_reference'];
                 file_put_contents($path,$post_data,FILE_APPEND);
@@ -114,5 +212,6 @@
             'id'=>$upload_id
         ]);
     }
+
 }
 ?>

@@ -11,7 +11,6 @@
     require_once('OnedriveException.php');
     class OneDriveService
     {
-        private $drive_id;
         public static function authorizationRedirectURL($user_id)
         {
             return 'https://login.microsoftonline.com/'.TENANT.'/oauth2/v2.0/authorize?client_id='.CLIENT_ID.'&response_type=code&redirect_uri='.REDIRECT_URI_AUTH.'&response_mode=query&scope='.SCOPE.'&state='.$user_id;
@@ -125,7 +124,7 @@
         {
             return 'https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=https://localhost/ProiectTW/public/cprofile/';
         }
-        public function getDriveMetadata($access_token)
+        public static function getDriveMetadata($access_token)
         {
             $curl=curl_init();
             curl_setopt_array($curl,[
@@ -140,25 +139,21 @@
             curl_close($curl);
             return $metadata_array;
         }
-        public function getDriveQuota($access_token)
+        public static function getDriveQuota($access_token)
         {
-           return ($this->getDriveMetadata($access_token)['quota']);
+           return (OneDriveService::getDriveMetadata($access_token)['quota']);
         }
-        public function getRemainingSize($access_token)
+        public static function getRemainingSize($access_token)
         {
-           return $this->getDriveQuota($access_token)['remaining'];
+           return OneDriveService::getDriveQuota($access_token)['remaining'];
         }
-        public function listAllFiles($access_token)
-        {
-            
-        }
-        public function uploadFile($access_token,$file_path=null)
+        public static function uploadFile($access_token,$file_path=null)
         {
 
             //Cream un resumable upload session pentru fisierul pe care intentionam sa-l uploadam
             if(file_exists($file_path))
             {
-                if($this->getRemainingSize($access_token)>filesize($file_path))
+                if(OneDriveService::getRemainingSize($access_token)>filesize($file_path))
                 {
                     echo 'Fisier gasit!<br>Este loc de fisierul asta!';
                     $upload_session_curl=curl_init();
@@ -274,7 +269,7 @@
                 }
                 else
                 {
-                    throw new OneDriveNotEnoughtSpaceException('There is no space available on Onedrive container!',507);
+                    throw new OneDriveNotEnoughtSpaceException($response_arary['error'],curl_getinfo($upload_curl,CURLINFO_HTTP_CODE));
                 }
             }
             else
@@ -283,10 +278,9 @@
             }
 
         }
-        public function downloadFileById($access_token,$file_id)
+        public static function downloadFileById($access_token,$file_id)
         {
             $download_curl=curl_init();
-            
         }
     }
     

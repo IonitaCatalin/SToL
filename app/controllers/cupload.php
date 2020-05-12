@@ -6,6 +6,10 @@ class CUpload extends Controller
     {
         $this->model=$this->model('mupload');
     }
+    public function testFunction($user_id)
+    {
+        $this->model->getAccessToken($user_id,'googledrive');
+    }
     public function createUpload($user_id,$parent_id,$chunk_size)
     {
         $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
@@ -61,7 +65,7 @@ class CUpload extends Controller
     {
         try
         {
-            $done=$this->model->uploadFile($upload_id,$chunk_size);
+            $done=$this->model->appendChunks($upload_id,$chunk_size);
             if($done)
             {
                 //Inainte de acest raspuns cu 201 v-a venii logica de upload pentru diferite servicii,vei putea sa intrerupi download-ul numai cand se uploadeaza explicit catre server nu si catre servicii
@@ -69,12 +73,13 @@ class CUpload extends Controller
                 //Nu vom vrea sa stergem upload-ul curent decat la cererea clientului doar de pe server,de pe servicii nu se va putea in decursul upload-ului
                 //Propun ca inainte sa inceapa upload-ul pe servicii sa verificam inca o data existenta sesiune de upload in baza de date ca sa ne asiguram ca user-ul nu a intrerupt sesiunea intre timp astfel sa avem un fail-safe
                 $this->model->statusChangeToSplitting($upload_id);
+                //Logica de upload pe servicii
                 $json=new JsonResponse('success',null,'Data file uploaded succesfully',201);
                 echo $json->response();
             }
             else
             {
-                $json=new JsonResponse('success',null,'Chunk upload successfully',200);  
+                $json=new JsonResponse('success',null,'Chunk uploaded successfully',200);  
                 echo $json->response();
             }
         }
@@ -91,7 +96,7 @@ class CUpload extends Controller
         }
         catch(UnsupportedChunkSize $exception)
         {
-            $json=new JsonResponse('error',null,'Chunk size not supported',413);
+            $json=new JsonResponse('error',null,'Chunk size not supported by the server instance',413);
             echo $json->response;
         }
     }
