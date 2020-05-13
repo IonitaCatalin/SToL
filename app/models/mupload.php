@@ -3,10 +3,25 @@
     {
         public function testUploadOnedrive($user_id)
         {
-            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/17181a8a28e685844800cfc9737122ab';
-            OneDriveService::uploadFile($this->getAccessToken($user_id,'onedrive'),$path,0,20000000 );
+            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/a99b1738e96f7eda14b0bab2e5636c4b';
+            OneDriveService::uploadFile($this->getAccessToken($user_id,'onedrive'),$path,0,500);
+        }
+
+        public function testUploadGoogledrive($user_id)
+        {
+            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/71aa4f5d54d03b038dbc601ee28b2350';
+            // pt un fisier de 25,306,104 bytes
+            //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 0, 15000000);
+            //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 15000000, 10000000);
+            //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 25000000, 306104);
+
+            // pt un fisier de 627,831 bytes
+            //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 0, 600000);
+            //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 600000, 27800);
+            //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 627800, 31);
 
         }
+
         public function getAccessToken($user_id,$service)
         {
             switch($service)
@@ -59,7 +74,6 @@
                     {
                        
                         $result_array=$get_gdrive_stmt->fetch(PDO::FETCH_ASSOC);
-                        var_dump($result_array);
                         $generated_at=date("Y-m-d H:i:s",strtotime($result_array['generated_at']));
                         $current_time=date("Y-m-d H:i:s",time());
                         $seconds_diff=strtotime($current_time)-strtotime($generated_at);
@@ -104,8 +118,9 @@
                     }
                     break;
                 }
+            }
         }
-    }
+
         public function startUpload($upload_id,$user_id,$parent_id,$filename,$filesize)
         {
             $check_parent_sql='SELECT item_id FROM FOLDERS WHERE item_id=:id';
@@ -149,75 +164,78 @@
                 throw new InvalidItemParentId();
             }
         }
-    public function appendChunks($upload_id,$chunk_size)
-    {
-        $check_upload_id="SELECT * FROM UPLOADS WHERE upload_id=:id";
-        $check_upload_stmt=DB::getConnection()->prepare($check_upload_id);
-        $check_upload_stmt->execute([
-            'id'=>$upload_id
-        ]);
-        if($check_upload_stmt->rowCount()>0)
+
+        public function appendChunks($upload_id,$chunk_size)
         {
-            $post_data=file_get_contents('php://input');
-            if(strlen($post_data)>$chunk_size)
+            $check_upload_id="SELECT * FROM UPLOADS WHERE upload_id=:id";
+            $check_upload_stmt=DB::getConnection()->prepare($check_upload_id);
+            $check_upload_stmt->execute([
+                'id'=>$upload_id
+            ]);
+            if($check_upload_stmt->rowCount()>0)
             {
-                throw new UnsupportedChunkSize();
-            }
-            else
-            {   
-                $upload_array=$check_upload_stmt->fetch(PDO::FETCH_ASSOC);
-                $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$upload_array['file_reference'];
-                file_put_contents($path,$post_data,FILE_APPEND);
-                if(filesize($path)==$upload_array['expected_size'])
+                $post_data=file_get_contents('php://input');
+                if(strlen($post_data)>$chunk_size)
                 {
-                    return true;
+                    throw new UnsupportedChunkSize();
                 }
-                else return false;    
-            }
-        }
-        else
-        {
-            throw new InvalidUploadId();
-        }
-    }
-    public function deletePublicUpload($upload_id)
-    {
-        $check_upload_sql="SELECT * FROM UPLOADS WHERE upload_id=:id";
-        $check_upload_stmt=DB::getConnection()->prepare($check_upload_sql);
-        $check_upload_stmt->execute([
-            'id'=>$upload_id
-        ]);
-        if($check_upload_stmt->rowCount()>0)
-        {
-            
-            $result_upload=$check_upload_stmt->fetch(PDO::FETCH_ASSOC);
-            if($result_upload['status']=='chunking')
-            {
-                unlink($_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$result_upload['file_reference']);
-                $delete_upload_sql="DELETE FROM uploads WHERE upload_id=:id";
-                $delete_upload_stmt=DB::getConnection()->prepare($delete_upload_sql);
-                $delete_upload_stmt->execute([
-                    'id'=>$upload_id
-                ]);
+                else
+                {   
+                    $upload_array=$check_upload_stmt->fetch(PDO::FETCH_ASSOC);
+                    $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$upload_array['file_reference'];
+                    file_put_contents($path,$post_data,FILE_APPEND);
+                    if(filesize($path)==$upload_array['expected_size'])
+                    {
+                        return true;
+                    }
+                    else return false;    
+                }
             }
             else
             {
-                throw new DeleteSplittingFile();
+                throw new InvalidUploadId();
             }
-        }   
-        else
-        {
-            throw new InvalidUploadId();
         }
-    }
-    public function statusChangeToSplitting($upload_id)
-    {
-        $change_status_sql="UPDATE uploads SET status='splitting' WHERE upload_id=:id";
-        $change_status_stmt=DB::getConnection()->prepare($change_status_sql);
-        $change_status_stmt->execute([
-            'id'=>$upload_id
-        ]);
-    }
+
+        public function deletePublicUpload($upload_id)
+        {
+            $check_upload_sql="SELECT * FROM UPLOADS WHERE upload_id=:id";
+            $check_upload_stmt=DB::getConnection()->prepare($check_upload_sql);
+            $check_upload_stmt->execute([
+                'id'=>$upload_id
+            ]);
+            if($check_upload_stmt->rowCount()>0)
+            {
+                
+                $result_upload=$check_upload_stmt->fetch(PDO::FETCH_ASSOC);
+                if($result_upload['status']=='chunking')
+                {
+                    unlink($_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$result_upload['file_reference']);
+                    $delete_upload_sql="DELETE FROM uploads WHERE upload_id=:id";
+                    $delete_upload_stmt=DB::getConnection()->prepare($delete_upload_sql);
+                    $delete_upload_stmt->execute([
+                        'id'=>$upload_id
+                    ]);
+                }
+                else
+                {
+                    throw new DeleteSplittingFile();
+                }
+            }   
+            else
+            {
+                throw new InvalidUploadId();
+            }
+        }
+
+        public function statusChangeToSplitting($upload_id)
+        {
+            $change_status_sql="UPDATE uploads SET status='splitting' WHERE upload_id=:id";
+            $change_status_stmt=DB::getConnection()->prepare($change_status_sql);
+            $change_status_stmt->execute([
+                'id'=>$upload_id
+            ]);
+        }
 
 }
 ?>

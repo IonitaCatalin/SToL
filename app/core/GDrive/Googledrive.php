@@ -264,23 +264,15 @@
 
         }
 
-        public static function uploadFile($token, $path = null) {
+        public static function uploadFile($token, $path = null, $start_offset, $filesize) {
 
             $url = "https://www.googleapis.com/upload/drive/v2/files?uploadType=resumable";
-
-            //$path = 'D:\Downloads\uploadedFile.txt'; //sa nu fie empty..
-            $path = 'D:\Downloads\uploadedFile.rar';
-            //$path = 'D:\Downloads\uploadedFile.png';
-            //$path = 'D:\Downloads\iobituninstaller.exe';
-            //$path = 'D:\Downloads\BigFile.txt';
-
 
             if(!file_exists($path)) {
                 throw new GoogledriveUploadFileException(
                     __METHOD__. ' '.__LINE__ , "Nu exista niciun fisier la $path");
             }
 
-            $filesize = filesize($path);
             $storageQuota = self::getStorageQuota($token);
             if(($storageQuota['usage'] + $filesize)  >  $storageQuota['limit']) {
                 throw new GoogledriveNotEnoughStorageSpaceException(
@@ -288,7 +280,7 @@
             }
 
             // 1. upload metadate fisier pt a primi un 'resumable' upload link
-            $filename = basename($path);
+            $filename = uniqid("",true);
             $metadata = '{ "title": "' . $filename . '" }';
             $metadatasize = strlen($metadata);
 
@@ -354,19 +346,23 @@
 
             // 2. upload fisier folosind link-ul primit
 
-            $filesize = filesize($path);
-            echo "FILESIZE: $filesize <br>";
-            $unit = 256 * 1024 * 8; // unitati de cate 1024KB
+            echo "STARTING AT: $start_offset , UPLOAD: $filesize <br>";
+            $unit = 256 * 1024 * 8; // unitati de cate 2MB
 
-            $total_uploaded = 0;
-            $offset = 0;
+            $offset = $start_offset;
+            $service_file_offset = 0;
             $i = 0;
-            while($offset != $filesize) {
+            while($service_file_offset != $filesize) {
                 
-                $chunk_size = ($offset + $unit) <= $filesize ? $unit : ($filesize - $offset );
+                $chunk_size = ($offset + $unit) <= ($start_offset + $filesize) ? $unit : ($start_offset + $filesize - $offset);
+                echo "offset: $offset / unit: $unit / filesize: $filesize / chunk_size: $chunk_size";
                 $file = file_get_contents($path, false, null, $offset, $chunk_size);
 
-                echo "Incarc intervalul $offset -- " . ($offset + $chunk_size - 1) ."/$filesize";
+                echo "Incarc intervalul $offset -- " . ($offset + $chunk_size - 1) ."/" . ($start_offset + $filesize);
+
+                echo "ceva<br>";
+                echo $service_file_offset."-".($service_file_offset + $chunk_size - 1)."/".$filesize;
+                
                 $ch2 = curl_init();
                 curl_setopt_array($ch2, array(
                     CURLOPT_URL => $resumable_url,
@@ -378,7 +374,7 @@
                     CURLOPT_HTTPHEADER => array(
                         "Content-Type: application/octet-stream",
                         "Content-Length: " . $chunk_size,
-                        "Content-Range: bytes " . $offset."-".($offset + $chunk_size - 1)."/".$filesize,
+                        "Content-Range: bytes " . $service_file_offset."-".($service_file_offset + $chunk_size - 1)."/".$filesize,
                         "Authorization: Bearer " . $token
                     ),
                     //CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
@@ -395,6 +391,7 @@
                         return $len;
                     }
                 ));
+
                 if(($response = curl_exec($ch2)) === false){
                     throw new GoogledriveUploadFileException(
                         __METHOD__. ' '.__LINE__, "Curl error: " . curl_error($ch2));
@@ -402,10 +399,8 @@
                 $httpcode = curl_getinfo($ch2, CURLINFO_HTTP_CODE);
                 curl_close($ch2);
 
-
                 if($httpcode == 200 || $httpcode == 201) {
-                    echo "<br> UPLOADED: " . ($offset+$chunk_size) ." - " . (($offset+$chunk_size)/$filesize * 100) . "%<br>";
-                    echo 'Succes';
+                    echo 'Succes - UPLOAD TERMINAT';
                     return true;
                 }
                 else if($httpcode == 308) {
@@ -413,19 +408,22 @@
                     $last_range = end($ranges);     //ultimul elem din array
                     $last_range = substr_replace($last_range, '', 0, 6); //elimin 'bytes='
                     //echo explode("-", $last_range)[1];
-                    $offset = explode("-", $last_range)[1]; // selectez al doilea nr din "nr1-nr2"
-                    $offset ++; // citim incepand cu urmatorul octet
+                    $service_file_offset = explode("-", $last_range)[1]; // selectez al doilea nr din "nr1-nr2"
+                    $service_file_offset ++; // citim incepand cu urmatorul octet
+                    $offset = $offset + $chunk_size;
                 }
                 else if($httpcode != 308){
                     $asoc_array = json_decode($response, true);
+                    echo $response;
                     throw new GoogledriveUploadFileException(
                         __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
                 }
 
-                echo "<br> UPLOADED: $offset - " . ($offset/$filesize * 100) . "%<br>";
-            }
+            } // while
 
         }
+
+
 
     }
 ?>
