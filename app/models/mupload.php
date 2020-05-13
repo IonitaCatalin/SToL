@@ -19,7 +19,20 @@
             //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 0, 600000);
             //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 600000, 27800);
             //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 627800, 31);
+        }
 
+        public function testUploadDropbox($user_id)
+        {
+            //$path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/d074b412a892735d0ab26e5b09465315';
+            //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 0, 15000000);
+            //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 15000000, 10000000);
+            //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 25000000, 306104);
+
+            // 627,831 bytes
+            //$path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/777a2a2279bb8ba4c857bbf41dbd79c6';
+            //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 0, 300000);
+            //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 300000, 300000);
+            //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 600000, 27831);
         }
 
         public function getAccessToken($user_id,$service)

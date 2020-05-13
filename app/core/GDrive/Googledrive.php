@@ -360,9 +360,6 @@
 
                 echo "Incarc intervalul $offset -- " . ($offset + $chunk_size - 1) ."/" . ($start_offset + $filesize);
 
-                echo "ceva<br>";
-                echo $service_file_offset."-".($service_file_offset + $chunk_size - 1)."/".$filesize;
-                
                 $ch2 = curl_init();
                 curl_setopt_array($ch2, array(
                     CURLOPT_URL => $resumable_url,
@@ -401,7 +398,7 @@
 
                 if($httpcode == 200 || $httpcode == 201) {
                     echo 'Succes - UPLOAD TERMINAT';
-                    return true;
+                    return json_decode($response, true)["id"]; // id-ul fisierului incarcat
                 }
                 else if($httpcode == 308) {
                     $ranges = $headers['range'];

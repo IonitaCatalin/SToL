@@ -252,23 +252,14 @@ require_once('DropboxException.php');
             echo "Am terminat de salvat"; // ar trebui sa nu apara :)
         }
 
-        public static function uploadFile($token, $path = null)
+        public static function uploadFile($token, $path, $start_offset, $length)
         {
-
-            //$path = 'D:\Downloads\uploadedFile.txt';
-            //$path = 'D:\Downloads\uploadedFile.rar';
-            //$path = 'D:\Downloads\fisierTest.pdf';
-            $path = 'D:\Downloads\uploadedFile.png';
-            //$path = 'D:\Downloads\iobituninstaller.exe';
-            //$path = 'D:\Downloads\BigFile.txt';
-            //$path = 'D:\Downloads\dummy.txt';
-
             if(!file_exists($path)) {
                 throw new DropboxUploadFileException(
                     __METHOD__. ' '.__LINE__, "Nu exista niciun fisier la $path");
             }
 
-            $filesize = filesize($path);
+            $filesize = $length;
 
             $data = self::getStorageQuota($token);
             if(($data['used'] + $filesize) > $data['allocation']['allocated']){
@@ -277,30 +268,31 @@ require_once('DropboxException.php');
                 );
             }
 
-            $unit = 256 * 1024 * 32; // 8 MB
+            $unit = 256 * 1024 * 4; // 1 MB
             if($filesize > (3 * $unit)) // macar 3 chunks pt start, append si finish
-                return self::uploadLargeFile($token, $path, $unit);
+                return self::uploadLargeFile($token, $path, $unit, $start_offset, $length);
             else
-                return self::uploadSmallFile($token, $path);
+                return self::uploadSmallFile($token, $path, $start_offset, $length);
 
         }
 
-        public function uploadLargeFile($token, $path, $unit) {
+        public function uploadLargeFile($token, $path, $unit, $start_offset, $filesize) {
 
-            $filename = basename($path);
-            $filesize = filesize($path);
+            $filename = uniqid("", true);
+            //$filesize = filesize($path);
             echo "FILESIZE: $filesize <br>";
 
-            $offset = 0;
+            $offset = $start_offset;
+            $service_file_offset = 0;
             $session_id = null;
 
-            while($offset != $filesize)
+            while($service_file_offset != $filesize)
             {
 
-                $chunk_size = ($offset + $unit) <= $filesize ? $unit : ($filesize - $offset );
+                $chunk_size = ($offset + $unit) <= ($start_offset + $filesize) ? $unit : ($start_offset + $filesize - $offset);
                 $file = file_get_contents($path, false, null, $offset, $chunk_size);
 
-                if($offset == 0)    // start upload session
+                if($service_file_offset == 0)    // start upload session
                 {
                     echo '<pre>';
                     echo "START: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
@@ -347,13 +339,13 @@ require_once('DropboxException.php');
                     // echo '<pre>';
                     // echo $session_id;
                     // echo '</pre>';
-
+                    $service_file_offset += $chunk_size;
                     $offset += $chunk_size;
                 }
                 else    
                 {
 
-                    if(($offset + $chunk_size) < $filesize) { // session append
+                    if(($service_file_offset + $chunk_size) < $filesize) { // session append
 
                         echo '<pre>';
                         echo "APPEND: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
@@ -363,7 +355,7 @@ require_once('DropboxException.php');
                         '{' .
                             '"cursor": {' .
                                 '"session_id": "' . $session_id . '",' .
-                                '"offset": ' . $offset .
+                                '"offset": ' . $service_file_offset .
                             '},' .
                             '"close": false' .
                         '}';
@@ -397,6 +389,7 @@ require_once('DropboxException.php');
                                 __METHOD__. ' '.__LINE__.' '.$httpcode , $response);
                         }
                         curl_close($ch);
+                        $service_file_offset += $chunk_size;
                         $offset += $chunk_size;
                     }
                     else    // session finish
@@ -410,10 +403,10 @@ require_once('DropboxException.php');
                         '{' .
                             '"cursor" : {' .
                                 '"session_id": "' . $session_id . '",' .
-                                '"offset": ' . $offset .
+                                '"offset": ' . $service_file_offset .
                             '},' .
                             '"commit": {' .
-                                '"path": "/Uploads/' . $filename . '",' .
+                                '"path": "/Stol/' . $filename . '",' .
                                 '"mode": "add",' .
                                 '"autorename": true,' .
                                 '"mute": false,' .
@@ -447,24 +440,26 @@ require_once('DropboxException.php');
                         }
                         curl_close($ch);
 
-                        $offset += $chunk_size; // setez ca sa iasa din while
+                        $service_file_offset += $chunk_size; // setez ca sa iasa din while
+                        $offset += $chunk_size;
                         echo $response;
-                        return true; // nvm
+                        return json_decode($response, true)["id"];
                     }
 
                 } // else
             } // while
         }
 
-        public static function uploadSmallFile($token, $path = null) {
+        public static function uploadSmallFile($token, $path, $start_offset, $length) {
 
-            $file = file_get_contents($path);
-            $filename = basename($path);
-            $filesize = strlen($file);
+            $file = file_get_contents($path, false, null, $start_offset, $length);
+            //$file = file_get_contents($path);
+            $filename = uniqid("", true);
+            $filesize = $length;
 
             $params = 
             '{' .
-                '"path": "/Uploads/' . $filename . '",' .
+                '"path": "/Stol/' . $filename . '",' .
                 '"mode": "add",' .
                 '"autorename": true,' .
                 '"mute": false,' .
@@ -508,9 +503,11 @@ require_once('DropboxException.php');
                     __METHOD__. ' '.__LINE__ , $response);
             }
 
-            echo '<pre>';
-            echo $response;
-            echo '</pre>';
+            // echo '<pre>';
+            // echo $response;
+            // echo '</pre>';
+            echo "Small file upload successfully";
+            return json_decode($response, true)["id"];
 
         }
 
