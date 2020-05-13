@@ -3,7 +3,7 @@
     {
         public function testUploadOnedrive($user_id)
         {
-            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/a99b1738e96f7eda14b0bab2e5636c4b';
+            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/955eb964652f83d43f3e77fe17a570ea';
             OneDriveService::uploadFile($this->getAccessToken($user_id,'onedrive'),$path,0,500);
         }
 

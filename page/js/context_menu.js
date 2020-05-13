@@ -24,7 +24,7 @@ var selected_item_id = null; // folder sau fisier selectat
 function toggleAlert(message = null, error = true, disable = false)
 {
     const alert = document.querySelector('.alert');
-    const alertText = document.getElementById('alert_text');
+    const alertText = document.getElementById('alert-text');
 
     if(disable == true) {
     	alert.style.display = 'none';
@@ -93,6 +93,7 @@ function menu_item_rename(event) {
     // https://stackoverflow.com/a/6814092
     //########
     title = selected_item.getElementsByTagName("p")[0];
+    let old_title=title.innerHTML;
     title.style.display = "none";
     text = title.innerHTML;
     input = document.createElement("input");
@@ -102,14 +103,12 @@ function menu_item_rename(event) {
     title.parentNode.appendChild(input);
     input.focus();
     input.onblur = function() {         // on click outside the input box
-        title.parentNode.removeChild(input);    // Remove the input
-        title.innerHTML = input.value == "" ? "New File" : input.value;     // Update the title
-        title.style.display = "";       // Show the title again
+              // Show the title again
         let xhr = new XMLHttpRequest();
         xhr.open('PATCH', 'http://localhost/ProiectTW/api/items/' + selected_item_id);
         xhr.setRequestHeader('Content-type', 'application/json');
         xhr.setRequestHeader('Authorization', 'Bearer ' + getCookieValue('jwt_token'));
-        const params = { newname: title.innerHTML }
+        const params = { newname: input.value }
         xhr.send(JSON.stringify(params));
 
         xhr.onreadystatechange = function() {
@@ -121,9 +120,19 @@ function menu_item_rename(event) {
                 if(response.status=='success' && xhr.status==200) {
                     // render data
                     console.log('Am redenumit item-ul cu id ' + selected_item_id);
+                    title.parentNode.removeChild(input);    // Remove the input
+                    title.innerHTML = input.value == "" ? "New File" : input.value;     // Update the title
+                    title.style.display = ""; 
                     loadFiles(folder_parents[folder_parents.length - 1]); // reafisez datele din folderul curent
                 }
                 else {
+                    title.parentNode.removeChild(input);    // Remove the input
+                    title.innerHTML = old_title    // Update the title
+                    title.style.display = ""; 
+                    if(xhr.status==409)
+                        toggleAlert(response.message,true,false);
+                    if(xhr.status==500)
+                        toggleAlert(response.message,true,false);
                     console.log('NU am reusit sa redenumesc item-ul cu id ' + selected_item_id);
                 }
             }
@@ -190,7 +199,14 @@ function menu_general_new_folder() {
                 loadFiles(folder_parents[folder_parents.length - 1]); // reafisez datele din folderul curent
             }
             else {
-                console.log('NU am reusit sa creez un nou folder');
+                if(xhr.status==409)
+                {
+                    toggleAlert(response.message,true,false);
+                }
+                if(xhr.status==500)
+                {
+                    toggleAlert(response.message,true,false);
+                }
             }
         }
     }

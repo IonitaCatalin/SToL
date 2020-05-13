@@ -1,4 +1,20 @@
 
+function toggleAlert(message = null, error = true, disable = false)
+{
+    const alert = document.querySelector('.alert');
+    const alertText = document.getElementById('alert-text');
+
+    if(disable == true) {
+    	alert.style.display = 'none';
+		alertText.innerHTML = '';
+    } else {
+    	alert.style.display = 'block';
+		alert.style.backgroundColor = '#f44336';
+		alertText.innerHTML = message;
+    }
+
+}
+
 function getCookieValue(name) {
     var value = "; " + document.cookie;
     var parts = value.split("; " + name + "=");
@@ -28,6 +44,10 @@ function moveItems(item_id, new_parent_id)
             }
             else {
                 console.log('NU am reusit sa mut item-ul');
+                if(xhr.status==409)
+                    toggleAlert(response.message,true,false);
+                if(xhr.status==500)
+                    toggleAlert(response.message,true,false);
             }
 
         }

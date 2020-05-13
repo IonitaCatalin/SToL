@@ -39,7 +39,7 @@
                         }
                         catch(ItemNameTaken $exception)
                         {
-                            $json=new JsonResponse('error',null,'Folder name already taken in the respective container with specified id',409);
+                            $json=new JsonResponse('error',null,'Folder name already taken in the respective container',409);
                             echo $json->response();
                         }
                         catch(InvalidItemId $exception)
@@ -129,13 +129,17 @@
                         }
                         catch(PDOException $exception)
                         {
-                            echo $exception;
                             $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
                             echo $json->response();
                         }
                         catch(ItemNameTaken $exception)
                         {
-                            $json=new JsonResponse('error',null,'New name for specified item is already taken');
+                            $json=new JsonResponse('error',null,'New name for specified item is already taken',409);
+                            echo $json->response();
+                        }
+                        catch(InvalidItemId $exception)
+                        {
+                            $json=new JsonResponse('error',null,'Specified reference id is invalid',400);
                             echo $json->response();
                         }
                     }
@@ -232,7 +236,7 @@
             }
             catch(MoveInvalidNameAndType $exception)
             {
-                $json = new JsonResponse('error',null,'There is already a file with same name and type in target directory',400);
+                $json = new JsonResponse('error',null,'There is already an item with same name and type in target directory',409);
                 echo $json->response();
             }
         }

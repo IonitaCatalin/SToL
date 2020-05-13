@@ -99,39 +99,65 @@
                 'item'=>$item_id,
                 'user'=>$user_id
             ]);
-            
             $result_list=$check_item_existence_stmt->fetch(PDO::FETCH_ASSOC);
             if($check_item_existence_stmt->rowCount()>0)
             {
                 if($result_list['content_type']=='folder')
                 {
-                    $check_name_sql="SELECT item_id FROM FOLDERS WHERE item_id=:item AND name=:new_name";
-                    $check_name_stmt=DB::getConnection()->prepare($check_name_sql);
-                    $check_name_stmt->execute([
-                        'item'=>$item_id,
-                        'new_name'=>$new_name
+                    $check_if_root_sql="SELECT item_id FROM FOLDERS WHERE item_id=:item AND parent_id IS NULL";
+                    $check_if_root_stmt=DB::getConnection()->prepare($check_if_root_sql);
+                    $check_if_root_stmt->execute([
+                        'item'=>$item_id
                     ]);
-                    if($check_name_stmt->rowCount()==0)
+                    if($check_if_root_stmt->rowCount()==0)
                     {
-                        $update_name_sql="UPDATE FOLDERS SET name=:new_name WHERE item_id=:item";
-                        $update_name_stmt=DB::getConnection()->prepare($update_name_sql);
-                        $update_name_stmt->execute([
-                            'new_name'=>$new_name,
-                            'item'=>$item_id,
+                        $get_parent_id="SELECT * FROM FOLDERS WHERE item_id=:item";
+                        $get_parent_stmt=DB::getConnection()->prepare($get_parent_id);
+                        $get_parent_stmt->execute([
+                            'item'=>$item_id
                         ]);
+                        $parent_id=$get_parent_stmt->fetch(PDO::FETCH_ASSOC)['parent_id'];
+                        $check_name_sql="SELECT item_id FROM FOLDERS WHERE item_id!=:item AND parent_id=:parent AND name=:new_name";
+                        $check_name_stmt=DB::getConnection()->prepare($check_name_sql);
+                        $check_name_stmt->execute([
+                            'item'=>$item_id,
+                            'new_name'=>$new_name,
+                            'parent'=>$parent_id
+                        ]);
+                        if($check_name_stmt->rowCount()==0)
+                        {
+                            $update_name_sql="UPDATE FOLDERS SET name=:new_name WHERE item_id=:item";
+                            $update_name_stmt=DB::getConnection()->prepare($update_name_sql);
+                            $update_name_stmt->execute([
+                                'new_name'=>$new_name,
+                                'item'=>$item_id,
+                            ]);
+                        }
+                    
+                        else
+                        {
+                            throw new ItemNameTaken();
+                        }
                     }
                     else
                     {
-                        throw new ItemNameTaken();
+                        throw new InvalidItemId();
                     }
                 }
                 else if($result_list['content_type']=='file')
                 {
-                    $check_name_sql="SELECT item_id FROM FILES WHERE item_id=:item_id AND name=:new_name";
+                    $get_parent_id="SELECT * FROM FILES WHERE item_id=:item";
+                    $get_parent_stmt=DB::getConnection()->prepare($get_parent_id);
+                    $get_parent_stmt->execute([
+                        'item'=>$item_id
+                    ]);
+                    $parent_id=$get_parent_stmt->fetch(PDO::FETCH_ASSOC)['parent_id'];
+                    $check_name_sql="SELECT item_id FROM FILES WHERE item_id!=:item_id AND parent_id=:parent AND name=:new_name";
                     $check_name_stmt=DB::getConnection()->prepare($check_name_sql);
                     $check_name_stmt->execute([
                         'item_id'=>$item_id,
-                        'new_name'=>$new_name
+                        'new_name'=>$new_name,
+                        'parent'=>$parent_id
                     ]);
                     if($check_name_stmt->rowCount()==0)
                     {

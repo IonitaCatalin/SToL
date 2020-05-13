@@ -203,11 +203,11 @@
                         $response=curl_exec($upload_curl);
                         $response_array=json_decode($response,true);
                         fclose($file_handle);
-                        if(!(curl_getinfo($upload_curl,CURLINFO_HTTP_CODE)==200 || curl_getinfo($upload_curl,CURLINFO_HTTP_CODE)==201))
+                        if(!curl_getinfo($upload_curl,CURLINFO_HTTP_CODE)==200 || !curl_getinfo($upload_curl,CURLINFO_HTTP_CODE)==201)
                         {
                             throw new OneDriveUploadException($response_arary['error'],curl_getinfo($upload_curl,CURLINFO_HTTP_CODE));
                         }
-                        return $result_array['id'];
+                        return  $response_array['id'];
                         curl_close($upload_curl);
 
                     }
@@ -215,7 +215,6 @@
                     {
                         echo '<br>Facem upload pe chunk-uri';
                         $fragment_size=327680*183;
-                        //$fragment_size=1000000;
                         $file_size=$size;
                         $num_fragments=ceil($file_size/$fragment_size);
                         echo 'Numar de fragmente:'.$num_fragments;
@@ -289,9 +288,19 @@
             }
 
         }
-        public static function downloadFileById($access_token,$file_id)
+        public static function downloadFileById($access_token,$file_id,$append_to_path)
         {
-            $download_curl=curl_init();
+            $get_download=curl_init();
+            curl_setopt_array($get_download,[
+                CURLOPT_URL=>USER_DRIVE_ENDPOINT."items/${file_id}/content",
+                CURLOPT_RETURNTRANSFER=>1,
+                CURLOPT_GET=>1,
+                CURLOPT_USERAGENT=>'Stol',
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            ]);
+            $result_array=json_decode(curl_exec($get_download));
+            var_dump($result_array);
+
         }
     }
     

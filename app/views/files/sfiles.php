@@ -82,7 +82,7 @@
 			<article class="container-wrapper">
 				<div class="alert">
   					<span class="alert-close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
-
+					<div id="alert-text"></div>
 				</div>
 				<h2>Files</h2>
 				<hr>
