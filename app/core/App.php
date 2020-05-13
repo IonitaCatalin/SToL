@@ -181,6 +181,15 @@ class App
             $upload_controller->deleteUpload($upload_id);
         });
 
+        $router->addRoute('GET', '/api/testUpload', function(){
+            if($this->authorize->validateAuthorization())
+            {
+                $upload_controller = new CUpload();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $upload_controller->testFunction($user_id);
+            }
+        });
+
         $router->run($this->method, $this->URI);
     }
 }
