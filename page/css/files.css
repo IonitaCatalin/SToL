@@ -335,7 +335,7 @@ article h1 {
 #modal-file-drop {
 	grid-area:up-area;
 	display:grid;
-	background-color:rgb(234,234,234);
+	background-color:white;
 	border-style: dotted;
 	border-color:grey;
 	border-width:2px;
@@ -428,16 +428,14 @@ article h1 {
 	width:100%;
 	padding:0;
 	background-color: rgb(220,220,220);
-	grid-template-columns: 0.3fr 1fr;
+	grid-template-columns: 1fr;
 }
 
-.up-elem-list img {
-	height:100%;
-	width:100px;
-}	
 
 .up-elem-meta {
-	display: inline-block;
+	display:block;
+	width:100%;
+	height:100%;
 }
 
 .up-elem-meta p {

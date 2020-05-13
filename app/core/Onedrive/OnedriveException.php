@@ -1,7 +1,11 @@
 <?php
 
 class OneDriveException extends Exception {
-
+    public $message = '';
+	public $code = '';
+	public $previous = '';
+    public $path = '';
+    
     public function __construct($message, $code = 0, Exception $previous = null) {
         $this->$message = $message;
         $this->$code = $code;

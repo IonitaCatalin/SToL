@@ -147,15 +147,16 @@
         {
            return OneDriveService::getDriveQuota($access_token)['remaining'];
         }
-        public static function uploadFile($access_token,$file_path=null)
+        public static function uploadFile($access_token,$file_path=null,$offset,$size)
         {
 
             //Cream un resumable upload session pentru fisierul pe care intentionam sa-l uploadam
             if(file_exists($file_path))
             {
-                if(OneDriveService::getRemainingSize($access_token)>filesize($file_path))
+                if(OneDriveService::getRemainingSize($access_token)>$size)
                 {
                     echo 'Fisier gasit!<br>Este loc de fisierul asta!';
+                    $random_name=uniqid("",true);
                     $upload_session_curl=curl_init();
                     $upload_session_post=json_encode(array('item'=>array(
                         '@microsoft.graph.conflictBehavior'=>'rename',
@@ -163,11 +164,11 @@
                         'fileSystemInfo'=>array(
                             '@odata.type'=>'microsoft.graph.fileSystemInfo',
                         ),
-                        'name'=>basename($file_path))
+                        'name'=>$random_name)
                     ));
                     curl_setopt_array($upload_session_curl,[
                         CURLOPT_RETURNTRANSFER=>1,
-                        CURLOPT_URL=>USER_DRIVE_ENDPOINT.'/root:/Stol/'.basename($file_path).':/createUploadSession',
+                        CURLOPT_URL=>USER_DRIVE_ENDPOINT.'/root:/Stol/'.$random_name.':/createUploadSession',
                         CURLOPT_USERAGENT=>'Stol',
                         CURLOPT_POST=>1,
                         CURLOPT_HTTPHEADER=>array("Authorization: Bearer ${access_token}",'Content-Type: application/json'),
@@ -177,7 +178,7 @@
                     $response=curl_exec($upload_session_curl);
                     $upload_url=json_decode($response,true)['uploadUrl'];
                     curl_close($upload_session_curl);
-                    if(filesize($file_path)<10000000)
+                    if($size<10000000)
                     {
                         
                         /*
@@ -187,7 +188,7 @@
                     
                         $upload_curl=curl_init();
                         $file_handle=fopen($file_path,"r");
-                        $bytes_content=stream_get_contents($file_handle);
+                        $bytes_content=stream_get_contents($file_handle,$size,$offset);
                         curl_setopt_array($upload_curl,[
                             CURLOPT_RETURNTRANSFER=>1,
                             CURLOPT_URL=>$upload_url,
@@ -195,8 +196,8 @@
                             CURLOPT_CUSTOMREQUEST=>'PUT',
                             CURLOPT_SSL_VERIFYPEER=>false,
                             CURLOPT_HTTPHEADER=>array("Authorization: Bearer ${access_token}",
-                                                'Content-Length: '.filesize($file_path),
-                                                'Content-Range: bytes '.'0-'.(filesize($file_path)-1).'/'.filesize($file_path)),
+                                                'Content-Length: '.$size,
+                                                'Content-Range: bytes '.'0-'.($size-1).'/'.$size),
                             CURLOPT_POSTFIELDS=>$bytes_content 
                         ]);
                         $response=curl_exec($upload_curl);
@@ -212,9 +213,11 @@
                     else
                     {
                         echo '<br>Facem upload pe chunk-uri';
-                        $fragment_size=327680*183;
-                        $file_size=filesize($file_path);
+                        //$fragment_size=327680*183;
+                        $fragment_size=1000000;
+                        $file_size=$size;
                         $num_fragments=ceil($file_size/$fragment_size);
+                        echo 'Numar de fragmente:'.$num_fragments;
                         $bytes_remaining=$file_size;
                         $index=0;
                         echo "<br>Cantitate de bytes:".$bytes_remaining;
@@ -227,22 +230,24 @@
                             $chunk_size=$num_bytes;
                             $start=$index*$fragment_size;
                             $end=$index*$fragment_size+$chunk_size-1;
-                            $offset=$index*$fragment_size; 
+                            $inner_offset=$index*$fragment_size; 
+                            
                                 if($bytes_remaining<$chunk_size)
                                 {
                                     $num_bytes=$bytes_remaining;
                                     $chunk_size=$num_bytes;
                                     $end=$file_size-1;
                                 }
+                               
 
                                 if($stream=fopen($file_path,'r'))
                                 {
-                                    $data=stream_get_contents($stream,$chunk_size,$offset);
+                                    $data=stream_get_contents($stream,$chunk_size,$inner_offset+$offset);
                                     fclose($stream);
                                 }
 
                                 $content_range='bytes '.$start.'-'.$end.'/'.$file_size;
-
+                                echo $content_range;
                                 $upload_parts_curl=curl_init();
                                 curl_setopt_array($upload_parts_curl,[
                                     CURLOPT_URL=>$upload_url,
@@ -259,7 +264,7 @@
                                 $response_array=json_decode($server_output,true);
                                 if(!(curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE)==201 || curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE)==202))
                                 {
-                                    throw new OneDriveUploadException($response_array['error'],curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE));
+                                    throw new OneDriveUploadException($response_array['error']['message'],curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE));
                                 }
                                 curl_close($upload_parts_curl);
                                 $bytes_remaining=$bytes_remaining - $chunk_size;

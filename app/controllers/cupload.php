@@ -8,7 +8,14 @@ class CUpload extends Controller
     }
     public function testFunction($user_id)
     {
-        $this->model->getAccessToken($user_id,'googledrive');
+        try
+        {
+            $this->model->testUploadOnedrive($user_id);
+        }
+        catch(Exception $exception)
+        {
+            echo $exception;
+        }
     }
     public function createUpload($user_id,$parent_id,$chunk_size)
     {

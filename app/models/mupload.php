@@ -1,6 +1,12 @@
 <?php
     class MUpload
     {
+        public function testUploadOnedrive($user_id)
+        {
+            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/a99b1738e96f7eda14b0bab2e5636c4b';
+            OneDriveService::uploadFile($this->getAccessToken($user_id,'onedrive'),$path,0,500);
+
+        }
         public function getAccessToken($user_id,$service)
         {
             switch($service)

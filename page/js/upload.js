@@ -183,11 +183,6 @@ function sendFileByChunks(file,start,chunkSize,url,index)
 
 function previewFileOnUp(file)
 {
-    var reader=new FileReader();
-    reader.fileName=file.name;
-    reader.fileSize=file.size;
-    reader.readAsDataURL(file)
-    reader.onloadend=function(){
         
         var div=document.createElement('div');
         var aboutFile=document.createElement('div');
@@ -196,16 +191,14 @@ function previewFileOnUp(file)
         var name=document.createElement('p');
         var status=document.createElement('p');
         status.className="up-elem-status";
-        var previewImg=document.createElement('img');
-        name.textContent=reader.fileName;
+        name.textContent=file.name;
+        name.style.textAlign='center';
         status.textContent='Ready for uploading';
         status.style.color='#00cc00';
         status.style.textAlign='center';
         status.style.fontWeight='bold';
         aboutFile.appendChild(name);
         aboutFile.appendChild(status);
-        previewImg.src=reader.result;
-        div.appendChild(previewImg );
         div.appendChild(aboutFile);
         document.getElementById('modal-file-drop').appendChild(div);
         /*
@@ -213,5 +206,4 @@ function previewFileOnUp(file)
             de multiple ori intr-o ierarhie copilNod-parinteNod
         */
         document.getElementById('modal-up-list').appendChild(div.cloneNode(true));
-    }
 }

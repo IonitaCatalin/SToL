@@ -181,7 +181,6 @@ class App
             $upload_controller->deleteUpload($upload_id);
         });
 
-
         $router->run($this->method, $this->URI);
     }
 }
