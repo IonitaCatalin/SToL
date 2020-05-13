@@ -3,7 +3,7 @@ const loginButton = document.getElementById('login_button');
 function toggleAlert(message = null, error = true, disable = false)
 {
     const alert = document.querySelector('.alert');
-    const alertText = document.getElementById('alert_text');
+    const alertText = document.getElementById('alert-text');
 
     if(disable == true) {
     	alert.style.display = 'none';

@@ -207,14 +207,15 @@
                         {
                             throw new OneDriveUploadException($response_arary['error'],curl_getinfo($upload_curl,CURLINFO_HTTP_CODE));
                         }
+                        return $result_array['id'];
                         curl_close($upload_curl);
 
                     }
                     else
                     {
                         echo '<br>Facem upload pe chunk-uri';
-                        //$fragment_size=327680*183;
-                        $fragment_size=1000000;
+                        $fragment_size=327680*183;
+                        //$fragment_size=1000000;
                         $file_size=$size;
                         $num_fragments=ceil($file_size/$fragment_size);
                         echo 'Numar de fragmente:'.$num_fragments;
@@ -265,6 +266,11 @@
                                 if(!(curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE)==201 || curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE)==202))
                                 {
                                     throw new OneDriveUploadException($response_array['error']['message'],curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE));
+                                }
+                                else
+                                {
+                                   if(curl_getinfo($upload_parts_curl,CURLINFO_HTTP_CODE)==201)
+                                        return $response_array['id'];
                                 }
                                 curl_close($upload_parts_curl);
                                 $bytes_remaining=$bytes_remaining - $chunk_size;

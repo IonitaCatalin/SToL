@@ -3,6 +3,7 @@ const fileContextMenu = document.querySelector('.context-file-menu');
 const folderContextMenu = document.querySelector('.context-folder-menu');
 const container = document.querySelector('.container-wrapper');
 const componentsContainer=document.querySelector('.main-container');
+const newFolderBtn=document.querySelector('#btn-upload');
 
 const file_download_opt = document.getElementById('file_download_opt');
 const file_rename_opt = document.getElementById('file_rename_opt');
@@ -17,7 +18,24 @@ const general_new_folder_opt = document.getElementById('general_new_folder_opt')
 const general_refresh_opt = document.getElementById('general_refresh_opt');
 const general_upload_opt = document.getElementById('general_upload_opt');
 
+
 var selected_item_id = null; // folder sau fisier selectat
+
+function toggleAlert(message = null, error = true, disable = false)
+{
+    const alert = document.querySelector('.alert');
+    const alertText = document.getElementById('alert_text');
+
+    if(disable == true) {
+    	alert.style.display = 'none';
+		alertText.innerHTML = '';
+    } else {
+    	alert.style.display = 'block';
+		alert.style.backgroundColor = '#f44336';
+		alertText.innerHTML = message;
+    }
+
+}
 
 function toggleGeneralMenu(mode = 'none', top, left) {
     generalContextMenu.style.display = mode;

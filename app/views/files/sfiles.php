@@ -20,12 +20,10 @@
 					</a>
 				</div>
 			</header>
-			
 			<div class="user-bar">
 				<button id="btn-back" class="btn-user-bar">Back<i class="ri-arrow-go-back-line"></i></button>
 				<button id="btn-upload" class="btn-user-bar">Upload<i class="ri ri-file-upload-line"></i></button>
 				<button id="btn-new-folder" class="btn-user-bar">New folder<i class="ri ri-add-fill"></i></button>
-				
 				<div class="search-container">
 					<input type="text" id="search-box" placeholder="Search...">
 				</div>
@@ -43,7 +41,7 @@
 						<div class="drop-file-preview">
 						</div>	
 					</div>
-					<div id="modal-up-list">
+					<div id="modal-up-list" role="dialog">
 					</div>
 					<button id="modal-btn-files">Select Files</button>
 					<button id="modal-btn-upload">Upload<i class="ri ri-check-line"></i></button>
@@ -82,6 +80,10 @@
 
 			</nav>
 			<article class="container-wrapper">
+				<div class="alert">
+  					<span class="alert-close-btn" onclick="this.parentElement.style.display='none';">&times;</span>
+
+				</div>
 				<h2>Files</h2>
 				<hr>
 				<div class="context-general-menu contxt-options">

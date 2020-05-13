@@ -5,7 +5,7 @@ class App
     private $method;       
     private $raw_input;
     private $authorize;   
-    private $max_upload_chunk=2000000;
+    private $max_upload_chunk=256;
 
     function __construct($inputs)
     {
@@ -180,7 +180,13 @@ class App
             $upload_controller=new CUpload();
             $upload_controller->deleteUpload($upload_id);
         });
-
+        $router->addRoute('GET','/api/testtoken',function(){
+            if($this->authorize->validateAuthorization())
+            {
+                $upload_controller=new CUpload();
+                $upload_controller->testFunction($this->authorize->getDecoded()['user_id']);
+            }
+        });
         $router->run($this->method, $this->URI);
     }
 }
