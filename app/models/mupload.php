@@ -35,12 +35,6 @@
             //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 600000, 27831);
         }
 
-        public $available_services = null;
-        public $available_storage = null;
-        public $onedrive_part = null;
-        public $dropbox_part = null;
-        public $gdrive_part = null;
-
         public function uploadFileFragmented($user_id, $path = null)
         {
             $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/955eb964652f83d43f3e77fe17a570ea'; 
