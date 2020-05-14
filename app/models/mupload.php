@@ -35,6 +35,255 @@
             //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 600000, 27831);
         }
 
+        public $available_services = null;
+        public $available_storage = null;
+        public $onedrive_part = null;
+        public $dropbox_part = null;
+        public $gdrive_part = null;
+
+        public function uploadFileFragmented($user_id, $path = null)
+        {
+            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/955eb964652f83d43f3e77fe17a570ea'; 
+            $file_spliting = $this->computeFileSplitting($user_id, $path);
+            print_r($file_spliting);
+
+            // ---
+            // inserari in baza de date si apeluri catre functiile de upload, acum ca se cunoaste splitting-ul
+            $offset = 0;
+            if($file_spliting["onedrive"] != 0 ) {
+                echo "Incarc pe onedrive start: $offset, dimensiune: " . $file_spliting["onedrive"];
+                $offset += $file_spliting["onedrive"]; 
+            }
+            if($file_spliting["dropbox"] != 0 ) {
+                echo "Incarc pe dropbox start: $offset, dimensiune: " . $file_spliting["dropbox"];
+                $offset += $file_spliting["dropbox"];
+            }
+            if($file_spliting["googledrive"] != 0 ) {
+                echo "Incarc pe googledrive start: $offset, dimensiune: " . $file_spliting["googledrive"];
+                $offset += $file_spliting["googledrive"];
+            }
+            // ---
+        }
+
+        public function computeFileSplitting($user_id, $path)
+        {
+            $gdrive_part = $onedrive_part = $dropbox_part = 0;
+
+            $filesize = filesize($path);
+            $available_services = $this->getAvailableServices($user_id);
+            $available_storage = $this->getServicesRemainingStorage($user_id, $available_services);
+
+            // ---- Test zone
+
+            // $filesize = 627827;
+            // echo "Fisierul are dimensiunea: $filesize ----";
+
+            // $available_services["onedrive"] = true;
+            // $available_services["dropbox"] = false;
+            // $available_services["googledrive"] = true;
+
+            // $available_storage["onedrive"] = 150000;
+            // $available_storage["dropbox"] = null;
+            // $available_storage["googledrive"] = 700000;
+
+            //echo "SPATIU TOTAL DISPONIBIL: " . array_sum($available_storage) . "----";
+            // -----
+
+
+            if($filesize > array_sum($available_storage)){      // atentie la test, va insuma chiar daca available == false
+                echo "Nu este suficient spatiul disponibil pe toate serviciile cumulate !!!";
+                return;
+            }
+
+            if(!$available_services["onedrive"] && !$available_services["dropbox"] && !$available_services["googledrive"]) {
+                echo "Nu sunt autentificat pe niciun serviciu. Fisierul nu se poate salva !!";
+                return;
+            }
+
+            // initial, presupunem ca punem 1 treime pe fiecare serviciu
+            $onedrive_part = intdiv($filesize, 3);
+            $dropbox_part = intdiv($filesize, 3);
+            $gdrive_part = intdiv($filesize, 3);
+            if($filesize % 3 == 1)  { $gdrive_part ++; }
+            if($filesize % 3 == 2)  { $onedrive_part++; $gdrive_part ++; }
+            //echo "INITIAL: $onedrive_part|$dropbox_part|$gdrive_part----";
+
+            if($available_services["onedrive"] == false) {
+                $this->resplit_to_gdrive_dropbox($onedrive_part, $available_services, $available_storage, $gdrive_part, $dropbox_part);
+                $onedrive_part = 0;
+            }
+            else if($onedrive_part > $available_storage["onedrive"]) {
+                $this->resplit_to_gdrive_dropbox($onedrive_part - $available_storage["onedrive"], $available_services, $available_storage, $gdrive_part, $dropbox_part);
+                $onedrive_part = $available_storage["onedrive"];
+            }
+
+            if($available_services["dropbox"] == false) {
+                $this->resplit_to_onedrive_gdrive($dropbox_part, $available_services, $available_storage, $onedrive_part, $gdrive_part);
+                $dropbox_part = 0;
+            }
+            else if($dropbox_part > $available_storage["dropbox"]) {
+                $this->resplit_to_onedrive_gdrive($dropbox_part - $available_storage["dropbox"], $available_services, $available_storage, $onedrive_part, $gdrive_part);
+                $dropbox_part = $available_storage["dropbox"];
+            }
+
+            if($available_services["googledrive"] == false) {
+                $this->resplit_to_onedrive_dropbox($gdrive_part, $available_services, $available_storage, $onedrive_part, $dropbox_part);
+                $gdrive_part = 0;
+            }
+            else if($gdrive_part > $available_storage["googledrive"]) {
+                $this->resplit_to_onedrive_dropbox($gdrive_part - $available_storage["googledrive"], $available_services, $available_storage, $onedrive_part, $dropbox_part);
+                $gdrive_part = $available_storage["googledrive"];
+            }
+
+            //echo "FINAL: $onedrive_part|$dropbox_part|$gdrive_part----";
+            //echo "SUMA CONTROL: " . ($onedrive_part + $dropbox_part + $gdrive_part);
+            return array("onedrive" => $onedrive_part, "dropbox" => $dropbox_part, "googledrive" => $gdrive_part);
+        }
+
+        public function resplit_to_gdrive_dropbox($size, $available_services, $available_storage, &$gdrive_part, &$dropbox_part)
+        {
+            if($available_services["googledrive"] == false) {
+                $dropbox_part += ($gdrive_part + $size);
+                $gdrive_part = 0;
+                return;
+            }
+            if($available_services["dropbox"] == false) {
+                $gdrive_part += ($dropbox_part + $size);
+                $dropbox_part = 0;
+                return;
+            }
+            if(($gdrive_part + intdiv($size, 2)) > $available_storage["googledrive"]) {
+                $temp = $available_storage["googledrive"] - $gdrive_part;
+                $gdrive_part += $temp;
+                $dropbox_part += $size - $temp;
+                return;
+            }
+            if(($dropbox_part + intdiv($size, 2)) > $available_storage["dropbox"]) {
+                $temp = $available_storage["dropbox"] - $dropbox_part;
+                $dropbox_part += $temp;
+                $gdrive_part += $size - $temp;
+                return;
+            }
+            $gdrive_part += intdiv($size, 2);
+            $dropbox_part += intdiv($size, 2);
+            if($size % 2 == 1){
+                ($gdrive_part+1) > $available_storage["googledrive"] ? $dropbox_part++ : $gdrive_part++;
+            }
+        }
+
+        public function resplit_to_onedrive_gdrive($size, $available_services, $available_storage, &$onedrive_part, &$gdrive_part)
+        {
+            if($available_services["onedrive"] == false) {
+                $gdrive_part += ($onedrive_part + $size);
+                $onedrive_part = 0;
+                return;
+            }
+            if($available_services["googledrive"] == false) {
+                $onedrive_part += ($gdrive_part + $size);
+                $gdrive_part = 0;
+                return;
+            }
+            if(($onedrive_part + intdiv($size, 2)) > $available_storage["onedrive"]) {
+                $temp = $available_storage["onedrive"] - $onedrive_part;
+                $onedrive_part += $temp;
+                $gdrive_part += $size - $temp;
+                return;
+            }
+            if(($gdrive_part + intdiv($size, 2)) > $available_storage["googledrive"]) {
+                $temp = $available_storage["googledrive"] - $gdrive_part;
+                $gdrive_part += $temp;
+                $onedrive_part += $size - $temp;
+                return;
+            }
+            $onedrive_part += intdiv($size, 2);
+            $gdrive_part += intdiv($size, 2);
+            if($size % 2 == 1){
+                ($gdrive_part+1) > $available_storage["googledrive"] ? $onedrive_part++ : $gdrive_part++;
+            }
+        }
+
+        public function resplit_to_onedrive_dropbox($size, $available_services, $available_storage, &$onedrive_part, &$dropbox_part)
+        {
+            if($available_services["onedrive"] == false) {
+                $dropbox_part += ($onedrive_part + $size);
+                $onedrive_part = 0;
+                return;
+            }
+            if($available_services["dropbox"] == false) {
+                $onedrive_part += ($dropbox_part + $size);
+                $dropbox_part = 0;
+                return;
+            }
+            if(($onedrive_part + intdiv($size, 2)) > $available_storage["onedrive"]) {
+                $temp = $available_storage["onedrive"] - $onedrive_part;
+                $onedrive_part += $temp;
+                $dropbox_part += $size - $temp;
+                return;
+            }
+            if(($dropbox_part + intdiv($size, 2)) > $available_storage["dropbox"]) {
+                $temp = $available_storage["dropbox"] - $dropbox_part;
+                $dropbox_part += $temp;
+                $onedrive_part += $size - $temp;
+                return;
+            }
+            $onedrive_part += intdiv($size, 2);
+            $dropbox_part += intdiv($size, 2);
+            if($size % 2 == 1){
+                ($onedrive_part+1) > $available_storage["onedrive"] ? $dropbox_part++ : $onedrive_part++;
+            }
+        }
+
+        public function getServicesRemainingStorage($user_id, $available_services)
+        {
+            $result = array();
+            if($available_services["onedrive"])
+                $result["onedrive"] = OnedriveService::getDriveQuota($this->getAccessToken($user_id, 'onedrive'))["remaining"];
+            if($available_services["googledrive"]) {
+                $temp = GoogleDriveService::getStorageQuota($this->getAccessToken($user_id, 'googledrive'));
+                $result["googledrive"] = $temp["limit"] - $temp["usage"];
+            }
+            if($available_services["dropbox"]){
+                $temp = DropboxService::getStorageQuota($this->getAccessToken($user_id, 'dropbox'));
+                $result["dropbox"] = $temp["allocation"]["allocated"] - $temp["used"];
+            }
+
+            //print_r(OnedriveService::getDriveQuota($this->getAccessToken($user_id, 'onedrive')));
+            //print_r(GoogleDriveService::getStorageQuota($this->getAccessToken($user_id, 'googledrive')));
+            //print_r(DropboxService::getStorageQuota($this->getAccessToken($user_id, 'dropbox')));
+            return $result;
+        }
+
+        public function getAvailableServices($user_id)
+        {
+            $result = array();
+
+            $get_onedrive_query = "SELECT user_id FROM onedrive_service WHERE user_id = :user_id";
+            $get_onedrive_stmt = DB::getConnection()->prepare($get_onedrive_query);
+            $get_onedrive_stmt->execute(['user_id'=>$user_id]);
+            if($get_onedrive_stmt->rowCount() > 0)
+                $result["onedrive"] = true;
+            else
+                $result["onedrive"] = false;
+
+            $get_googledrive_query = "SELECT user_id FROM googledrive_service WHERE user_id = :user_id";
+            $get_googledrive_stmt = DB::getConnection()->prepare($get_googledrive_query);
+            $get_googledrive_stmt->execute(['user_id'=>$user_id]);
+            if($get_googledrive_stmt->rowCount()>0)
+                $result["googledrive"] = true;
+            else
+                $result["googledrive"] = false;
+
+            $get_dropbox_query = "SELECT user_id FROM dropbox_service WHERE user_id = :user_id";
+            $get_dropbox_stmt = DB::getConnection()->prepare($get_dropbox_query);
+            $get_dropbox_stmt->execute(['user_id'=>$user_id]);
+            if($get_dropbox_stmt->rowCount()>0)
+                $result["dropbox"] = true;
+            else
+                $result["dropbox"] = false;
+
+            return $result;
+        }
+
         public function getAccessToken($user_id,$service)
         {
             switch($service)

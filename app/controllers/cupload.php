@@ -10,9 +10,10 @@ class CUpload extends Controller
     {
         try
         {
-            $this->model->testUploadOnedrive($user_id);
+            //$this->model->testUploadOnedrive($user_id);
             //$this->model->testUploadGoogledrive($user_id);
             //$this->model->testUploadDropbox($user_id);
+            $this->model->uploadFileFragmented($user_id);
         }
         catch(Exception $exception)
         {
