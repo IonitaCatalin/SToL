@@ -198,6 +198,28 @@
 				'user_id' => $user_id
 			]);
 		}
+
+		public function getUserStorageData($user_id)
+		{
+			$result["googledrive"]["available"] = $this->isGoogleDriveAuthorized($user_id);	
+			$result["onedrive"]["available"] = $this->isOneDriveAuthorized($user_id);
+			$result["dropbox"]["available"] = $this->isDropboxAuthorized($user_id);
+
+			if($result["onedrive"]["available"]) {
+				$result["onedrive"]["total"] = OnedriveService::getDriveQuota($this->getAccessToken($user_id, 'onedrive'))["total"];
+				$result["onedrive"]["used"] = OnedriveService::getDriveQuota($this->getAccessToken($user_id, 'onedrive'))["used"];
+			}
+            if($result["googledrive"]["available"]) {
+                $result["googledrive"]["total"] = GoogleDriveService::getStorageQuota($this->getAccessToken($user_id, 'googledrive'))["limit"];
+                $result["googledrive"]["used"] = GoogleDriveService::getStorageQuota($this->getAccessToken($user_id, 'googledrive'))["usage"];
+            }
+			if($result["dropbox"]["available"]){
+			    $result["dropbox"]["total"] = DropboxService::getStorageQuota($this->getAccessToken($user_id, 'dropbox'))["allocation"]["allocated"];
+			    $result["dropbox"]["used"] = DropboxService::getStorageQuota($this->getAccessToken($user_id, 'dropbox'))["used"];
+			}
+
+			return $result;
+		}
 	}
 	
 

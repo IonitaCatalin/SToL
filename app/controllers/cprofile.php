@@ -252,6 +252,22 @@ class CProfile extends Controller {
 		}
 	}
 
+	public function getUserStorageData($user_id)
+	{
+		try
+		{
+			$data_json = json_encode($this->model->getUserStorageData($user_id));
+			$json = new JsonResponse('success', $data_json, 'User\'s storage data succesfully retrieved', 200);
+			echo $json->response();
+		}
+		catch(PDOException $exception)
+		{
+			echo $exception;
+			$json=new JsonResponse('error', null, 'Storage data temporarily unavailable', 500);
+			echo $json->response();
+		}
+	}
+
 }
 
 ?>

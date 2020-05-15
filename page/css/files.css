@@ -117,20 +117,6 @@ nav {
 	font-size:15px;
 }
 
-#storage-info-box {
-	position: relative;
-	background-color: white;
-	margin: auto 0 0 0;
-	height: 250px;
-	width: 100%;
-}
-
-.quota_background {
-	margin: 0 auto 0 auto;
-	height: 5px;
-	width: 95%;
-	background-color: lightgray;
-}
 
 .alert {
 	padding: 20px;
@@ -151,28 +137,43 @@ nav {
 	transition: 0.3s;
 }
 
+#storage-info-box {
+	position: relative;
+	background-color: white;
+	margin: auto 0 0 0;
+	height: 250px;
+	width: 100%;
+}
+
+.quota_background {
+	margin: 0 auto 0 auto;
+	height: 5px;
+	width: 95%;
+	background-color: lightgray;
+}
+
 .storage-text {
 	margin-top: 10px;
-	color: green;
+	color: rgb(9,74,178);
 	font-size: 0.7em;
 	padding: 5%;
 }
 
-#quota_g_drive {
+#quota_googledrive {
 	height: 100%;
-	width: 66%;
+	width: 0%;
 	background-color: rgb(9,74,178);
 }
 
-#quota_one_drive {
+#quota_onedrive {
 	height: 100%;
-	width: 20%;
+	width: 0%;
 	background-color: rgb(9,74,178);
 }
 
 #quota_dropbox {
 	height: 100%;
-	width: 50%;
+	width: 0%;
 	background-color: rgb(9,74,178);
 }
 

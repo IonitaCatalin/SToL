@@ -97,4 +97,5 @@ function renderComponents(data)
 
 window.onload = function(){  
     loadFiles();
+    initializeStorageBox();
 }

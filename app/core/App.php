@@ -40,7 +40,7 @@ class App
                 $page_controller=new CPage();
                 $page_controller->renderFiles();
         });
-
+        // info despre profile
         $router->addRoute('GET', '/api/user', function()
         {
             if($this->authorize->validateAuthorization())
@@ -48,6 +48,16 @@ class App
                 $profile_controller = new CProfile();
                 $user_id = $this->authorize->getDecoded()["user_id"];
                 $profile_controller->getUser($user_id);
+            }
+        });
+        // info despre storage
+        $router->addRoute('GET', '/api/user/storage', function()
+        {
+            if($this->authorize->validateAuthorization())
+            {
+                $profile_controller = new CProfile();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $profile_controller->getUserStorageData($user_id);
             }
         });
 

@@ -66,16 +66,16 @@
 					</div>
 				</div>
 				<div id="storage-info-box">
-					<div class="storage-text">Google Drive: 10/15GB</div>
-					<div class="quota_background"><div id="quota_g_drive"></div></div>
+					<div class="storage-text">GoogleDrive: <span id="gdrive_used">-</span>/<span id="gdrive_total">-</span></div>
+					<div class="quota_background"><div id="quota_googledrive"></div></div>
 
-					<div class="storage-text">MS One Drive: 1/5GB</div>
-					<div class="quota_background"><div id="quota_one_drive"></div></div>
+					<div class="storage-text">OneDrive: <span id="onedrive_used">-</span>/<span id="onedrive_total">-</span></div>
+					<div class="quota_background"><div id="quota_onedrive"></div></div>
 
-					<div class="storage-text">DropBox: 1/2GB</div>
+					<div class="storage-text">DropBox: <span id="dropbox_used">-</span>/<span id="dropbox_total">-</span></div>
 					<div class="quota_background"><div id="quota_dropbox"></div></div>
 
-					<button onclick="location.href='clogin' " id="btn-disconn">Logout</button>
+					<button id="btn-disconn">Logout</button>
 				</div>
 
 			</nav>
@@ -109,6 +109,7 @@
 				Footer
 			</footer>
 		</div>
+		<script async src="../page/js/storage_quota.js"></script>
 		<script async src="../page/js/drag_and_drop.js"></script>
 		<script async src="../page/js/upload.js"></script>
 		<script async src="../page/js/context_menu.js"></script>
