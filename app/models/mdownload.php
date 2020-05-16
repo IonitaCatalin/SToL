@@ -17,6 +17,10 @@ class MDownload
 		//DropboxService::downloadFileById($this->getAccessToken($user_id,'dropbox'), 'id:EYf7PryE5EAAAAAAAAAAQw');
 		//DropboxService::downloadFileById($this->getAccessToken($user_id,'dropbox'), 'id:EYf7PryE5EAAAAAAAAAARA');
 		//DropboxService::downloadFileById($this->getAccessToken($user_id,'dropbox'), 'id:EYf7PryE5EAAAAAAAAAARQ');
+
+        // teste pentru delete
+        //GoogleDriveService::deleteFileById($this->getAccessToken($user_id,'googledrive'), '1zib1Wej5guQG1oz0RCVMlKZcJFof41a7');
+        //DropboxService::deleteFileById($this->getAccessToken($user_id,'dropbox'), 'id:EYf7PryE5EAAAAAAAAAASQ');
 	}
 
 	// preluata din mupload
