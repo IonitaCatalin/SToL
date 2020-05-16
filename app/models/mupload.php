@@ -528,6 +528,67 @@
             }
         }
 
+        public function completePublicUpload($upload_id)
+        {
+            $get_upload_sql="SELECT * FROM UPLOADS WHERE upload_id=:upload_id";
+            $get_upload_stmt=DB::getConnection()->prepare($get_upload_sql);
+            $get_upload_stmt->execute([
+                'upload_id'=>$upload_id
+            ]);
+            if($get_upload_stmt->rowCount()>0)
+            {
+                $result_upload=$get_upload_stmt->fetch(PDO::FETCH_ASSOC);
+                $file_reference=$result_upload['file_reference'];
+                unlink($_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$result_upload['file_reference']);
+                $delete_upload_sql="DELETE FROM UPLOADS WHERE upload_id=:upload_id";
+                $delete_upload_stmt=DB::getConnection()->prepare($delete_upload_sql);
+                $delete_upload_stmt->execute([
+                    'upload_id'=>$upload_id
+                ]);
+            }
+            else
+            {
+                throw new InvalidUploadId();
+            }
+        }
+
+        public function deleteIncompleteUpload($upload_id,$fragments_id)
+        {
+            $get_upload_sql="SELECT * FROM UPLOADS WHERE upload_id=:upload_id";
+            $get_upload_stmt=DB::getConnection()->prepare($get_upload_sql);
+            $get_upload_stmt->execute([
+                'upload_id'=>$upload_id
+            ]);
+            $result_upload=$get_upload_stmt->fetch(PDO::FETCH_ASSOC);
+            if($get_upload_stmt->rowCount()>0)
+            {
+                unlink($_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$result_upload['file_reference']);
+                $delete_upload_sql="DELETE FROM UPLOADS WHERE upload_id=:upload_id";
+                $delete_upload_stmt=DB::getConnection()->prepare($delete_upload_sql);
+                $delete_upload_stmt->execute([
+                    'upload_id'=>$upload_id
+                ]);
+                $get_files_sql="SELECT * FROM FILES WHERE fragments_id=:fragments_id";
+                $get_files_stmt=DB::getConnection()->prepare($get_files_sql);
+                $get_files_stmt->execute([
+                    'fragmnets_id'=>$fragments_id
+                ]);
+                $file_result=$get_files_stmt->fetch(PDO::FETCH_ASSOC);
+
+                //Aici vine logica care sterge toate fragmentele din servicii, va fi omisa si introduse cand e gata
+                
+                $delete_files_sql="DELETE FROM FILES WHERE fragments_id=:fragments_id";
+                $delete_files_stmt=DB::getConnection()->prepare($delete_files_sql);
+                $delete_files_stmt->execute();
+
+                $delete_items_sql="DELETE FROM ITEMS WHERE item_id=:item_id AND content_type='file'";
+                $delete_items_stmt=DB::getConnection()->prepare($delete_items_sql);
+                $delete_files_stmt->execute([
+                    'item_id'=>$file_result['item_id']
+                ]);
+            }
+
+        }
         public function statusChangeToSplitting($upload_id)
         {
             $change_status_sql="UPDATE uploads SET status='splitting' WHERE upload_id=:id";

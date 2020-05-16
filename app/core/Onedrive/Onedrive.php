@@ -302,6 +302,14 @@
             var_dump($result_array);
 
         }
+
+        public static function deleteById($acces_token,$item_id)
+        {
+            $delete_item=curl_init();
+            $curl_setopt_array($delete_itemm[
+                
+            ]);
+        }
     }
     
 ?>
