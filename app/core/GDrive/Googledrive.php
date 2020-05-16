@@ -428,7 +428,30 @@
 
         }
 
+        public static function deleteFileById($token, $file_id)
+        {
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => "https://www.googleapis.com/drive/v3/files/" . $file_id,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "DELETE",
+                CURLOPT_HTTPHEADER => array("Authorization: Bearer ${token}"),
+            ));
+            if(($result = curl_exec($ch)) === false){
+                throw new GoogledriveDeleteException(
+                    __METHOD__. ' '.__LINE__, "Curl error: " . curl_error($ch));
+            }
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            if($httpcode != 204){   // returneaza 204 NoContent fara body la succes
+                $asoc_array = json_decode($result, true);
+                throw new GoogledriveDeleteException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
+            }
 
+            return true;
+        }
 
     }
 ?>

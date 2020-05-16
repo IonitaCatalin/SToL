@@ -75,4 +75,10 @@ class GoogledriveNotEnoughStorageSpaceException extends GoogledriveException {
     }
 }
 
+class GoogledriveDeleteException extends GoogledriveException {
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
+    }
+}
+
 ?>

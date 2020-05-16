@@ -69,4 +69,10 @@ class DropboxNotEnoughStorageSpaceException extends DropboxException {
     }
 }
 
+class DropboxDeleteException extends DropboxException {
+    public function __toString() {
+        return __CLASS__ . ' ' .$this->path .": [{$this->code}]: {$this->message}";
+    }
+}
+
 ?>

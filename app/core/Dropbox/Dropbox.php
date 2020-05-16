@@ -512,6 +512,36 @@ require_once('DropboxException.php');
 
         }
 
+
+        public static function deleteFileById($token, $file_id)
+        {
+            $post_fields = '{"path": "' . $file_id . '"}';
+
+            $ch = curl_init();
+            curl_setopt_array($ch, array(
+                CURLOPT_URL => 'https://api.dropboxapi.com/2/files/delete_v2',
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_POST => 1,
+                CURLOPT_POSTFIELDS => $post_fields,
+                CURLOPT_HTTPHEADER => array(
+                    "Authorization: Bearer ${token}",
+                    "Content-Type: application/json"
+                )
+            ));
+            if(($response = curl_exec($ch)) === false){
+                throw new DropboxDeleteException(
+                    __METHOD__. ' '.__LINE__ , "Curl error: " . curl_error($ch));
+            }
+            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            if($httpcode != 200){
+                throw new DropboxDeleteException(
+                    __METHOD__. ' '.__LINE__.' '.$httpcode , $response);
+            }
+            curl_close($ch);
+            //echo '<pre>'; print_r(json_decode($response, true)); echo '</pre>'; // returneaza metadatele fisierului de sters..
+            return true; // sau altceva ?
+        }
+
     }
 
 ?>
