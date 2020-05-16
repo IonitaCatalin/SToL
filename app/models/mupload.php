@@ -9,7 +9,7 @@
 
         public function testUploadGoogledrive($user_id)
         {
-            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/71aa4f5d54d03b038dbc601ee28b2350';
+            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/955eb964652f83d43f3e77fe17a570ea';
             // pt un fisier de 25,306,104 bytes
             //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 0, 15000000);
             //GoogleDriveService::uploadFile($this->getAccessToken($user_id,'googledrive'), $path, 15000000, 10000000);
@@ -34,27 +34,73 @@
             //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 300000, 300000);
             //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 600000, 27831);
         }
-
-        public function uploadFileFragmented($user_id, $path = null)
+        public function uploadFileFragmented($fragments_id,$upload_id,$item_id)
         {
-            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/955eb964652f83d43f3e77fe17a570ea'; 
-            $file_spliting = $this->computeFileSplitting($user_id, $path);
-            print_r($file_spliting);
+                //$path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/955eb964652f83d43f3e77fe17a570ea'; 
+                $get_upload_sql="SELECT * FROM UPLOADS WHERE upload_id=:upload_id";
+                $get_upload_stmt=DB::getConnection()->prepare($get_upload_sql);
+                $get_upload_stmt->execute([
+                    'upload_id'=>$upload_id
+                ]);
+                $upload_info=$get_upload_stmt->fetch(PDO::FETCH_ASSOC);
+                $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$upload_info['file_reference'];
+                $file_splitting = $this->computeFileSplitting($upload_info['user_id'], $path);
+
+                //print_r($file_splitting);
+
+                $insert_item_sql="INSERT INTO ITEMS(user_id,item_id,content_type) VALUES (:user_id,:item_id,'file')";
+                $insert_item_stmt=DB::getConnection()->prepare($insert_item_sql);
+                $insert_item_stmt->execute([
+                    'user_id'=>$upload_info['user_id'],
+                    'item_id'=>$item_id,
+                ]);
+
+                $insert_file_sql="INSERT INTO FILES(item_id,folder_id,name,fragments_id) VALUES (:item_id,:folder_id,:name,:fragments_id)";
+                $insert_file_stmt=DB::getConnection()->prepare($insert_file_sql);
+                $insert_file_stmt->execute([
+                    'item_id'=>$item_id,
+                    'folder_id'=>$upload_info['parent_id'],
+                    'name'=>$upload_info['name'],
+                    'fragments_id'=>$fragments_id
+                ]);
 
             // ---
             // inserari in baza de date si apeluri catre functiile de upload, acum ca se cunoaste splitting-ul
+            $insert_fragment_sql="INSERT INTO FRAGMENTS(fragments_id,service,offset,service_id,fragment_size) VALUES(:fragments_id,:service,:offset,:service_id,:fragment_size)";
+            $insert_fragment_stmt=DB::getConnection()->prepare($insert_fragment_sql);
             $offset = 0;
-            if($file_spliting["onedrive"] != 0 ) {
-                echo "Incarc pe onedrive start: $offset, dimensiune: " . $file_spliting["onedrive"];
-                $offset += $file_spliting["onedrive"]; 
+            if($file_splitting["onedrive"] != 0 ) {
+                //echo "Incarc pe onedrive start: $offset, dimensiune: " . $file_spliting["onedrive"];
+                $insert_fragment_stmt->execute([
+                    'fragments_id'=>$fragments_id,
+                    'service'=>'onedrive',
+                    'offset'=>$offset,
+                    'service_id'=>OneDriveService::uploadFile($this->getAccessToken($upload_info['user_id'],'onedrive'),$path,$offset,$file_splitting['onedrive']),
+                    'fragment_size'=>$file_splitting['onedrive']
+                ]);
+                $offset += $file_splitting["onedrive"]; 
             }
-            if($file_spliting["dropbox"] != 0 ) {
-                echo "Incarc pe dropbox start: $offset, dimensiune: " . $file_spliting["dropbox"];
-                $offset += $file_spliting["dropbox"];
+            if($file_splitting["dropbox"] != 0 ) {
+                //echo "Incarc pe dropbox start: $offset, dimensiune: " . $file_spliting["dropbox"];
+                $insert_fragment_stmt->execute([
+                    'fragments_id'=>$fragments_id,
+                    'service'=>'dropbox',
+                    'offset'=>$offset,
+                    'service_id'=>DropboxService::uploadFile($this->getAccessToken($upload_info['user_id'],'dropbox'),$path,$offset,$file_splitting['dropbox']),
+                    'fragment_size'=>$file_splitting['dropbox']
+                ]);
+                $offset += $file_splitting["dropbox"];
             }
-            if($file_spliting["googledrive"] != 0 ) {
-                echo "Incarc pe googledrive start: $offset, dimensiune: " . $file_spliting["googledrive"];
-                $offset += $file_spliting["googledrive"];
+            if($file_splitting["googledrive"] != 0 ) {
+                //echo "Incarc pe googledrive start: $offset, dimensiune: " . $file_spliting["googledrive"];
+                $insert_fragment_stmt->execute([
+                    'fragments_id'=>$fragments_id,
+                    'service'=>'googledrive',
+                    'offset'=>$offset,
+                    'service_id'=>GoogleDriveService::uploadFile($this->getAccessToken($upload_info['user_id'],'googledrive'),$path,$offset,$file_splitting['googledrive']),
+                    'fragment_size'=>$file_splitting['googledrive']
+                ]);
+                $offset += $file_splitting["googledrive"];
             }
             // ---
         }
@@ -62,7 +108,6 @@
         public function computeFileSplitting($user_id, $path)
         {
             $gdrive_part = $onedrive_part = $dropbox_part = 0;
-
             $filesize = filesize($path);
             $available_services = $this->getAvailableServices($user_id);
             $available_storage = $this->getServicesRemainingStorage($user_id, $available_services);
@@ -85,13 +130,12 @@
 
 
             if($filesize > array_sum($available_storage)){      // atentie la test, va insuma chiar daca available == false
-                echo "Nu este suficient spatiul disponibil pe toate serviciile cumulate !!!";
-                return;
+                //echo "Nu este suficient spatiul disponibil pe toate serviciile cumulate !!!";
+                throw new NotEnoughStorage();
             }
 
             if(!$available_services["onedrive"] && !$available_services["dropbox"] && !$available_services["googledrive"]) {
-                echo "Nu sunt autentificat pe niciun serviciu. Fisierul nu se poate salva !!";
-                return;
+                throw new NoStorageServices();
             }
 
             // initial, presupunem ca punem 1 treime pe fiecare serviciu

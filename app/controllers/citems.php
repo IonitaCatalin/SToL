@@ -129,6 +129,7 @@
                         }
                         catch(PDOException $exception)
                         {
+                            echo $exception;
                             $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
                             echo $json->response();
                         }

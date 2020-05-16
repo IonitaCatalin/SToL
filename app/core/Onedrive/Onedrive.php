@@ -155,7 +155,7 @@
             {
                 if(OneDriveService::getRemainingSize($access_token)>$size)
                 {
-                    echo 'Fisier gasit!<br>Este loc de fisierul asta!';
+                    //echo 'Fisier gasit!<br>Este loc de fisierul asta!';
                     $random_name=uniqid("",true);
                     $upload_session_curl=curl_init();
                     $upload_session_post=json_encode(array('item'=>array(
@@ -213,16 +213,16 @@
                     }
                     else
                     {
-                        echo '<br>Facem upload pe chunk-uri';
+                        //echo '<br>Facem upload pe chunk-uri';
                         $fragment_size=327680*183;
                         $file_size=$size;
                         $num_fragments=ceil($file_size/$fragment_size);
-                        echo 'Numar de fragmente:'.$num_fragments;
+                        //echo 'Numar de fragmente:'.$num_fragments;
                         $bytes_remaining=$file_size;
                         $index=0;
-                        echo "<br>Cantitate de bytes:".$bytes_remaining;
-                        echo '<br>Limita unui fragment:'.$fragment_size;
-                        echo '<br> Fragmente:'.$num_fragments;
+                        //echo "<br>Cantitate de bytes:".$bytes_remaining;
+                        //echo '<br>Limita unui fragment:'.$fragment_size;
+                        //echo '<br> Fragmente:'.$num_fragments;
                         $upload_response=null;
                         while($index<$num_fragments)
                         {
@@ -247,7 +247,7 @@
                                 }
 
                                 $content_range='bytes '.$start.'-'.$end.'/'.$file_size;
-                                echo $content_range;
+                                //echo $content_range;
                                 $upload_parts_curl=curl_init();
                                 curl_setopt_array($upload_parts_curl,[
                                     CURLOPT_URL=>$upload_url,
@@ -284,7 +284,7 @@
             }
             else
             {
-                echo 'Problema cu fisierul';
+                throw new OneDriveUploadException("FIle cannot be found on server");
             }
 
         }

@@ -6,20 +6,20 @@ class CUpload extends Controller
     {
         $this->model=$this->model('mupload');
     }
-    public function testFunction($user_id)
-    {
-        try
-        {
-            //$this->model->testUploadOnedrive($user_id);
-            //$this->model->testUploadGoogledrive($user_id);
-            //$this->model->testUploadDropbox($user_id);
-            $this->model->uploadFileFragmented($user_id);
-        }
-        catch(Exception $exception)
-        {
-            echo $exception;
-        }
-    }
+    // public function testFunction($user_id)
+    // {
+    //     try
+    //     {
+    //         //$this->model->testUploadOnedrive($user_id);
+    //         //$this->model->testUploadGoogledrive($user_id);
+    //         //$this->model->testUploadDropbox($user_id);
+    //         $this->model->uploadFileFragmented($user_id);
+    //     }
+    //     catch(Exception $exception)
+    //     {
+    //         echo $exception;
+    //     }
+    // }
     public function createUpload($user_id,$parent_id,$chunk_size)
     {
         $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
@@ -83,9 +83,48 @@ class CUpload extends Controller
                 //Nu vom vrea sa stergem upload-ul curent decat la cererea clientului doar de pe server,de pe servicii nu se va putea in decursul upload-ului
                 //Propun ca inainte sa inceapa upload-ul pe servicii sa verificam inca o data existenta sesiune de upload in baza de date ca sa ne asiguram ca user-ul nu a intrerupt sesiunea intre timp astfel sa avem un fail-safe
                 $this->model->statusChangeToSplitting($upload_id);
-                //Logica de upload pe servicii
-                $json=new JsonResponse('success',null,'Data file uploaded succesfully',201);
-                echo $json->response();
+                try
+                {
+                    $bytes=random_bytes(16);
+                    $fragments_id=bin2hex($bytes);
+                    $bytes=random_bytes(16);
+                    $item_id=bin2hex($bytes);
+                    $this->model->uploadFileFragmented($fragments_id,$upload_id,$item_id);
+                    $json=new JsonResponse('success',null,'Data file uploaded succesfully',201);
+                    echo $json->response();
+                }
+                catch(NotEnoughStorage $exception)
+                {
+                    $json=new JsonResponse('error',null,'Storage space insufficient to complete request',413);
+                    echo $json->response();
+                }
+                catch(NoStorageServices $exception)
+                {
+                    $json=new JsonResponse('error',null,'Upload could not be complete since there are no storage services linked',400);
+                    echo $json->response();
+                }
+                catch(GoogledriveUploadFileException $exception)
+                {
+                    $json=new JsonResponse('error',null,'GoogleDrive service failed due to internat issues',400);
+                    echo $json->response();
+                }
+                catch(OneDriveUploadException $exception)
+                {
+                    $json=new JsonResponse('error',null,'Onedrive service failed due to internat issues',400);
+                    echo $json->response();
+                }
+                catch(DropboxUploadFileException $exception)
+                {
+                    $json=new JsonResponse('error',null,'Dropbox service failed due to internat issues',400);
+                    echo $json->response();
+                }
+                catch(Exception $exception)
+                {
+                    echo $exception;
+                    $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                    echo $json->response();
+                }
+                
             }
             else
             {

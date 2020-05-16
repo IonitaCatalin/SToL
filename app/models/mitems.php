@@ -151,8 +151,8 @@
                     $get_parent_stmt->execute([
                         'item'=>$item_id
                     ]);
-                    $parent_id=$get_parent_stmt->fetch(PDO::FETCH_ASSOC)['parent_id'];
-                    $check_name_sql="SELECT item_id FROM FILES WHERE item_id!=:item_id AND parent_id=:parent AND name=:new_name";
+                    $parent_id=$get_parent_stmt->fetch(PDO::FETCH_ASSOC)['folder_id'];
+                    $check_name_sql="SELECT item_id FROM FILES WHERE item_id!=:item_id AND folder_id=:parent AND name=:new_name";
                     $check_name_stmt=DB::getConnection()->prepare($check_name_sql);
                     $check_name_stmt->execute([
                         'item_id'=>$item_id,

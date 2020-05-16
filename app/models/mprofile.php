@@ -108,30 +108,103 @@
 			else
 				return false;
 		}
-
-		public function getAccessToken($id, $service)
+		public function getAccessToken($user_id,$service)
         {
-            $sql = '';
-            switch ($service) {
+            switch($service)
+            {
                 case 'onedrive':
-                    $sql = "SELECT access_token FROM onedrive_service WHERE user_id = :id";
+                {
+                    $get_onedrive_sql='SELECT * FROM onedrive_service WHERE user_id=:id';
+                    $get_onedrive_stmt=DB::getConnection()->prepare($get_onedrive_sql);
+                    $get_onedrive_stmt->execute([
+                        'id'=>$user_id
+                    ]);
+                    if($get_onedrive_stmt->rowCount()>0)
+                    {
+                        $result_array=$get_onedrive_stmt->fetch(PDO::FETCH_ASSOC);
+                        $generated_at=date("Y-m-d H:i:s",strtotime($result_array['generated_at']));
+                        $current_time=date("Y-m-d H:i:s",time());
+                        $seconds_diff=strtotime($current_time)-strtotime($generated_at);
+                        if($seconds_diff<$result_array['expires_in'])
+                        {
+                            return $result_array['access_token'];
+                        }
+                        else
+                        {
+                            $renewed_tokens=OneDriveService::renewTokens($result_array['refresh_token']);
+                            $update_tokens_sql="UPDATE onedrive_service SET access_token=:access_token,refresh_token=:refresh_token,generated_at=:generated_at,expires_in=:expires_in";
+                            $update_tokens_stmt=DB::getConnection()->prepare($update_tokens_sql);
+                            $update_tokens_stmt->execute([
+                                'access_token'=>$renewed_tokens['access_token'],
+                                'refresh_token'=>$renewed_tokens['refresh_token'],
+                                'generated_at'=>date("Y-m-d H:i:s"),
+                                'expires_in'=>$renewed_tokens['expires_in']
+                            ]);
+                            return $renewed_tokens['access_token'];
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
                     break;
+                }
                 case 'googledrive':
-                    $sql = "SELECT access_token FROM googledrive_service WHERE user_id = :id";
+                {
+                    $get_gdrive_sql='SELECT * FROM googledrive_service WHERE user_id=:id';
+                    $get_gdrive_stmt=DB::getConnection()->prepare($get_gdrive_sql);
+                    $get_gdrive_stmt->execute([
+                        'id'=>$user_id
+                    ]);
+                    if($get_gdrive_stmt->rowCount()>0)
+                    {
+                       
+                        $result_array=$get_gdrive_stmt->fetch(PDO::FETCH_ASSOC);
+                        $generated_at=date("Y-m-d H:i:s",strtotime($result_array['generated_at']));
+                        $current_time=date("Y-m-d H:i:s",time());
+                        $seconds_diff=strtotime($current_time)-strtotime($generated_at);
+                        if($seconds_diff<$result_array['expires_in'])
+                        {
+                            return $result_array['access_token'];
+                        }
+                        else
+                        {
+                            $renewed_tokens=GoogleDriveService::renewAccessToken($result_array['refresh_token']);
+                            $update_tokens_sql="UPDATE googledrive_service SET access_token=:access_token,generated_at=:generated_at,expires_in=:expires_in";
+                            $update_tokens_stmt=DB::getConnection()->prepare($update_tokens_sql);
+                            $update_tokens_stmt->execute([
+                                'access_token'=>$renewed_tokens['access_token'],
+                                'generated_at'=>date("Y-m-d H:i:s"),
+                                'expires_in'=>$renewed_tokens['expires_in']
+                            ]);
+                            return $renewed_tokens['access_token'];
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
                     break;
+                }
                 case 'dropbox':
-                    $sql = "SELECT access_token FROM dropbox_service WHERE user_id = :id";
+                {
+                    $get_dropbox_sql='SELECT * FROM dropbox_service WHERE user_id=:id';
+                    $get_dropbox_stmt=DB::getConnection()->prepare($get_dropbox_sql);
+                    $get_dropbox_stmt->execute([
+                        'id'=>$user_id
+                    ]);
+                    if($get_dropbox_stmt->rowCount()>0)
+                    {
+                        $result_array=$get_dropbox_stmt->fetch(PDO::FETCH_ASSOC);
+                        return $result_array['access_token'];
+                    }
+                    else
+                    {
+                        return null;
+                    }
                     break;
+                }
             }
-            $stmt = DB::getConnection()->prepare($sql);
-            $stmt->execute([
-                'id'=>$id
-            ]);
-            if($stmt->rowCount() > 0) {
-                $result = $stmt->fetch();
-                return $result['access_token'];
-			}
-			else return null;
         }
 
 		public function updateUsername($username,$id)
@@ -217,7 +290,6 @@
 			    $result["dropbox"]["total"] = DropboxService::getStorageQuota($this->getAccessToken($user_id, 'dropbox'))["allocation"]["allocated"];
 			    $result["dropbox"]["used"] = DropboxService::getStorageQuota($this->getAccessToken($user_id, 'dropbox'))["used"];
 			}
-
 			return $result;
 		}
 	}

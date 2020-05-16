@@ -105,9 +105,9 @@ require_once('DropboxException.php');
                     __METHOD__. ' '.__LINE__ , $array['error_summary']);
             }
 
-            echo "<pre>";
-            print_r($array);
-            echo "</pre>";
+            //echo "<pre>";
+            //print_r($array);
+            //echo "</pre>";
             
         }
 
@@ -247,9 +247,9 @@ require_once('DropboxException.php');
             header('Content-Disposition: attachment; filename="' . $metadate['name'] . '"');
             header('Content-Length: ' . $metadate['size']);
             ob_clean();
-            echo ($file);
+            //echo ($file);
             return true;
-            echo "Am terminat de salvat"; // ar trebui sa nu apara :)
+            //echo "Am terminat de salvat"; // ar trebui sa nu apara :)
         }
 
         public static function uploadFile($token, $path, $start_offset, $length)
@@ -260,7 +260,7 @@ require_once('DropboxException.php');
             }
 
             $filesize = $length;
-
+            
             $data = self::getStorageQuota($token);
             if(($data['used'] + $filesize) > $data['allocation']['allocated']){
                 throw new DropboxNotEnoughStorageSpaceException(
@@ -280,7 +280,7 @@ require_once('DropboxException.php');
 
             $filename = uniqid("", true);
             //$filesize = filesize($path);
-            echo "FILESIZE: $filesize <br>";
+            //echo "FILESIZE: $filesize <br>";
 
             $offset = $start_offset;
             $service_file_offset = 0;
@@ -294,9 +294,9 @@ require_once('DropboxException.php');
 
                 if($service_file_offset == 0)    // start upload session
                 {
-                    echo '<pre>';
-                    echo "START: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
-                    echo '</pre>';
+                    //echo '<pre>';
+                    //echo "START: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
+                    //echo '</pre>';
 
                     $params = 
                     '{' .
@@ -347,9 +347,9 @@ require_once('DropboxException.php');
 
                     if(($service_file_offset + $chunk_size) < $filesize) { // session append
 
-                        echo '<pre>';
-                        echo "APPEND: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
-                        echo '</pre>';
+                        //echo '<pre>';
+                        //echo "APPEND: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
+                        //echo '</pre>';
 
                         $params = 
                         '{' .
@@ -395,9 +395,9 @@ require_once('DropboxException.php');
                     else    // session finish
                     {
 
-                        echo '<pre>';
-                        echo "FINISH: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
-                        echo '</pre>';
+                        //echo '<pre>';
+                        //echo "FINISH: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
+                        //echo '</pre>';
 
                         $params = 
                         '{' .
@@ -442,7 +442,7 @@ require_once('DropboxException.php');
 
                         $service_file_offset += $chunk_size; // setez ca sa iasa din while
                         $offset += $chunk_size;
-                        echo $response;
+                        //echo $response;
                         return json_decode($response, true)["id"];
                     }
 
@@ -506,7 +506,7 @@ require_once('DropboxException.php');
             // echo '<pre>';
             // echo $response;
             // echo '</pre>';
-            echo "Small file upload successfully";
+            //echo "Small file upload successfully";
             return json_decode($response, true)["id"];
 
         }

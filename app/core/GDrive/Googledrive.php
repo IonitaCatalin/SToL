@@ -149,9 +149,9 @@
                     __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
             }
 
-            echo '<pre>';
-            print_r($result);
-            echo '</pre>';
+            //echo '<pre>';
+            //print_r($result);
+            //echo '</pre>';
         }
 
         public static function getStorageQuota($token)
@@ -264,7 +264,7 @@
 
         }
 
-        public static function uploadFile($token, $path = null, $start_offset, $filesize) {
+        public static function uploadFile($token, $path, $start_offset, $filesize) {
 
             $url = "https://www.googleapis.com/upload/drive/v2/files?uploadType=resumable";
 
@@ -346,7 +346,7 @@
 
             // 2. upload fisier folosind link-ul primit
 
-            echo "STARTING AT: $start_offset , UPLOAD: $filesize <br>";
+            //echo "STARTING AT: $start_offset , UPLOAD: $filesize <br>";
             $unit = 256 * 1024 * 8; // unitati de cate 2MB
 
             $offset = $start_offset;
@@ -355,10 +355,10 @@
             while($service_file_offset != $filesize) {
                 
                 $chunk_size = ($offset + $unit) <= ($start_offset + $filesize) ? $unit : ($start_offset + $filesize - $offset);
-                echo "offset: $offset / unit: $unit / filesize: $filesize / chunk_size: $chunk_size";
+                //echo "offset: $offset / unit: $unit / filesize: $filesize / chunk_size: $chunk_size";
                 $file = file_get_contents($path, false, null, $offset, $chunk_size);
 
-                echo "Incarc intervalul $offset -- " . ($offset + $chunk_size - 1) ."/" . ($start_offset + $filesize);
+                //echo "Incarc intervalul $offset -- " . ($offset + $chunk_size - 1) ."/" . ($start_offset + $filesize);
 
                 $ch2 = curl_init();
                 curl_setopt_array($ch2, array(
@@ -397,7 +397,7 @@
                 curl_close($ch2);
 
                 if($httpcode == 200 || $httpcode == 201) {
-                    echo 'Succes - UPLOAD TERMINAT';
+                    //echo 'Succes - UPLOAD TERMINAT';
                     return json_decode($response, true)["id"]; // id-ul fisierului incarcat
                 }
                 else if($httpcode == 308) {
@@ -411,7 +411,7 @@
                 }
                 else if($httpcode != 308){
                     $asoc_array = json_decode($response, true);
-                    echo $response;
+                    //echo $response;
                     throw new GoogledriveUploadFileException(
                         __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
                 }
