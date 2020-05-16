@@ -105,9 +105,9 @@ require_once('DropboxException.php');
                     __METHOD__. ' '.__LINE__ , $array['error_summary']);
             }
 
-            //echo "<pre>";
-            //print_r($array);
-            //echo "</pre>";
+            echo "<pre>";
+            print_r($array);
+            echo "</pre>";
             
         }
 
@@ -201,55 +201,59 @@ require_once('DropboxException.php');
                 throw new DropboxDownloadFileByIdException(
                     __METHOD__. ' '.__LINE__, $exception->message);
             }
-            if($metadate == null){
-                throw new DropboxDownloadFileByIdException(
-                    __METHOD__. ' '.__LINE__ , "Nu s-au putut obtine metadate pentru $file_id");
+
+            // creez fisierul gol la care voi da append
+            $path = $_SERVER['DOCUMENT_ROOT'].'/ProiectTW/downloads/' . $metadate['name'];
+            file_put_contents($path, '');
+
+            $chunk_size = 256 * 1024 * 32; // unitati de cate 8MB
+            $offset = 0;
+            echo "File size: " . $metadate["size"] . "<br>";
+
+            while($offset != $metadate["size"])
+            {
+                $chunk_size = ($offset + $chunk_size) <= $metadate["size"] ? $chunk_size : ($metadate["size"] - $offset);
+                echo "Descarc intervalul $offset - " . ($offset + $chunk_size - 1) . "<br>";
+
+                $params = '{ "path": "' . $file_id . '" }' ;
+
+                $ch = curl_init();
+                curl_setopt_array($ch, array(
+                    CURLOPT_URL => 'https://content.dropboxapi.com/2/files/download',
+                    CURLOPT_RETURNTRANSFER => 1,
+                    CURLOPT_BINARYTRANSFER => 1,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_SSL_VERIFYHOST => false,
+                    CURLOPT_HTTPHEADER => array(
+                        "Authorization: Bearer ${token}",
+                        "Dropbox-API-Arg: $params",
+                        "Range:bytes=" . $offset . '-' . ($offset + $chunk_size - 1)
+                    )
+                ));
+
+                if(($data = curl_exec($ch)) === false){
+                    unlink($path);  // sterg fisierul partial in caz de eroare
+                    throw new DropboxDownloadFileByIdException(
+                        __METHOD__. ' '.__LINE__ , 'Curl error: ' . curl_error($ch));
+                }
+                $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                if(($httpcode != 200) && ($httpcode != 206)){
+                    unlink($path);  // sterg fisierul partial in caz de eroare
+                    $array = json_decode($data, true);
+                    //echo "<pre>"; print_r($array); echo "</pre>";
+                    throw new DropboxDownloadFileByIdException(
+                        __METHOD__. ' '.__LINE__ , $array['error_summary']);
+                }
+
+                $file_part = $data;
+                file_put_contents($path, $file_part, FILE_APPEND);
+                $offset += $chunk_size;
             }
 
-
-            $params = '{ "path": "' . $file_id . '" }' ;
-
-            $ch = curl_init();
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => 'https://content.dropboxapi.com/2/files/download',
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_BINARYTRANSFER => 1,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => false,
-                CURLOPT_HTTPHEADER => array(
-                    "Authorization: Bearer ${token}",
-                    "Dropbox-API-Arg: $params"
-                )
-            ));
-
-            if(($data = curl_exec($ch)) === false){
-                throw new DropboxDownloadFileByIdException(
-                    __METHOD__. ' '.__LINE__ , 'Curl error: ' . curl_error($ch));
-            }
-            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            if($httpcode != 200){
-                throw new DropboxDownloadFileByIdException(
-                    __METHOD__. ' '.__LINE__.' '.$httpcode , $data);
-            }
-            curl_close($ch);
-
-            $array = json_decode($data, true);
-            if(array_key_exists('error_summary', $array)){
-                //echo "<pre>"; print_r($array); echo "</pre>";
-                throw new DropboxDownloadFileByIdException(
-                    __METHOD__. ' '.__LINE__ , $array['error_summary']);
-            }
-
-            $file = $data;
-            // dialogul de save file
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="' . $metadate['name'] . '"');
-            header('Content-Length: ' . $metadate['size']);
-            ob_clean();
-            //echo ($file);
-            return true;
-            //echo "Am terminat de salvat"; // ar trebui sa nu apara :)
+            echo "Am terminat de descarcat la: $path";
+            return $path;
         }
 
         public static function uploadFile($token, $path, $start_offset, $length)
@@ -260,7 +264,7 @@ require_once('DropboxException.php');
             }
 
             $filesize = $length;
-            
+
             $data = self::getStorageQuota($token);
             if(($data['used'] + $filesize) > $data['allocation']['allocated']){
                 throw new DropboxNotEnoughStorageSpaceException(
@@ -279,7 +283,6 @@ require_once('DropboxException.php');
         public function uploadLargeFile($token, $path, $unit, $start_offset, $filesize) {
 
             $filename = uniqid("", true);
-            //$filesize = filesize($path);
             //echo "FILESIZE: $filesize <br>";
 
             $offset = $start_offset;
@@ -294,9 +297,9 @@ require_once('DropboxException.php');
 
                 if($service_file_offset == 0)    // start upload session
                 {
-                    //echo '<pre>';
-                    //echo "START: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
-                    //echo '</pre>';
+                    // echo '<pre>';
+                    // echo "START: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
+                    // echo '</pre>';
 
                     $params = 
                     '{' .
@@ -347,9 +350,9 @@ require_once('DropboxException.php');
 
                     if(($service_file_offset + $chunk_size) < $filesize) { // session append
 
-                        //echo '<pre>';
-                        //echo "APPEND: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
-                        //echo '</pre>';
+                        // echo '<pre>';
+                        // echo "APPEND: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
+                        // echo '</pre>';
 
                         $params = 
                         '{' .
@@ -395,9 +398,9 @@ require_once('DropboxException.php');
                     else    // session finish
                     {
 
-                        //echo '<pre>';
-                        //echo "FINISH: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
-                        //echo '</pre>';
+                        // echo '<pre>';
+                        // echo "FINISH: Incarc intervalul $offset - " . ($offset + $chunk_size - 1);
+                        // echo '</pre>';
 
                         $params = 
                         '{' .
@@ -453,7 +456,6 @@ require_once('DropboxException.php');
         public static function uploadSmallFile($token, $path, $start_offset, $length) {
 
             $file = file_get_contents($path, false, null, $start_offset, $length);
-            //$file = file_get_contents($path);
             $filename = uniqid("", true);
             $filesize = $length;
 
@@ -469,7 +471,6 @@ require_once('DropboxException.php');
             // echo '<pre>';
             // echo $params;
             // echo '</pre>';
-            // return;
 
             $ch = curl_init();
             curl_setopt_array($ch, array(

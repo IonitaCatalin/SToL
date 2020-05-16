@@ -190,13 +190,22 @@ class App
             $upload_controller=new CUpload();
             $upload_controller->deleteUpload($upload_id);
         });
-        
+        // test upload
         $router->addRoute('GET', '/api/testUpload', function(){
             if($this->authorize->validateAuthorization())
             {
                 $upload_controller = new CUpload();
                 $user_id = $this->authorize->getDecoded()["user_id"];
                 $upload_controller->testFunction($user_id);
+            }
+        });
+        // test download
+        $router->addRoute('GET', '/api/testDownload', function(){
+            if($this->authorize->validateAuthorization())
+            {
+                $download_controller = new CDownload();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $download_controller->testFunction($user_id);
             }
         });
 

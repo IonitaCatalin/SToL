@@ -6,6 +6,7 @@ class CUpload extends Controller
     {
         $this->model=$this->model('mupload');
     }
+    
     // public function testFunction($user_id)
     // {
     //     try
@@ -20,6 +21,7 @@ class CUpload extends Controller
     //         echo $exception;
     //     }
     // }
+
     public function createUpload($user_id,$parent_id,$chunk_size)
     {
         $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';

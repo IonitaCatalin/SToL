@@ -40,7 +40,6 @@
             ];
 
             $post_fields=http_build_query($array);
-            //echo "<br><br>".$query_string;
             $curl=curl_init();
             curl_setopt_array($curl, [
                 CURLOPT_URL => 'https://oauth2.googleapis.com/token',
@@ -48,11 +47,9 @@
                 CURLOPT_RETURNTRANSFER => 1,
                 CURLOPT_SSL_VERIFYPEER => FALSE,
                 CURLOPT_POST => 1,
-                //CURLOPT_USERAGENT => 'Stol',
                 CURLOPT_POSTFIELDS => $post_fields
             ]);
             $response = curl_exec($curl);
-            //print_r(json_decode($response,true));
             $httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
             if($httpcode != 200){
                 throw new GoogledriveAuthException(
@@ -96,7 +93,6 @@
             ];
 
             $post_fields=http_build_query($array);
-            //echo "<br><br>".$query_string;
             $ch=curl_init();
             curl_setopt_array($ch, [
                 CURLOPT_URL => 'https://oauth2.googleapis.com/token',
@@ -149,9 +145,9 @@
                     __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
             }
 
-            //echo '<pre>';
-            //print_r($result);
-            //echo '</pre>';
+            echo '<pre>';
+            print_r($result);
+            echo '</pre>';
         }
 
         public static function getStorageQuota($token)
@@ -221,50 +217,62 @@
 
             $url = 'https://www.googleapis.com/drive/v2/files/' . $file_id .'?alt=media';
 
-            $ch = curl_init();
-            curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
-                CURLOPT_HEADER => 0,
-                CURLOPT_RETURNTRANSFER => 1,
-                CURLOPT_BINARYTRANSFER => 1,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_SSL_VERIFYHOST => false,
-                CURLOPT_CONNECTTIMEOUT => 20,
-                CURLOPT_HTTPHEADER => array("Authorization: Bearer ${token}")
-            ));
-
-            if(($data = curl_exec($ch)) === false){
-                throw new GoogledriveDownloadFileByIdException(
-                    __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
-            }
-            $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-            if($httpcode != 200){
-                $asoc_array = json_decode($data, true);
-                throw new GoogledriveDownloadFileByIdException(
-                    __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
-            }
-
+            // creez fisierul gol
             $metadate = self::getFileMetadataById($token, $file_id);
             if($metadate == null){
                 throw new GoogledriveDownloadFileByIdException(
                     __METHOD__. ' '.__LINE__ , "Download: nu exista metadate pentru fisierul $file_id");            
             }
+            $path = $_SERVER['DOCUMENT_ROOT'].'/ProiectTW/downloads/' . $metadate['title'];
+            file_put_contents($path, '');
 
-            $file = $data;
+            $chunk_size = 256 * 1024 * 128; // unitati de cate 32MB
+            $offset = 0;
+            echo "File size: " . $metadate["fileSize"] . "<br>";
 
-            header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="' . $metadate['title'] . '"');
-            header('Content-Length: ' . $metadate['fileSize']);
-            ob_clean();
-            echo ($file);
-            return true; //return ca sa nu mai apara si alte lucruri in fisier
-            echo "Am terminat de salvat"; //ar trebui sa nu apara in fisier :)
+            while($offset != $metadate["fileSize"])
+            {
+                $chunk_size = ($offset + $chunk_size) <= $metadate["fileSize"] ? $chunk_size : ($metadate["fileSize"] - $offset);
+                echo "Descarc intervalul $offset - " . ($offset + $chunk_size - 1) . "<br>";
 
+                $ch = curl_init();
+                curl_setopt_array($ch, array(
+                    CURLOPT_URL => $url,
+                    CURLOPT_HEADER => 0,
+                    CURLOPT_RETURNTRANSFER => 1,
+                    CURLOPT_BINARYTRANSFER => 1,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_SSL_VERIFYHOST => false,
+                    CURLOPT_CONNECTTIMEOUT => 20,
+                    CURLOPT_RANGE => $offset . '-' . ($offset + $chunk_size - 1),
+                    CURLOPT_HTTPHEADER => array("Authorization: Bearer ${token}")
+                ));
+
+                if(($data = curl_exec($ch)) === false){
+                    unlink($path);  // sterg fisierul partial in caz de eroare
+                    throw new GoogledriveDownloadFileByIdException(
+                        __METHOD__. ' '.__LINE__.' '."Curl error: " . curl_error($ch));
+                }
+                $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                if(($httpcode != 200) && ($httpcode != 206)){ //206 = Partial Content
+                    unlink($path);  // sterg fisierul partial in caz de eroare
+                    $asoc_array = json_decode($data, true);
+                    throw new GoogledriveDownloadFileByIdException(
+                        __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
+                }
+
+                $file_part = $data;
+                file_put_contents($path, $file_part, FILE_APPEND);
+                $offset += $chunk_size;
+            }
+
+            echo "Am terminat de descarcat la: $path";
+            return $path;
         }
 
-        public static function uploadFile($token, $path, $start_offset, $filesize) {
+        public static function uploadFile($token, $path = null, $start_offset, $filesize) {
 
             $url = "https://www.googleapis.com/upload/drive/v2/files?uploadType=resumable";
 
