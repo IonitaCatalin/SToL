@@ -6,22 +6,6 @@ class CUpload extends Controller
     {
         $this->model=$this->model('mupload');
     }
-    
-    // public function testFunction($user_id)
-    // {
-    //     try
-    //     {
-    //         //$this->model->testUploadOnedrive($user_id);
-    //         //$this->model->testUploadGoogledrive($user_id);
-    //         //$this->model->testUploadDropbox($user_id);
-    //         $this->model->uploadFileFragmented($user_id);
-    //     }
-    //     catch(Exception $exception)
-    //     {
-    //         echo $exception;
-    //     }
-    // }
-
     public function createUpload($user_id,$parent_id,$chunk_size)
     {
         $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';

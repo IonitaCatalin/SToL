@@ -539,7 +539,8 @@ require_once('DropboxException.php');
             }
             curl_close($ch);
             //echo '<pre>'; print_r(json_decode($response, true)); echo '</pre>'; // returneaza metadatele fisierului de sters..
-            return true; // sau altceva ?
+            //return true; // sau altceva ?
+            //Am presupus ca nu e necesar sa returnam ceva doar sa vedem daca delete-ul a esuat
         }
 
     }

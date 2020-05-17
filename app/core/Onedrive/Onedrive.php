@@ -284,7 +284,7 @@
             }
             else
             {
-                throw new OneDriveUploadException("FIle cannot be found on server");
+                throw new OneDriveUploadException("File cannot be found on server");
             }
 
         }
@@ -292,7 +292,7 @@
         {
             $get_download=curl_init();
             curl_setopt_array($get_download,[
-                CURLOPT_URL=>USER_DRIVE_ENDPOINT."items/${file_id}/content",
+                CURLOPT_URL=>USER_DRIVE_ENDPOINT."/items/${file_id}/content",
                 CURLOPT_RETURNTRANSFER=>1,
                 CURLOPT_GET=>1,
                 CURLOPT_USERAGENT=>'Stol',
@@ -303,13 +303,22 @@
 
         }
 
-        public static function deleteById($acces_token,$item_id)
+        public static function deleteFileById($access_token,$item_id)
         {
-            $delete_item=curl_init();
-            $curl_setopt_array($delete_itemm[
-                
+            echo $item_id;
+            $delete_item_curl=curl_init();
+            curl_setopt_array($delete_item_curl,[
+                CURLOPT_URL => USER_DRIVE_ENDPOINT."/items/${item_id}",
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "DELETE",
+                CURLOPT_HTTPHEADER => array("Authorization: Bearer ${access_token}"),
             ]);
-        }
+            curl_exec($delete_item_curl);
+            if(curl_getinfo($delete_item_curl,CURLINFO_HTTP_CODE)!=204)
+                throw new OneDriveDeleteException(null,curl_getinfo($delete_item_curl,CURLINFO_HTTP_CODE));
+            curl_close($delete_item_curl);
+        }   
     }
     
 ?>

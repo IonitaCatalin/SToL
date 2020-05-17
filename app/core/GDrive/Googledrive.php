@@ -449,8 +449,6 @@
                 throw new GoogledriveDeleteException(
                     __METHOD__. ' '.__LINE__.' '.$httpcode, $asoc_array['error']['message'], $asoc_array['error']['code']);
             }
-
-            return true;
         }
 
     }
