@@ -6,6 +6,17 @@ class CUpload extends Controller
     {
         $this->model=$this->model('mupload');
     }
+    public function testFunction($user_id)
+    {
+        try
+        {
+            //OneDriveService::downloadFileById($this->model->getAccessToken($user_id,'onedrive'),'C605214351BE1193!1942',$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/downloads/test.bin');
+        }
+        catch(Exception $exception)
+        {
+            echo $exception;
+        }
+    }
     public function createUpload($user_id,$parent_id,$chunk_size)
     {
         $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';

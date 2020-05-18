@@ -41,7 +41,7 @@
             $response_array=json_decode($response,true);
             if(isset($response_array['error']))
             {
-                throw new OnedriveAuthException($response_array['error'],curl_getinfo($curl,CURLINFO_HTTP_CODE));
+                throw new OnedriveAuthException($response_array['error']['message'],curl_getinfo($curl,CURLINFO_HTTP_CODE));
             }
             else 
             {
@@ -115,7 +115,7 @@
             curl_close($curl);
             if(isset($tokens_array['error']))
             {
-                throw new OnedriveRenewTokensException($tokens_array['error'],curl_getinfo($curl,CURLINFO_HTTP_CODE));
+                throw new OnedriveRenewTokensException($tokens_array['error']['message'],curl_getinfo($curl,CURLINFO_HTTP_CODE));
             }
             else return $tokens_array;
 
@@ -205,7 +205,7 @@
                         fclose($file_handle);
                         if(!curl_getinfo($upload_curl,CURLINFO_HTTP_CODE)==200 || !curl_getinfo($upload_curl,CURLINFO_HTTP_CODE)==201)
                         {
-                            throw new OneDriveUploadException($response_arary['error'],curl_getinfo($upload_curl,CURLINFO_HTTP_CODE));
+                            throw new OneDriveUploadException($response_arary['error']['message'],curl_getinfo($upload_curl,CURLINFO_HTTP_CODE));
                         }
                         return  $response_array['id'];
                         curl_close($upload_curl);
@@ -279,7 +279,7 @@
                 }
                 else
                 {
-                    throw new OneDriveNotEnoughtSpaceException($response_arary['error'],curl_getinfo($upload_curl,CURLINFO_HTTP_CODE));
+                    throw new OneDriveNotEnoughtSpaceException($response_arary['error']['message'],curl_getinfo($upload_curl,CURLINFO_HTTP_CODE));
                 }
             }
             else
@@ -288,21 +288,76 @@
             }
 
         }
-        public static function downloadFileById($access_token,$file_id,$append_to_path)
+        public static function getFileMetadataById($access_token,$file_id)
         {
-            $get_download=curl_init();
-            curl_setopt_array($get_download,[
-                CURLOPT_URL=>USER_DRIVE_ENDPOINT."/items/${file_id}/content",
+            $get_metadata_curl=curl_init();
+            curl_setopt_array($get_metadata_curl,[
+                CURLOPT_URL=>USER_DRIVE_ENDPOINT."/items/${file_id}",
                 CURLOPT_RETURNTRANSFER=>1,
-                CURLOPT_GET=>1,
                 CURLOPT_USERAGENT=>'Stol',
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_HTTPHEADER => array("Authorization: Bearer ${access_token}")
             ]);
-            $result_array=json_decode(curl_exec($get_download));
-            var_dump($result_array);
-
+            $response_array=json_decode(curl_exec($get_metadata_curl),true);
+            if(curl_getinfo($get_metadata_curl,CURLINFO_HTTP_CODE)!=200)
+            {
+                var_dump($response_array);
+                throw new OneDriveMetadataException($response_arary['error']['message'],curl_getinfo($get_metadata_curl,CURLINFO_HTTP_CODE));
+            }
+            else return $response_array;
         }
-
+        public static function downloadFileById($access_token,$file_id,$append_to_path)
+        {
+            $file_metadata=self::getFileMetadataById($access_token,$file_id);
+            $file_size=$file_metadata['size'];
+            $download_url=$file_metadata['@microsoft.graph.downloadUrl'];
+            //Cream fisierul daca nu exista
+            $fragment_size=327680*183;
+            $num_fragments=ceil($file_size/$fragment_size);
+            //echo 'Numar de fragmente:'.$num_fragments;
+            $bytes_remaining=$file_size;
+            $index=0;
+            // echo "<br>Cantitate de bytes:".$bytes_remaining;
+            // echo '<br>Limita unui fragment:'.$fragment_size;
+            // echo '<br> Fragmente:'.$num_fragments;
+            $upload_response=null;
+            while($index<$num_fragments)
+            {
+                $num_bytes=$fragment_size;
+                $chunk_size=$num_bytes;
+                $start=$index*$fragment_size;
+                $end=$index*$fragment_size+$chunk_size-1;
+                $offset=$index*$fragment_size; 
+                
+                    if($bytes_remaining<$chunk_size)
+                    {
+                        $num_bytes=$bytes_remaining;
+                        $chunk_size=$num_bytes;
+                        $end=$file_size-1;
+                    } 
+                    $content_range='bytes='.$start.'-'.$end;
+                    //echo $content_range;
+                    $download_parts_curl=curl_init();
+                    curl_setopt_array($download_parts_curl,[
+                        CURLOPT_URL=>$download_url,
+                        CURLOPT_RETURNTRANSFER=>1,
+                        CURLOPT_HTTPHEADER=> array('Range:'.$content_range),
+                        CURLOPT_USERAGENT=>'Stol',
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_BINARYTRANSFER => TRUE
+                    ]);
+                    $server_output=curl_exec($download_parts_curl);
+                    $response_array=json_decode($server_output,true);
+                    if(curl_getinfo($download_parts_curl,CURLINFO_HTTP_CODE)!=206)
+                    {
+                        throw new OneDriveDownloadException($response_array['error']['message'],curl_getinfo($download_parts_curl,CURLINFO_HTTP_CODE));
+                    }
+                    file_put_contents($append_to_path,$server_output,FILE_APPEND);   
+                    curl_close($download_parts_curl);
+                    $bytes_remaining=$bytes_remaining - $chunk_size;
+                    $index++;
+                }
+        }
         public static function deleteFileById($access_token,$item_id)
         {
             echo $item_id;
@@ -314,9 +369,9 @@
                 CURLOPT_CUSTOMREQUEST => "DELETE",
                 CURLOPT_HTTPHEADER => array("Authorization: Bearer ${access_token}"),
             ]);
-            curl_exec($delete_item_curl);
+            $response_array=json_decode(curl_exec($delete_item_curl),true);
             if(curl_getinfo($delete_item_curl,CURLINFO_HTTP_CODE)!=204)
-                throw new OneDriveDeleteException(null,curl_getinfo($delete_item_curl,CURLINFO_HTTP_CODE));
+                throw new OneDriveDeleteException($response_array['error']['message'],curl_getinfo($delete_item_curl,CURLINFO_HTTP_CODE));
             curl_close($delete_item_curl);
         }   
     }

@@ -58,4 +58,10 @@ class OneDriveDeleteException extends OneDriveException
         return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
     }
 }
+class OneDriveMetadataException extends OneDriveException
+{
+    public function __toString() {
+        return __CLASS__ . $this->path .": [{$this->code}]: {$this->message}";
+    }
+}
 ?>
