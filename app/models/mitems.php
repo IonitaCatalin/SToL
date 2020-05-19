@@ -304,7 +304,7 @@
 
             if($search_file_exists_stmt->rowCount() > 0)
             {
-                $this->deleteFile($item_id);
+                $this->deleteFile($user_id,$item_id);
                 return; // !!!
             }
 
@@ -312,8 +312,44 @@
 
         }
 
-        public function deleteFile($item_id)
+        public function deleteFile($user_id,$item_id)
         {
+            $get_file_fragments_sql="SELECT fragments_id FROM FILES WHERE item_id=:item_id";
+            $get_file_fragments_stmt=DB::getConnection()->prepare($get_file_fragments_sql);
+            $get_file_fragments_stmt->execute([
+                'item_id'=>$item_id
+            ]);
+            $result_fragment_id=$get_file_fragments_stmt->fetch(PDO::FETCH_ASSOC);
+
+            $get_each_fragment_sql="SELECT * FROM FRAGMENTS WHERE fragments_id=:fragments_id";
+            $get_each_fragment_stmt=DB::getConnection()->prepare($get_each_fragment_sql);
+            $get_each_fragment_stmt->execute([
+                'fragments_id'=>$result_fragment_id['fragments_id']
+            ]);
+            $result_fragments=$get_each_fragment_stmt->fetchAll();
+
+            for($index=0;$index<count($result_fragments);$index++)
+            {
+                if($result_fragments[$index]['service']=='onedrive')
+                {
+                    OneDriveService::deleteFileById($this->getAccessToken($user_id,'onedrive'),$result_fragments[$index]['service_id']);
+                }
+                else if($result_fragments[$index]['service']=='googledrive')
+                {
+                    GoogleDriveService::deleteFileById($this->getAccessToken($user_id,'googledrive'),$result_fragments[$index]['service_id']);
+                }
+                else if($result_fragments[$index]['service']=='dropbox')
+                {
+                    DropboxService::deleteFileById($this->getAccessToken($user_id,'dropbox'),$result_fragments[$index]['service_id']);
+                }
+            }
+            $delete_fragments_sql="DELETE FROM FRAGMENTS WHERE fragments_id=:fragments_id";
+            $delete_fragments_stmt=DB::getConnection()->prepare($delete_fragments_sql);
+            $delete_fragments_stmt->execute([
+                'fragments_id'=>$result_fragment_id['fragments_id']
+            ]);
+            
+
             $delete_file_sql = "DELETE FROM files WHERE item_id=:item_id";
             $delete_file_stmt = DB::getConnection()->prepare($delete_file_sql);
             $delete_file_stmt->execute(['item_id' => $item_id]);
@@ -322,35 +358,134 @@
             $delete_item_sql = "DELETE FROM items WHERE item_id=:item_id";
             $delete_item_stmt = DB::getConnection()->prepare($delete_item_sql);
             $delete_item_stmt->execute(['item_id' => $item_id]);
-            //echo "Deleted $item_id from items.";
+            // //echo "Deleted $item_id from items.";
 
-            $services_ids_sql = "SELECT onedrive_id, dropbox_id, googledrive_id FROM FRAGMENTS WHERE file_id=:item_id";
-            $services_ids_stmt = DB::getConnection()->prepare($services_ids_sql);
-            $services_ids_stmt->execute(['item_id' => $item_id]);
+            // $services_ids_sql = "SELECT onedrive_id, dropbox_id, googledrive_id FROM FRAGMENTS WHERE file_id=:item_id";
+            // $services_ids_stmt = DB::getConnection()->prepare($services_ids_sql);
+            // $services_ids_stmt->execute(['item_id' => $item_id]);
 
-            // !!!! de tratat situatia cand fisierul e stocat redundant sau nu e stocat simplu(fara tabela fragments sau redundant)
-            if($services_ids_stmt->rowCount()>0)
-            {
-                $row = $services_ids_stmt->fetch(PDO::FETCH_ASSOC);
-                if($row['onedrive_id'] != ''){
-                    //echo "Deleted file $item_id fragment from Onedrive.";
-                    // OneDriveService::deleteFileById($row['onedrive_id']);
-                }
-                if($row['googledrive_id'] != ''){
-                    //echo "Deleted file $item_id fragment from Googledrive.";
-                    // GoogleDriveService::deleteFileById($row['googledrive_id']);
-                }
-                if($row['dropbox_id'] != ''){
-                    //echo "Deleted file $item_id fragment from Dropbox.";
-                    // DropboxService::deleteFileById($row['dropbox_id']);
-                }
+            // // !!!! de tratat situatia cand fisierul e stocat redundant sau nu e stocat simplu(fara tabela fragments sau redundant)
+            // if($services_ids_stmt->rowCount()>0)
+            // {
+            //     $row = $services_ids_stmt->fetch(PDO::FETCH_ASSOC);
+            //     if($row['onedrive_id'] != ''){
+            //         //echo "Deleted file $item_id fragment from Onedrive.";
+            //         // OneDriveService::deleteFileById($row['onedrive_id']);
+            //     }
+            //     if($row['googledrive_id'] != ''){
+            //         //echo "Deleted file $item_id fragment from Googledrive.";
+            //         // GoogleDriveService::deleteFileById($row['googledrive_id']);
+            //     }
+            //     if($row['dropbox_id'] != ''){
+            //         //echo "Deleted file $item_id fragment from Dropbox.";
+            //         // DropboxService::deleteFileById($row['dropbox_id']);
+            //     }
                 
-            }
+            // }
 
-            $delete_fragment_sql = "DELETE FROM `fragments` WHERE `file_id`=:item_id";
-            $delete_fragment_stmt = DB::getConnection()->prepare($delete_fragment_sql);
-            $delete_fragment_stmt->execute(['item_id' => $item_id]);
+            // $delete_fragment_sql = "DELETE FROM `fragments` WHERE `file_id`=:item_id";
+            // $delete_fragment_stmt = DB::getConnection()->prepare($delete_fragment_sql);
+            // $delete_fragment_stmt->execute(['item_id' => $item_id]);
             //echo "Deleted $item_id from fragments.";
+        }
+
+        public function getAccessToken($user_id,$service)
+        {
+            switch($service)
+            {
+                case 'onedrive':
+                {
+                    $get_onedrive_sql='SELECT * FROM onedrive_service WHERE user_id=:id';
+                    $get_onedrive_stmt=DB::getConnection()->prepare($get_onedrive_sql);
+                    $get_onedrive_stmt->execute([
+                        'id'=>$user_id
+                    ]);
+                    if($get_onedrive_stmt->rowCount()>0)
+                    {
+                        $result_array=$get_onedrive_stmt->fetch(PDO::FETCH_ASSOC);
+                        $generated_at=date("Y-m-d H:i:s",strtotime($result_array['generated_at']));
+                        $current_time=date("Y-m-d H:i:s",time());
+                        $seconds_diff=strtotime($current_time)-strtotime($generated_at);
+                        if($seconds_diff<$result_array['expires_in'])
+                        {
+                            return $result_array['access_token'];
+                        }
+                        else
+                        {
+                            $renewed_tokens=OneDriveService::renewTokens($result_array['refresh_token']);
+                            $update_tokens_sql="UPDATE onedrive_service SET access_token=:access_token,refresh_token=:refresh_token,generated_at=:generated_at,expires_in=:expires_in";
+                            $update_tokens_stmt=DB::getConnection()->prepare($update_tokens_sql);
+                            $update_tokens_stmt->execute([
+                                'access_token'=>$renewed_tokens['access_token'],
+                                'refresh_token'=>$renewed_tokens['refresh_token'],
+                                'generated_at'=>date("Y-m-d H:i:s"),
+                                'expires_in'=>$renewed_tokens['expires_in']
+                            ]);
+                            return $renewed_tokens['access_token'];
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    break;
+                }
+                case 'googledrive':
+                {
+                    $get_gdrive_sql='SELECT * FROM googledrive_service WHERE user_id=:id';
+                    $get_gdrive_stmt=DB::getConnection()->prepare($get_gdrive_sql);
+                    $get_gdrive_stmt->execute([
+                        'id'=>$user_id
+                    ]);
+                    if($get_gdrive_stmt->rowCount()>0)
+                    {
+                       
+                        $result_array=$get_gdrive_stmt->fetch(PDO::FETCH_ASSOC);
+                        $generated_at=date("Y-m-d H:i:s",strtotime($result_array['generated_at']));
+                        $current_time=date("Y-m-d H:i:s",time());
+                        $seconds_diff=strtotime($current_time)-strtotime($generated_at);
+                        if($seconds_diff<$result_array['expires_in'])
+                        {
+                            return $result_array['access_token'];
+                        }
+                        else
+                        {
+                            $renewed_tokens=GoogleDriveService::renewAccessToken($result_array['refresh_token']);
+                            $update_tokens_sql="UPDATE googledrive_service SET access_token=:access_token,generated_at=:generated_at,expires_in=:expires_in";
+                            $update_tokens_stmt=DB::getConnection()->prepare($update_tokens_sql);
+                            $update_tokens_stmt->execute([
+                                'access_token'=>$renewed_tokens['access_token'],
+                                'generated_at'=>date("Y-m-d H:i:s"),
+                                'expires_in'=>$renewed_tokens['expires_in']
+                            ]);
+                            return $renewed_tokens['access_token'];
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    break;
+                }
+                case 'dropbox':
+                {
+                    $get_dropbox_sql='SELECT * FROM dropbox_service WHERE user_id=:id';
+                    $get_dropbox_stmt=DB::getConnection()->prepare($get_dropbox_sql);
+                    $get_dropbox_stmt->execute([
+                        'id'=>$user_id
+                    ]);
+                    if($get_dropbox_stmt->rowCount()>0)
+                    {
+                        $result_array=$get_dropbox_stmt->fetch(PDO::FETCH_ASSOC);
+                        return $result_array['access_token'];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                    break;
+                }
+            }
         }
 
         public function deleteFolder($user_id, $item_id)
@@ -359,7 +494,7 @@
             //print_r($files_in_folder);
             foreach($files_in_folder as $key => $file){ //key e index-ul 0, 1, 2...
                 if($file['content_type'] == 'file'){
-                    $this->deleteFile($file['item_id']);
+                    $this->deleteFile($user_id,$file['item_id']);
                 }
                 else if($file['content_type'] == 'folder'){
                     $this->deleteFolder($user_id, $file['item_id']);

@@ -360,7 +360,6 @@
         }
         public static function deleteFileById($access_token,$item_id)
         {
-            echo $item_id;
             $delete_item_curl=curl_init();
             curl_setopt_array($delete_item_curl,[
                 CURLOPT_URL => USER_DRIVE_ENDPOINT."/items/${item_id}",
