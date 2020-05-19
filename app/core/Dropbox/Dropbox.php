@@ -190,7 +190,7 @@ require_once('DropboxException.php');
             return json_decode($response, true); // used and allocation/allocated
         }
 
-        public static function downloadFileById($token, $file_id)
+        public static function downloadFileById($token, $file_id, $append_to_path)
         {
 
             $metadate = null;
@@ -202,18 +202,19 @@ require_once('DropboxException.php');
                     __METHOD__. ' '.__LINE__, $exception->message);
             }
 
-            // creez fisierul gol la care voi da append
-            $path = $_SERVER['DOCUMENT_ROOT'].'/ProiectTW/downloads/' . $metadate['name'];
-            file_put_contents($path, '');
+            // // creez fisierul gol la care voi da append
+            // $path = $_SERVER['DOCUMENT_ROOT'].'/ProiectTW/downloads/' . $metadate['name'];
+            // file_put_contents($path, '');
+            $path = $append_to_path;
 
             $chunk_size = 256 * 1024 * 32; // unitati de cate 8MB
             $offset = 0;
-            echo "File size: " . $metadate["size"] . "<br>";
+            //echo "File size: " . $metadate["size"] . "<br>";
 
             while($offset != $metadate["size"])
             {
                 $chunk_size = ($offset + $chunk_size) <= $metadate["size"] ? $chunk_size : ($metadate["size"] - $offset);
-                echo "Descarc intervalul $offset - " . ($offset + $chunk_size - 1) . "<br>";
+                //echo "Descarc intervalul $offset - " . ($offset + $chunk_size - 1) . "<br>";
 
                 $params = '{ "path": "' . $file_id . '" }' ;
 
@@ -252,7 +253,7 @@ require_once('DropboxException.php');
                 $offset += $chunk_size;
             }
 
-            echo "Am terminat de descarcat la: $path";
+            //echo "Am terminat de descarcat la: $path";
             return $path;
         }
 

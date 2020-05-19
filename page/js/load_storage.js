@@ -68,7 +68,12 @@ function renderComponents(data)
             component.setAttribute("id", element['item_id']);
             let graphics = document.createElement('img');
             let title = document.createElement('p');
-            title.textContent = element['name'];
+            if(element['name'].length > 12) {
+                title.textContent = element['name'].substr(0, 12) + "...";
+            }
+            else {
+                title.textContent = element['name'];
+            }
 
             switch(element.content_type)
             {

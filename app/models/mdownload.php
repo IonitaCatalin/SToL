@@ -25,6 +25,52 @@ class MDownload
 
     public function createDownload($user_id, $file_id, $download_id)
     {
+        $check_file_id_sql = "SELECT * FROM FILES WHERE item_id = :file_id";
+        $check_file_id_stmt = DB::getConnection()->prepare($check_file_id_sql);
+        $check_file_id_stmt->execute([
+            'file_id'=>$file_id
+        ]);
+        if($check_file_id_stmt->rowCount() == 0) {
+            throw new InvalidItemId();
+        }
+
+        // obtinere servicii necesare si verificare autorizare + existenta fragment
+        $get_required_services_sql = "SELECT service, service_id FROM FILES f JOIN FRAGMENTS fr ON f.fragments_id = fr.fragments_id WHERE item_id=:file_id";
+        $get_required_services_stmt = DB::getConnection()->prepare($get_required_services_sql);
+        $get_required_services_stmt->execute([
+            'file_id'=>$file_id
+        ]);
+
+        if($get_required_services_stmt->rowCount() > 0)
+        {
+            $available_services = $this->getAvailableServices($user_id);
+            while($row = $get_required_services_stmt->fetch(PDO::FETCH_ASSOC))
+            {
+                switch($row['service'])
+                {
+                    case 'onedrive':
+                        if($available_services['onedrive'] == false) {
+                            throw new MissingOneDriveAuthException();
+                        }
+                        OnedriveService::getFileMetadataById($this->getAccessToken($user_id,'onedrive'), $row['service_id']);
+                        break;
+                    case 'dropbox':
+                        if($available_services['dropbox'] == false) {
+                            throw new MissingDropboxAuthException();
+                        }
+                        DropboxService::getFileMetadataById($this->getAccessToken($user_id,'dropbox'), $row['service_id']);
+                        break;
+                    case 'googledrive':
+                        if($available_services['googledrive'] == false) {
+                            throw new MissingGoogledriveAuthException();
+                        }
+                        GoogleDriveService::getFileMetadataById($this->getAccessToken($user_id,'googledrive'), $row['service_id']);
+                        break;
+                }
+            }
+        }
+
+        // la final, daca totul merge bine
         $insert_download_sql = "INSERT INTO DOWNLOADS(user_id, file_id, download_id) VALUES (:user_id, :file_id, :download_id)";
         $insert_download_stmt = DB::getConnection()->prepare($insert_download_sql);
         $insert_download_stmt->execute([
@@ -37,8 +83,9 @@ class MDownload
     public function downloadFile($download_id)
     {
 
-        $check_download_id = "SELECT * FROM DOWNLOADS WHERE download_id = :download_id";
-        $check_download_stmt = DB::getConnection()->prepare($check_download_id);
+        // verificare download si obtinere date utile
+        $check_download_id_sql = "SELECT user_id, file_id, name, fragments_id FROM FILES f JOIN DOWNLOADS ON file_id = item_id WHERE download_id = :download_id";
+        $check_download_stmt = DB::getConnection()->prepare($check_download_id_sql);
         $check_download_stmt->execute([
             'download_id'=>$download_id
         ]);
@@ -48,25 +95,52 @@ class MDownload
             throw new InvalidDownloadId();
         }
 
+        $download_info = $check_download_stmt->fetch(PDO::FETCH_ASSOC);
+        $user_id = $download_info['user_id'];
+        $file_id = $download_info['file_id'];
+        $file_name = $download_info['name'];
+        $fragments_id = $download_info['fragments_id'];
 
-        $file_id = $check_download_stmt->fetch(PDO::FETCH_ASSOC)["file_id"];
+        // !!! Nu uita, pentru redundant trebuie o abordare diferita ...
 
-        //=====
-            // verificare daca fisierul este fragmentat -> logica pentru identificare fragmente, descarcare fragmente de pe servicii si compunere
-            // daca fisierul este redundant, se alege un serviciu pe care e disponibil, se descarca
-            // in ambele cazuri, variabila $path trebuie initializata cu calea catre fisier rezultat din .../downloads
-        //===== 
+        // caut fragmentele si le descarc intr-un singur fisier
+        $get_storage_services_sql = "SELECT service, service_id FROM FRAGMENTS WHERE fragments_id = :fragments_id";
+        $get_storage_services_stmt = DB::getConnection()->prepare($get_storage_services_sql);
+        $get_storage_services_stmt->execute([
+            'fragments_id'=>$fragments_id
+        ]);
 
-        // partea care trimite fisierul catre cel care il cere
+        $path = null;
+        if($get_storage_services_stmt->rowCount() > 0)
+        {
+            // fisier temporar in care se vor face toate append-urile
+            $temp_file_name = uniqid("", true);
+            $path = $_SERVER['DOCUMENT_ROOT'].'/ProiectTW/downloads/'. $temp_file_name;
 
-        $path = 'D:\folderTesteDownload\Fisier1MB.txt';
+            while($row = $get_storage_services_stmt->fetch(PDO::FETCH_ASSOC))
+            {
+                switch($row['service'])
+                {
+                    case 'onedrive':
+                        OnedriveService::downloadFileById($this->getAccessToken($user_id,'onedrive'), $row['service_id'], $path);
+                        break;
+                    case 'dropbox':
+                        DropboxService::downloadFileById($this->getAccessToken($user_id,'dropbox'), $row['service_id'], $path);
+                        break;
+                    case 'googledrive':
+                        GoogleDriveService::downloadFileById($this->getAccessToken($user_id,'googledrive'), $row['service_id'], $path);
+                        break;
+                }
+            }
+        }
+
         $chunk_size = 1024 * 1024 * 8; // unitati de cate 8MB
         $fd = fopen($path, "rb");
         if ($fd)
         {
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="'.basename($path).'"');
+            header('Content-Disposition: attachment; filename="' . $file_name . '"');
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
@@ -84,9 +158,45 @@ class MDownload
         }
         fclose($fd);
 
-        //====
-            // dupa descarcare, probabil fisierul ar trebui sters, la fel si intrarea din tabela downloads pentru ca link-ul sa nu mai fie valid
-        //====
+        // stergere fisier si "invalidare" link download
+        unlink($path);
+        $delete_download_sql = "DELETE FROM DOWNLOADS WHERE download_id = :download_id";
+        $delete_download_stmt = DB::getConnection()->prepare($delete_download_sql);
+        $delete_download_stmt->execute([
+            'download_id'=>$download_id
+        ]);
+
+    }
+
+    public function getAvailableServices($user_id)
+    {
+        $result = array();
+
+        $get_onedrive_query = "SELECT user_id FROM onedrive_service WHERE user_id = :user_id";
+        $get_onedrive_stmt = DB::getConnection()->prepare($get_onedrive_query);
+        $get_onedrive_stmt->execute(['user_id'=>$user_id]);
+        if($get_onedrive_stmt->rowCount() > 0)
+            $result["onedrive"] = true;
+        else
+            $result["onedrive"] = false;
+
+        $get_googledrive_query = "SELECT user_id FROM googledrive_service WHERE user_id = :user_id";
+        $get_googledrive_stmt = DB::getConnection()->prepare($get_googledrive_query);
+        $get_googledrive_stmt->execute(['user_id'=>$user_id]);
+        if($get_googledrive_stmt->rowCount()>0)
+            $result["googledrive"] = true;
+        else
+            $result["googledrive"] = false;
+
+        $get_dropbox_query = "SELECT user_id FROM dropbox_service WHERE user_id = :user_id";
+        $get_dropbox_stmt = DB::getConnection()->prepare($get_dropbox_query);
+        $get_dropbox_stmt->execute(['user_id'=>$user_id]);
+        if($get_dropbox_stmt->rowCount()>0)
+            $result["dropbox"] = true;
+        else
+            $result["dropbox"] = false;
+
+        return $result;
     }
 
 	// preluata din mupload

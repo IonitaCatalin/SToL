@@ -27,12 +27,16 @@ function toggleAlert(message = null, error = true, disable = false)
     const alertText = document.getElementById('alert-text');
 
     if(disable == true) {
-    	alert.style.display = 'none';
-		alertText.innerHTML = '';
+        alert.style.display = 'none';
+        alertText.innerHTML = '';
     } else {
-    	alert.style.display = 'block';
-		alert.style.backgroundColor = '#f44336';
-		alertText.innerHTML = message;
+        alert.style.display = 'block';
+        if(error) {
+            alert.style.backgroundColor = '#f44336';
+        } else {
+            alert.style.backgroundColor = '#33cc33';
+        }
+        alertText.innerHTML = message;
     }
 
 }
@@ -95,6 +99,7 @@ function menu_file_download(event) {
 
             if(xhr.status == 200 && response.status == 'success')
             {
+                toggleAlert(response.message, false);
                 console.log(response.data.url);
                 const url = response.data.url;
                 const a = document.createElement('a');
@@ -102,6 +107,7 @@ function menu_file_download(event) {
                 a.href = url;
                 //a.download = "raspunsuri_subiecte_sesiune.pdf"; // numele este dat din php prin header-ul Content-Disposition: .. filename = ..
                 a.click();
+                //toggleAlert(null, null, true);
             }
             else {
                 toggleAlert(response.message, true);

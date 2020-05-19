@@ -87,6 +87,23 @@ class InvalidDownloadId extends ApplicationExceptions
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 }
-
+class MissingOneDriveAuthException extends ApplicationExceptions
+{
+    public function __toString() {
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    }
+}
+class MissingDropboxAuthException extends ApplicationExceptions
+{
+    public function __toString() {
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    }
+}
+class MissingGoogledriveAuthException extends ApplicationExceptions
+{
+    public function __toString() {
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    }
+}
 
 ?>

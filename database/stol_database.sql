@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2020 at 11:13 AM
+-- Generation Time: May 19, 2020 at 04:32 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.3
 
@@ -42,8 +42,7 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`id`, `email`, `username`, `password`, `created_at`, `updated_at`) VALUES
-('87a13548b4dd0d3bbf0451ebdce2757b', 'onedrive@onedrive.com', 'onedrive', 'onedrive', '2020-05-09 10:13:43', '2020-05-09 10:13:43'),
-('c9526e3221d689b48c621d1babe0bb87', 'abcdef@yahoo.com', 'abcdef', 'abcdef', '2020-05-04 08:03:14', '2020-05-04 08:03:14');
+('c9526e3221d689b48c621d1babe0bb87', 'abcdef@yahoo.com', 'abcdef', 'abcdef', '2020-05-04 08:03:14', '2020-05-13 07:41:56');
 
 -- --------------------------------------------------------
 
@@ -83,13 +82,6 @@ CREATE TABLE `files` (
   `fragments_id` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `files`
---
-
-INSERT INTO `files` (`id`, `item_id`, `folder_id`, `name`, `fragments_id`) VALUES
-(4, '4', 'e86edca146bbefd773838a7e7955b521', 'file4', '4');
-
 -- --------------------------------------------------------
 
 --
@@ -109,9 +101,7 @@ CREATE TABLE `folders` (
 --
 
 INSERT INTO `folders` (`id`, `item_id`, `parent_id`, `name`, `created_at`) VALUES
-(7, 'e86edca146bbefd773838a7e7955b521', NULL, 'root', '2020-05-04 08:03:14'),
-(8, '67b6e87381a8fb18c96c7acca3b6c35d', 'b5908118157cff12d8d1f1ae6ed4c104', 'NewFolder1', '2020-05-09 18:36:13'),
-(9, 'b5908118157cff12d8d1f1ae6ed4c104', 'e86edca146bbefd773838a7e7955b521', 'NewFolder23', '2020-05-10 09:35:19');
+(7, 'e86edca146bbefd773838a7e7955b521', NULL, 'root', '2020-05-13 17:20:53');
 
 -- --------------------------------------------------------
 
@@ -124,6 +114,7 @@ CREATE TABLE `fragments` (
   `fragments_id` varchar(200) NOT NULL,
   `service` varchar(40) NOT NULL,
   `offset` bigint(20) NOT NULL,
+  `service_id` varchar(1000) NOT NULL,
   `fragment_size` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -158,10 +149,6 @@ CREATE TABLE `items` (
 --
 
 INSERT INTO `items` (`user_id`, `item_id`, `content_type`) VALUES
-('c9526e3221d689b48c621d1babe0bb87', '4', 'file'),
-('c9526e3221d689b48c621d1babe0bb87', '67b6e87381a8fb18c96c7acca3b6c35d', 'folder'),
-('87a13548b4dd0d3bbf0451ebdce2757b', '816d89ddf642b6dc46303eed2177238e', 'folder'),
-('c9526e3221d689b48c621d1babe0bb87', 'b5908118157cff12d8d1f1ae6ed4c104', 'folder'),
 ('c9526e3221d689b48c621d1babe0bb87', 'e86edca146bbefd773838a7e7955b521', 'folder');
 
 -- --------------------------------------------------------
@@ -175,7 +162,7 @@ CREATE TABLE `onedrive_service` (
   `access_token` varchar(1500) NOT NULL,
   `refresh_token` varchar(1500) NOT NULL,
   `expires_in` int(11) NOT NULL,
-  `generated_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `generated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -276,31 +263,31 @@ ALTER TABLE `uploads`
 -- AUTO_INCREMENT for table `downloads`
 --
 ALTER TABLE `downloads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `folders`
 --
 ALTER TABLE `folders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `fragments`
 --
 ALTER TABLE `fragments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT for table `uploads`
 --
 ALTER TABLE `uploads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1223;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1303;
 
 --
 -- Constraints for dumped tables

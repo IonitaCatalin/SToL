@@ -213,7 +213,7 @@
             return $metadata;
         }
 
-        public static function downloadFileById($token, $file_id) {
+        public static function downloadFileById($token, $file_id, $append_to_path) {
 
             $url = 'https://www.googleapis.com/drive/v2/files/' . $file_id .'?alt=media';
 
@@ -223,17 +223,18 @@
                 throw new GoogledriveDownloadFileByIdException(
                     __METHOD__. ' '.__LINE__ , "Download: nu exista metadate pentru fisierul $file_id");            
             }
-            $path = $_SERVER['DOCUMENT_ROOT'].'/ProiectTW/downloads/' . $metadate['title'];
-            file_put_contents($path, '');
+            // $path = $_SERVER['DOCUMENT_ROOT'].'/ProiectTW/downloads/' . $metadate['title'];
+            // file_put_contents($path, '');
+            $path = $append_to_path;
 
             $chunk_size = 256 * 1024 * 128; // unitati de cate 32MB
             $offset = 0;
-            echo "File size: " . $metadate["fileSize"] . "<br>";
+            //echo "File size: " . $metadate["fileSize"] . "<br>";
 
             while($offset != $metadate["fileSize"])
             {
                 $chunk_size = ($offset + $chunk_size) <= $metadate["fileSize"] ? $chunk_size : ($metadate["fileSize"] - $offset);
-                echo "Descarc intervalul $offset - " . ($offset + $chunk_size - 1) . "<br>";
+                //echo "Descarc intervalul $offset - " . ($offset + $chunk_size - 1) . "<br>";
 
                 $ch = curl_init();
                 curl_setopt_array($ch, array(
@@ -268,7 +269,7 @@
                 $offset += $chunk_size;
             }
 
-            echo "Am terminat de descarcat la: $path";
+            //echo "Am terminat de descarcat la: $path";
             return $path;
         }
 

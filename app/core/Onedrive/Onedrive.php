@@ -301,8 +301,8 @@
             $response_array=json_decode(curl_exec($get_metadata_curl),true);
             if(curl_getinfo($get_metadata_curl,CURLINFO_HTTP_CODE)!=200)
             {
-                var_dump($response_array);
-                throw new OneDriveMetadataException($response_arary['error']['message'],curl_getinfo($get_metadata_curl,CURLINFO_HTTP_CODE));
+                //var_dump($response_array);
+                throw new OneDriveMetadataException($response_array['error']['message'],curl_getinfo($get_metadata_curl,CURLINFO_HTTP_CODE));
             }
             else return $response_array;
         }
