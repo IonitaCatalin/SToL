@@ -23,6 +23,72 @@ class MDownload
         //DropboxService::deleteFileById($this->getAccessToken($user_id,'dropbox'), 'id:EYf7PryE5EAAAAAAAAAASQ');
 	}
 
+    public function createDownload($user_id, $file_id, $download_id)
+    {
+        $insert_download_sql = "INSERT INTO DOWNLOADS(user_id, file_id, download_id) VALUES (:user_id, :file_id, :download_id)";
+        $insert_download_stmt = DB::getConnection()->prepare($insert_download_sql);
+        $insert_download_stmt->execute([
+            'user_id' => $user_id,
+            'file_id' => $file_id,
+            'download_id' => $download_id
+        ]);
+    }
+
+    public function downloadFile($download_id)
+    {
+
+        $check_download_id = "SELECT * FROM DOWNLOADS WHERE download_id = :download_id";
+        $check_download_stmt = DB::getConnection()->prepare($check_download_id);
+        $check_download_stmt->execute([
+            'download_id'=>$download_id
+        ]);
+        
+        if($check_download_stmt->rowCount() == 0)
+        {
+            throw new InvalidDownloadId();
+        }
+
+
+        $file_id = $check_download_stmt->fetch(PDO::FETCH_ASSOC)["file_id"];
+
+        //=====
+            // verificare daca fisierul este fragmentat -> logica pentru identificare fragmente, descarcare fragmente de pe servicii si compunere
+            // daca fisierul este redundant, se alege un serviciu pe care e disponibil, se descarca
+            // in ambele cazuri, variabila $path trebuie initializata cu calea catre fisier rezultat din .../downloads
+        //===== 
+
+        // partea care trimite fisierul catre cel care il cere
+
+        $path = 'D:\folderTesteDownload\Fisier1MB.txt';
+        $chunk_size = 1024 * 1024 * 8; // unitati de cate 8MB
+        $fd = fopen($path, "rb");
+        if ($fd)
+        {
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/octet-stream');
+            header('Content-Disposition: attachment; filename="'.basename($path).'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($path));
+
+            while(!feof($fd)) {
+                $buffer = fread($fd, $chunk_size);
+                echo $buffer;
+                ob_flush();
+                flush();
+            }
+        }
+        else {
+            echo "Error opening file";
+        }
+        fclose($fd);
+
+        //====
+            // dupa descarcare, probabil fisierul ar trebui sters, la fel si intrarea din tabela downloads pentru ca link-ul sa nu mai fie valid
+        //====
+    }
+
 	// preluata din mupload
     public function getAccessToken($user_id,$service)
     {

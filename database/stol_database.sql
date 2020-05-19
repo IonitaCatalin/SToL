@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 12, 2020 at 07:27 AM
+-- Generation Time: May 19, 2020 at 11:13 AM
 -- Server version: 10.4.11-MariaDB
--- PHP Version: 7.4.2
+-- PHP Version: 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -48,6 +48,19 @@ INSERT INTO `accounts` (`id`, `email`, `username`, `password`, `created_at`, `up
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `downloads`
+--
+
+CREATE TABLE `downloads` (
+  `id` int(11) NOT NULL,
+  `user_id` varchar(200) NOT NULL,
+  `file_id` varchar(200) NOT NULL,
+  `download_id` varchar(200) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `dropbox_service`
 --
 
@@ -75,7 +88,7 @@ CREATE TABLE `files` (
 --
 
 INSERT INTO `files` (`id`, `item_id`, `folder_id`, `name`, `fragments_id`) VALUES
-(4, '4', '67b6e87381a8fb18c96c7acca3b6c35d', 'file4', '4');
+(4, '4', 'e86edca146bbefd773838a7e7955b521', 'file4', '4');
 
 -- --------------------------------------------------------
 
@@ -98,8 +111,7 @@ CREATE TABLE `folders` (
 INSERT INTO `folders` (`id`, `item_id`, `parent_id`, `name`, `created_at`) VALUES
 (7, 'e86edca146bbefd773838a7e7955b521', NULL, 'root', '2020-05-04 08:03:14'),
 (8, '67b6e87381a8fb18c96c7acca3b6c35d', 'b5908118157cff12d8d1f1ae6ed4c104', 'NewFolder1', '2020-05-09 18:36:13'),
-(9, 'b5908118157cff12d8d1f1ae6ed4c104', 'e86edca146bbefd773838a7e7955b521', 'NewFolder23', '2020-05-10 09:35:19'),
-(13, '816d89ddf642b6dc46303eed2177238e', NULL, 'root', '2020-05-09 10:13:43');
+(9, 'b5908118157cff12d8d1f1ae6ed4c104', 'e86edca146bbefd773838a7e7955b521', 'NewFolder23', '2020-05-10 09:35:19');
 
 -- --------------------------------------------------------
 
@@ -194,6 +206,12 @@ ALTER TABLE `accounts`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `downloads`
+--
+ALTER TABLE `downloads`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `dropbox_service`
 --
 ALTER TABLE `dropbox_service`
@@ -255,6 +273,12 @@ ALTER TABLE `uploads`
 --
 
 --
+-- AUTO_INCREMENT for table `downloads`
+--
+ALTER TABLE `downloads`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
 -- AUTO_INCREMENT for table `files`
 --
 ALTER TABLE `files`
@@ -276,7 +300,7 @@ ALTER TABLE `fragments`
 -- AUTO_INCREMENT for table `uploads`
 --
 ALTER TABLE `uploads`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1220;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1223;
 
 --
 -- Constraints for dumped tables

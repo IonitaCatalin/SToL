@@ -208,6 +208,20 @@ class App
                 $download_controller->testFunction($user_id);
             }
         });
+        // un post (fara body ?! i.e ruta get e luata, eventual folosim alta) pentru a obtine un link de download
+        $router->addRoute('POST', '/api/download/:file_id', function($file_id){
+            if($this->authorize->validateAuthorization())
+            {
+                $download_controller = new CDownload();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $download_controller->createDownload($user_id, $file_id);
+            }
+        });
+        // download fisier folosind link-ul primit
+        $router->addRoute('GET', '/api/download/:download_id', function($download_id){
+            $download_controller = new CDownload();
+            $download_controller->downloadFile($download_id);
+        });
 
         $router->run($this->method, $this->URI);
     }

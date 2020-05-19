@@ -81,6 +81,12 @@ class NoStorageServices extends ApplicationExceptions
         return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
     }
 }
+class InvalidDownloadId extends ApplicationExceptions
+{
+    public function __toString() {
+        return __CLASS__ . ": [{$this->code}]: {$this->message}\n";
+    }
+}
 
 
 ?>

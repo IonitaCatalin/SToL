@@ -80,7 +80,35 @@ function hideMenus(event) {
 
 function menu_file_download(event) {
     console.log('Download file with id: ' + selected_item_id);
-    //...
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://localhost/ProiectTW/api/download/' + selected_item_id);
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + getCookieValue('jwt_token'));
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+
+            console.log(xhr.responseText);
+            const response = JSON.parse(xhr.responseText);
+
+            if(xhr.status == 200 && response.status == 'success')
+            {
+                console.log(response.data.url);
+                const url = response.data.url;
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                //a.download = "raspunsuri_subiecte_sesiune.pdf"; // numele este dat din php prin header-ul Content-Disposition: .. filename = ..
+                a.click();
+            }
+            else {
+                toggleAlert(response.message, true);
+            }
+        }
+    }
+
     document.getElementById(selected_item_id).classList.remove('context-selected');
     toggleFileMenu('none');
 }
