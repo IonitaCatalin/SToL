@@ -34,6 +34,137 @@
             //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 300000, 300000);
             //DropboxService::uploadFile($this->getAccessToken($user_id,'dropbox'), $path, 600000, 27831);
         }
+        public function uploadFileWithMode($fragments_id,$upload_id)
+        {
+               
+                $bytes=random_bytes(16);
+                $item_id=bin2hex($bytes);
+                $get_upload_sql="SELECT * FROM UPLOADS WHERE upload_id=:upload_id";
+                $get_upload_stmt=DB::getConnection()->prepare($get_upload_sql);
+                $get_upload_stmt->execute([
+                    'upload_id'=>$upload_id
+                ]);
+                $upload_info=$get_upload_stmt->fetch(PDO::FETCH_ASSOC);
+                $mode=$upload_info['mode'];
+            switch($mode)
+            {
+                case 'fragmented':
+                {
+                    $this->uploadFileFragmented($fragments_id,$upload_id,$item_id);
+                    break;
+                }
+                case 'redundant':
+                {
+                    $this->uploadFileRedundant($fragments_id,$upload_id,$item_id);
+                    break;
+                }
+                
+            }
+        }
+        public function uploadFileRedundant($fragments_id,$upload_id,$item_id)
+        {
+            $get_upload_sql="SELECT * FROM UPLOADS WHERE upload_id=:upload_id";
+            $get_upload_stmt=DB::getConnection()->prepare($get_upload_sql);
+            $get_upload_stmt->execute([
+                'upload_id'=>$upload_id
+            ]);
+            $upload_info=$get_upload_stmt->fetch(PDO::FETCH_ASSOC);
+            $path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$upload_info['file_reference'];
+            $filesize=filesize($path);
+
+            $insert_item_sql="INSERT INTO ITEMS(user_id,item_id,content_type) VALUES (:user_id,:item_id,'file')";
+            $insert_item_stmt=DB::getConnection()->prepare($insert_item_sql);
+            $insert_item_stmt->execute([
+                'user_id'=>$upload_info['user_id'],
+                'item_id'=>$item_id,
+            ]);
+
+            $insert_file_sql="INSERT INTO FILES(item_id,folder_id,name,fragments_id) VALUES (:item_id,:folder_id,:name,:fragments_id)";
+            $insert_file_stmt=DB::getConnection()->prepare($insert_file_sql);
+            $insert_file_stmt->execute([
+                'item_id'=>$item_id,
+                'folder_id'=>$upload_info['parent_id'],
+                'name'=>$upload_info['name'],
+                'fragments_id'=>$fragments_id
+            ]);
+
+            $available_services = $this->getAvailableServices($upload_info['user_id']);
+            $available_storage=$this->getServicesRemainingStorage($upload_info['user_id'],$available_services);
+            $count_services=0;
+            foreach($available_storage as $key=>$value)
+            {
+                if($value)
+                    $count_services++;
+            }
+            if($count_services==0)
+            {
+                throw new NoStorageServices();
+            }
+            else if($count_services==1)
+            {
+                throw new InvalidRedundancyException();
+            }
+            else
+            {
+                $bytes=random_bytes(16);
+                $redundancy_id=bin2hex($bytes);
+                $insert_fragment_sql="INSERT INTO FRAGMENTS(fragments_id,service,offset,service_id,fragment_size,redundancy_id) VALUES(:fragments_id,:service,:offset,:service_id,:fragment_size,:redundancy_id)";
+                $insert_fragment_stmt=DB::getConnection()->prepare($insert_fragment_sql);
+                foreach($available_services as $key=>$value)
+                {
+                    switch($key)
+                    {
+                        case 'onedrive':
+                        {
+                            if($value)
+                            {
+                                $insert_fragment_stmt->execute([
+                                    'fragments_id'=>$fragments_id,
+                                    'service'=>'onedrive',
+                                    'offset'=>0,
+                                    'service_id'=>OneDriveService::uploadFile($this->getAccessToken($upload_info['user_id'],'onedrive'),$path,0,$filesize),
+                                    'fragment_size'=>$filesize,
+                                    'redundancy_id'=>$redundancy_id
+                                ]);
+                            }
+                            break;
+                        }
+                        case 'googledrive':
+                        {
+                            if($value)
+                            {
+                                $insert_fragment_stmt->execute([
+                                    'fragments_id'=>$fragments_id,
+                                    'service'=>'googledrive',
+                                    'offset'=>0,
+                                    'service_id'=>GoogleDriveService::uploadFile($this->getAccessToken($upload_info['user_id'],'googledrive'),$path,0,$filesize),
+                                    'fragment_size'=>$filesize,
+                                    'redundancy_id'=>$redundancy_id
+                                ]);
+                            }
+                            break;
+                        }
+                        case 'dropbox':
+                        {
+                            if($value)
+                            {
+                                $insert_fragment_stmt->execute([
+                                    'fragments_id'=>$fragments_id,
+                                    'service'=>'dropbox',
+                                    'offset'=>0,
+                                    'service_id'=>DropboxService::uploadFile($this->getAccessToken($upload_info['user_id'],'dropbox'),$path,0,$filesize),
+                                    'fragment_size'=>$filesize,
+                                    'redundancy_id'=>$redundancy_id
+                                ]);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+        }
         public function uploadFileFragmented($fragments_id,$upload_id,$item_id)
         {
                 //$path=$_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/955eb964652f83d43f3e77fe17a570ea'; 
@@ -421,7 +552,7 @@
             }
         }
 
-        public function startUpload($upload_id,$user_id,$parent_id,$filename,$filesize)
+        public function startUpload($upload_id,$user_id,$parent_id,$filename,$filesize,$mode)
         {
             $check_parent_sql='SELECT item_id FROM FOLDERS WHERE item_id=:id';
             $check_parent_stmt=DB::getConnection()->prepare($check_parent_sql);
@@ -440,7 +571,7 @@
                 {
                     $bytes=random_bytes(16);
                     $file_reference=bin2hex($bytes);
-                    $insert_upload_sql="INSERT INTO UPLOADS(user_id,upload_id,parent_id,file_reference,name,expected_size,status) VALUES (:user_id,:upload_id,:parent_id,:file_reference,:name,:expected_size,'chunking')";
+                    $insert_upload_sql="INSERT INTO UPLOADS(user_id,upload_id,parent_id,file_reference,name,expected_size,status,mode) VALUES (:user_id,:upload_id,:parent_id,:file_reference,:name,:expected_size,'chunking',:mode)";
                     $insert_upload_stmt=DB::getConnection()->prepare($insert_upload_sql);
                     $insert_upload_stmt->execute([
                         'user_id'=>$user_id,
@@ -448,7 +579,8 @@
                         'parent_id'=>$parent_id,
                         'file_reference'=>$file_reference,
                         'name'=>$filename,
-                        'expected_size'=>$filesize
+                        'expected_size'=>$filesize,
+                        'mode'=>$mode
                     ]);
                     $path = $_SERVER['DOCUMENT_ROOT'].'/ProiectTW/uploads/'.$file_reference;
                     $file = fopen($path,"w");
@@ -571,20 +703,30 @@
                 $get_files_sql="SELECT * FROM FILES WHERE fragments_id=:fragments_id";
                 $get_files_stmt=DB::getConnection()->prepare($get_files_sql);
                 $get_files_stmt->execute([
-                    'fragmnets_id'=>$fragments_id
+                    'fragments_id'=>$fragments_id
                 ]);
                 $file_result=$get_files_stmt->fetch(PDO::FETCH_ASSOC);
 
-                //Aici vine logica care sterge toate fragmentele din servicii, va fi omisa si introduse cand e gata
-                
+                //Logica de stergere pe servicii
+
+
+                $get_item_id_sql="SELECT item_id FROM FILES WHERE fragments_id=:fragments_id";
+                $get_item_id_stmt=DB::getConnection()->prepare($get_item_id_sql);
+                $get_item_id_stmt->execute([
+                    'fragments_id'=>$fragments_id
+                ]);
+                $result_id=$get_item_id_stmt->fetch(PDO::FETCH_ASSOC);
+
                 $delete_files_sql="DELETE FROM FILES WHERE fragments_id=:fragments_id";
                 $delete_files_stmt=DB::getConnection()->prepare($delete_files_sql);
-                $delete_files_stmt->execute();
+                $delete_files_stmt->execute([
+                    'fragments_id'=>$fragments_id
+                ]);
 
                 $delete_items_sql="DELETE FROM ITEMS WHERE item_id=:item_id AND content_type='file'";
                 $delete_items_stmt=DB::getConnection()->prepare($delete_items_sql);
-                $delete_files_stmt->execute([
-                    'item_id'=>$file_result['item_id']
+                $delete_items_stmt->execute([
+                    'item_id'=>$result_id['item_id']
                 ]);
             }
 

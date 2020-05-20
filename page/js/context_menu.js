@@ -17,6 +17,7 @@ const folder_remove_opt = document.getElementById('folder_remove_opt');
 const general_new_folder_opt = document.getElementById('general_new_folder_opt');
 const general_refresh_opt = document.getElementById('general_refresh_opt');
 const general_upload_opt = document.getElementById('general_upload_opt');
+const new_folder=document.getElementById('btn-new-folder');
 
 
 var selected_item_id = null; // folder sau fisier selectat
@@ -260,6 +261,7 @@ function menu_general_upload() {
 }
 
 function initializeGeneralMenu() {
+    new_folder.addEventListener('click',menu_general_new_folder);
     general_new_folder_opt.addEventListener('click', menu_general_new_folder);
     general_refresh_opt.addEventListener('click', menu_general_refresh);
     general_upload_opt.addEventListener('click', menu_general_upload);

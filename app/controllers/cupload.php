@@ -35,11 +35,11 @@ class CUpload extends Controller
             }
             else
             {
-                if(isset($post_array['filename']) && isset($post_array['filesize']))
+                if(isset($post_array['filename']) && isset($post_array['filesize']) && isset($post_array['mode']))
                 {
                     $upload_id=uniqid("",true);
                     try{
-                        $this->model->startUpload($upload_id,$user_id,$parent_id,$post_array['filename'],$post_array['filesize']);
+                        $this->model->startUpload($upload_id,$user_id,$parent_id,$post_array['filename'],$post_array['filesize'],$post_array['mode']);
                         $upload_url=array('url'=>'http://'.$_SERVER['HTTP_HOST'].'/ProiectTW/api/upload/'.$upload_id,'chunk'=>$chunk_size);
                         $json=new JsonResponse('success',$upload_url,'Upload endpoint generated succesfully',200);
                         echo $json->response();
@@ -80,14 +80,12 @@ class CUpload extends Controller
                 //Nu vom vrea sa stergem upload-ul curent decat la cererea clientului doar de pe server,de pe servicii nu se va putea in decursul upload-ului
                 //Propun ca inainte sa inceapa upload-ul pe servicii sa verificam inca o data existenta sesiune de upload in baza de date ca sa ne asiguram ca user-ul nu a intrerupt sesiunea intre timp astfel sa avem un fail-safe
                 $this->model->statusChangeToSplitting($upload_id);
-                $bytes=random_bytes(16);
-                $fragments_id=bin2hex($bytes);
-                $bytes=random_bytes(16);
-                $item_id=bin2hex($bytes);
                 try
                 {
-                   
-                    $this->model->uploadFileFragmented($fragments_id,$upload_id,$item_id);
+                    $bytes=random_bytes(16);
+                    $fragments_id=bin2hex($bytes);
+                    //$this->model->uploadFileFragmented($fragments_id,$upload_id,$item_id);
+                    $this->model->uploadFileWithMode($fragments_id,$upload_id);
                     $this->model->completePublicUpload($upload_id);
                     $json=new JsonResponse('success',null,'Data file uploaded succesfully',201);
                     echo $json->response();
@@ -120,12 +118,19 @@ class CUpload extends Controller
                     $json=new JsonResponse('error',null,'Dropbox service failed due to internat issues',400);
                     echo $json->response();
                 }
+                catch(InvalidRedundancyException $exception)
+                {
+                    $this->model->deleteIncompleteUpload($upload_id,$fragments_id);
+                    $json=new JsonResponse('error',null,'Using redundancy mode for a file requires at least two services',400);
+                    echo $json->response();
+                } 
                 catch(Exception $exception)
                 {
                     $this->model->deleteIncompleteUpload($upload_id,$fragments_id);
                     $json=new JsonResponse('error',null,'Something went wrong while processing the file',500);
                     echo $json->response();
-                }  
+                } 
+                
             }
             else
             {
@@ -137,17 +142,17 @@ class CUpload extends Controller
         {
             echo $exception;
             $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
-            echo $json->response;
+            echo $json->response();
         }
         catch(InvalidUploadId $exception)
         {
             $json=new JsonResponse('error',null,'Invalid upload endpoint',400);
-            echo $json->response;
+            echo $json->response();
         }
         catch(UnsupportedChunkSize $exception)
         {
             $json=new JsonResponse('error',null,'Chunk size not supported by the server instance',413);
-            echo $json->response;
+            echo $json->response();
         }
     }
     public function deleteUpload($upload_id)

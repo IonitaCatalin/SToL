@@ -4,6 +4,7 @@ var dropArea=document.querySelector('#modal-file-drop');
 var fileSelector=document.querySelector('#file-selector');  
 var chooseFilesButton=document.querySelector('#modal-btn-files');
 var uploadFilesButton=document.querySelector('#modal-btn-upload');
+var redundant=document.querySelector('#redundant');
 
 var activeTransfer=false;
 var currentTransferId;
@@ -95,8 +96,6 @@ dropArea.onclick=function(){
     }
 }
 
-
-
 function getCookieValue(name) {
     let value = "; " + document.cookie;
     let  parts = value.split("; " + name + "=");
@@ -129,8 +128,10 @@ function uploadSingleFile(file,index)
 {
     const requestBody = {
         filename:file.name,
-        filesize:file.size
+        filesize:file.size,
+        mode:redundant.checked?'redundant':'fragmented'
     }
+    console.log(requestBody);
     fetch('http://localhost/ProiectTW/api/upload/'+folder_parents[folder_parents.length - 1],{
         method:'post',body:JSON.stringify(requestBody), headers:{
         'Content-Type': 'application/json',

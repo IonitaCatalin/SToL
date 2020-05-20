@@ -32,7 +32,7 @@
 				<div class="upload-modal" role="dialog">
 					<p>Select or Drag any files to upload</p>
 					<div id="modal-storage">
-						<input type="radio" id="redundant" name="storage-type" value="redundant">
+						<input type="checkbox" id="redundant" name="storage-type" value="redundant">
 						<label for="redundant">Redundant</label><br>
 					</div>
 					<span id="modal-btn-close">&times;</span>
