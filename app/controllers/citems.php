@@ -152,13 +152,12 @@
                 }
             }
         }
-
-        public function getItemsFromFolder($user_id, $parent_id)
+        public function getItemMetadata($user_id,$item_id)
         {
             try
             {
-                $data_json = json_encode($this->model->getItemsListFromFolder($user_id, $parent_id));
-                $json = new JsonResponse('success', $data_json, 'Items succesfully retrieved',200);
+                $data_json=json_encode($this->model->getItemMetadata($user_id,$item_id));
+                $json=new JsonResponse('success',$data_json,'Item successfully retrieved',200);
                 echo $json->response();
             }
             catch(PDOException $exception)
@@ -169,11 +168,11 @@
             }
             catch(InvalidItemId $exception)
             {
-                $json = new JsonResponse('error',null,'Specified reference parent id is invalid',400);
+                $json = new JsonResponse('error',null,'Specified reference item id is invalid',400);
                 echo $json->response();
             }
-        }
 
+        }
         public function getItemsFromRoot($user_id)
         {
             try
@@ -198,9 +197,24 @@
                 $json = new JsonResponse('success', null, 'Items succesfully deleted',200);
                 echo $json->response();
             }
+            catch(OneDriveDeleteException $exception)
+            {
+                $json=new JsonResponse('error',null,'An unexpected error appeared while deleting file from container Onedrive',500);
+                echo $json->response();
+            }
+            catch(GoogleDriveDeleteException $exception)
+            {
+                $json=new JsonResponse('error',null,'An unexpected error appeared while deleting file from container GoogleDrive',500);
+                echo $json->response();
+            }
+            catch(DropboxDeleteException $exception)
+            {
+                $json=new JsonResponse('error',null,'An unexpected error appeared while deleting file from container Dropbox',500);
+                echo $json->response();
+            }
             catch(PDOException $exception)
             {
-                echo $exception;
+            
                 $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
                 echo $json->response();
             }

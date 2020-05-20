@@ -249,7 +249,8 @@ function menu_general_new_folder() {
 }
 
 function menu_general_refresh() {
-    location.reload();
+    //location.reload();
+    loadFiles(folder_parents[folder_parents.length - 1]);
     toggleGeneralMenu('none');
 }
 

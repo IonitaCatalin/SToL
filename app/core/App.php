@@ -132,12 +132,12 @@ class App
             }
         });
         // obtine fisiere dintr-un folder
-        $router->addRoute('GET','/api/items/:parent_id',function($parent_id){
+        $router->addRoute('GET','/api/items/:item_id',function($item_id){
             if($this->authorize->validateAuthorization())
             {
                 $items_controller=new CItems();
                 $user_id = $this->authorize->getDecoded()["user_id"];
-                $items_controller->getItemsFromFolder($user_id, $parent_id);
+                $items_controller->getItemMetadata($user_id,$item_id);
             }
         });
         // obtine fisiere din root

@@ -179,7 +179,47 @@
                 throw new InvalidItemId();
             }
         }
-    
+        
+        public function getItemMetadata($user_id,$item_id)
+        {
+            $search_item_exists_sql = "SELECT * FROM ITEMS WHERE item_id=:id";
+            $search_item_exists_stmt = DB::getConnection()->prepare($search_item_exists_sql);
+            $search_item_exists_stmt->execute([
+                'id' => $item_id
+            ]);
+            $search_item_exists_result = $search_item_exists_stmt->fetch(PDO::FETCH_ASSOC);
+            if($search_item_exists_stmt->rowCount()>0)
+            {
+                if($search_item_exists_result['content_type']=='folder')
+                {
+                    return $this->getItemsListFromFolder($user_id,$item_id);
+                }
+                else if($search_item_exists_result['content_type']=='file')
+                {
+                    $metadata_array=array();
+                    $get_file_metadata_sql="SELECT * FROM FILES JOIN FRAGMENTS ON FILES.FRAGMENTS_ID=FILES.FRAGMENTS_ID WHERE FILES.ITEM_ID=:item_id";
+                    $get_file_metadata_stmt=DB::getConnection()->prepare($get_file_metadata_sql);
+                    $get_file_metadata_stmt->execute([
+                        'item_id'=>$item_id
+                    ]);
+                    $result_rows=$get_file_metadata_stmt->fetchAll();
+                    $metadata_array['filename']=$result_rows[0]['name'];
+                    $filesize=0;
+                    for($index=0;$index<count($result_rows);$index++)
+                    {
+                        $filesize+=$result_rows[$index]['fragment_size'];
+                    }
+                    $metadata_array['parent_id']=$result_rows[0]['folder_id'];
+                    $metadata_array['filesize']=$filesize;
+                    return $metadata_array;
+
+                }
+            }
+            else
+            {
+                throw new InvalidItemId();
+            }
+        }
         public function getItemsListFromFolder($user_id, $parent_id)
         {
 
