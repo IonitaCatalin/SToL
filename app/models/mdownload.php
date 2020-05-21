@@ -25,6 +25,7 @@ class MDownload
 
     public function createDownload($user_id, $file_id, $download_id)
     {
+        // verificare fisier intregistrat
         $check_file_id_sql = "SELECT * FROM FILES WHERE item_id = :file_id";
         $check_file_id_stmt = DB::getConnection()->prepare($check_file_id_sql);
         $check_file_id_stmt->execute([
@@ -34,6 +35,165 @@ class MDownload
             throw new InvalidItemId();
         }
 
+        // verificare tip fisier fragmentat sau redundant
+        $check_stored_type_sql = "SELECT redundancy_id FROM FILES f JOIN FRAGMENTS fr ON f.fragments_id = fr.fragments_id WHERE item_id=:file_id";
+        $check_stored_type_stmt = DB::getConnection()->prepare($check_stored_type_sql);
+        $check_stored_type_stmt->execute([
+            'file_id' => $file_id
+        ]);
+        $file_type = null;
+        $service_hint = null;   // folosit pentru redundant, indica cu siguranta de unde pot descarca fisierul
+        $row = $check_stored_type_stmt->fetch(PDO::FETCH_ASSOC);
+        if($row['redundancy_id']) {
+            $file_type = 'redundant';
+            $service_hint = $this->checkRedundantFileDownloadRequirements($user_id, $file_id, $download_id);
+        } else {
+            $file_type = 'fragmented';
+            $this->checkFragmentedFileDownloadRequirements($user_id, $file_id, $download_id);
+        }
+
+        // la final, daca totul merge bine
+        $insert_download_sql = "INSERT INTO DOWNLOADS(user_id, file_id, download_id, file_type, service_hint) VALUES (:user_id, :file_id, :download_id, :file_type, :service_hint)";
+        $insert_download_stmt = DB::getConnection()->prepare($insert_download_sql);
+        $insert_download_stmt->execute([
+            'user_id' => $user_id,
+            'file_id' => $file_id,
+            'download_id' => $download_id,
+            'file_type' => $file_type,
+            'service_hint' => $service_hint  // pentru redundant, indica de unde il pot descarca
+        ]);
+
+        return $service_hint; // folosesc pt a spune si de pe ce mirror descarc
+
+    }
+
+    public function checkRedundantFileDownloadRequirements($user_id, $file_id, $download_id)
+    {
+        $stored_on_services_sql = "SELECT service, service_id FROM FILES f JOIN FRAGMENTS fr ON f.fragments_id = fr.fragments_id WHERE item_id=:file_id";
+        $stored_on_services_stmt = DB::getConnection()->prepare($stored_on_services_sql);
+        $stored_on_services_stmt->execute([
+            'file_id'=>$file_id
+        ]);
+
+        $stored_on_services_nr = 0;
+        $file_availability = array();
+        if($stored_on_services_stmt->rowCount() > 0)
+        {
+            $available_services = $this->getAvailableServices($user_id);
+            while($row = $stored_on_services_stmt->fetch(PDO::FETCH_ASSOC))
+            {
+                switch($row['service'])
+                {
+                    case 'onedrive':
+                        $stored_on_services_nr++;
+                        $file_availability['onedrive'] = true;
+                        if($available_services['onedrive'] == false) {
+                            $file_availability['onedrive'] = 'unauthorized';
+                        }
+                        else {
+                            try {
+                                OnedriveService::getFileMetadataById($this->getAccessToken($user_id,'onedrive'), $row['service_id']);
+                            } catch(OneDriveMetadataException $exception) {
+                                $file_availability['onedrive'] = 'deleted';
+                            }
+                        }
+                        break;
+
+                    case 'dropbox':
+                        $stored_on_services_nr++;
+                        $file_availability['dropbox'] = true;
+                        if($available_services['dropbox'] == false) {
+                            $file_availability['dropbox'] = 'unauthorized';
+                        }
+                        else {
+                            try {
+                                DropboxService::getFileMetadataById($this->getAccessToken($user_id,'dropbox'), $row['service_id']);
+                            } catch(DropboxGetFileMetadataException $exception) {
+                                $file_availability['dropbox'] = 'deleted';
+                            }
+                        }
+                        break;
+
+                    case 'googledrive':
+                        $stored_on_services_nr++;
+                        $file_availability['googledrive'] = true;
+                        if($available_services['googledrive'] == false) {
+                            $file_availability['googledrive'] = 'unauthorized';
+                        }
+                        else {
+                            try {
+                                GoogleDriveService::getFileMetadataById($this->getAccessToken($user_id,'googledrive'), $row['service_id']);
+                            } catch(GoogledriveGetFileMetadataException $exception) {
+                                $file_availability['googledrive'] = 'deleted';
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+
+        // verific daca nu sunt autorizat pe niciun serviciu necesar
+        $counter = 0;
+        $required_services_str = '';
+        foreach($available_services as $service=>$value)
+        {
+            if(!$value && array_key_exists($service, $file_availability) && (strcmp($file_availability[$service],'unauthorized') == 0)){
+                $required_services_str .= ucfirst($service) . ", ";
+                $counter++;
+            }
+        }
+        if($counter == $stored_on_services_nr) {
+            //echo "Nu sunt autorizat pe niciunul din serviciile necesare !!!";
+            throw new RedundantFileDownloadMissingAllAuthException(substr($required_services_str, 0, -2));
+        }
+
+        // verific daca fisierul a fost sters de peste tot
+        $counter = 0;
+        $required_services_str = '';
+        foreach($available_services as $service=>$value)
+        {
+            if($value && (strcmp($file_availability[$service],'deleted') == 0)){
+                $required_services_str .= ucfirst($service) . ", ";
+                $counter++;
+            }
+        }
+        if($counter == $stored_on_services_nr) {
+            //echo "Fisierul a fost sters de pe toate serviciile !!!";
+            throw new RedundantFileDeletedFromAllServicesException(substr($required_services_str, 0, -2));
+        }
+
+        // verific daca e un mix de 'deleted' si 'unauthorized'
+        $counter = 0;
+        $required_services_str = '';
+        $deleted_from_str = '';
+        foreach($file_availability as $service=>$state)
+        {
+            if(strcmp($file_availability[$service],'deleted') == 0){
+                $counter ++;
+                $deleted_from_str .= ucfirst($service) . ", ";
+            } else if(strcmp($file_availability[$service],'unauthorized') == 0) {
+                $counter ++;
+                $required_services_str .= ucfirst($service) . ", ";
+            }
+        }
+        if($counter == $stored_on_services_nr) {
+            //echo "Niciun serviciu de pe care se poate descarca nu este autorizat";
+            throw new RedundantFileDownloadMissingServicesAuthException("File was deleted from: ".substr($deleted_from_str, 0, -2).", please try to authorize: ".substr($required_services_str, 0, -2));
+        }
+
+        // lista cu servicii de unde pot descarca - daca se ajunge pana aici sigur exista unul
+        foreach($file_availability as $service=>$value)
+        {
+            if($value === true) {
+                //echo "Pot descarca fisierul de pe $service";
+                return $service;    // intorc un hint cu serviciul de unde sigur este disponibil fisierul
+            }
+        }
+
+    }
+
+    public function checkFragmentedFileDownloadRequirements($user_id, $file_id, $download_id)
+    {
         // obtinere servicii necesare si verificare autorizare + existenta fragment
         $get_required_services_sql = "SELECT service, service_id FROM FILES f JOIN FRAGMENTS fr ON f.fragments_id = fr.fragments_id WHERE item_id=:file_id";
         $get_required_services_stmt = DB::getConnection()->prepare($get_required_services_sql);
@@ -70,22 +230,14 @@ class MDownload
             }
         }
 
-        // la final, daca totul merge bine
-        $insert_download_sql = "INSERT INTO DOWNLOADS(user_id, file_id, download_id) VALUES (:user_id, :file_id, :download_id)";
-        $insert_download_stmt = DB::getConnection()->prepare($insert_download_sql);
-        $insert_download_stmt->execute([
-            'user_id' => $user_id,
-            'file_id' => $file_id,
-            'download_id' => $download_id
-        ]);
     }
 
     public function downloadFile($download_id)
     {
 
         // verificare download si obtinere date utile
-        $check_download_id_sql = "SELECT user_id, file_id, name, fragments_id FROM FILES f JOIN DOWNLOADS ON file_id = item_id WHERE download_id = :download_id";
-        $check_download_stmt = DB::getConnection()->prepare($check_download_id_sql);
+        $check_download_sql = "SELECT user_id, file_id, name, fragments_id, file_type, service_hint FROM FILES f JOIN DOWNLOADS ON file_id = item_id WHERE download_id = :download_id";
+        $check_download_stmt = DB::getConnection()->prepare($check_download_sql);
         $check_download_stmt->execute([
             'download_id'=>$download_id
         ]);
@@ -100,40 +252,20 @@ class MDownload
         $file_id = $download_info['file_id'];
         $file_name = $download_info['name'];
         $fragments_id = $download_info['fragments_id'];
+        $file_type = $download_info['file_type'];
+        $service_hint = $download_info['service_hint'];
 
-        // !!! Nu uita, pentru redundant trebuie o abordare diferita ...
+        // fisier temporar in care se face download-ul
+        $temp_file_name = uniqid("", true);
+        $path = $_SERVER['DOCUMENT_ROOT'].'/ProiectTW/downloads/'. $temp_file_name;
 
-        // caut fragmentele si le descarc intr-un singur fisier
-        $get_storage_services_sql = "SELECT service, service_id FROM FRAGMENTS WHERE fragments_id = :fragments_id";
-        $get_storage_services_stmt = DB::getConnection()->prepare($get_storage_services_sql);
-        $get_storage_services_stmt->execute([
-            'fragments_id'=>$fragments_id
-        ]);
-
-        $path = null;
-        if($get_storage_services_stmt->rowCount() > 0)
-        {
-            // fisier temporar in care se vor face toate append-urile
-            $temp_file_name = uniqid("", true);
-            $path = $_SERVER['DOCUMENT_ROOT'].'/ProiectTW/downloads/'. $temp_file_name;
-
-            while($row = $get_storage_services_stmt->fetch(PDO::FETCH_ASSOC))
-            {
-                switch($row['service'])
-                {
-                    case 'onedrive':
-                        OnedriveService::downloadFileById($this->getAccessToken($user_id,'onedrive'), $row['service_id'], $path);
-                        break;
-                    case 'dropbox':
-                        DropboxService::downloadFileById($this->getAccessToken($user_id,'dropbox'), $row['service_id'], $path);
-                        break;
-                    case 'googledrive':
-                        GoogleDriveService::downloadFileById($this->getAccessToken($user_id,'googledrive'), $row['service_id'], $path);
-                        break;
-                }
-            }
+        if($file_type === 'fragmented') {
+            $this->downloadFragmentedFile($user_id, $path, $fragments_id);
+        } else if($file_type === 'redundant') {
+            $this->downloadRedundantFile($user_id, $path, $fragments_id, $service_hint);
         }
 
+        // trimiterea propriu zisa a fisierului catre client
         $chunk_size = 1024 * 1024 * 8; // unitati de cate 8MB
         $fd = fopen($path, "rb");
         if ($fd)
@@ -154,7 +286,7 @@ class MDownload
             }
         }
         else {
-            echo "Error opening file";
+            echo "^^^Error opening file^^^";
         }
         fclose($fd);
 
@@ -165,6 +297,65 @@ class MDownload
         $delete_download_stmt->execute([
             'download_id'=>$download_id
         ]);
+
+    }
+
+    public function downloadFragmentedFile($user_id, $path, $fragments_id)
+    {
+        // caut fragmentele si le descarc intr-un singur fisier
+        $get_storage_services_sql = "SELECT service, service_id FROM FRAGMENTS WHERE fragments_id = :fragments_id";
+        $get_storage_services_stmt = DB::getConnection()->prepare($get_storage_services_sql);
+        $get_storage_services_stmt->execute([
+            'fragments_id'=>$fragments_id
+        ]);
+
+        if($get_storage_services_stmt->rowCount() > 0)
+        {
+            while($row = $get_storage_services_stmt->fetch(PDO::FETCH_ASSOC))
+            {
+                switch($row['service'])
+                {
+                    case 'onedrive':
+                        OnedriveService::downloadFileById($this->getAccessToken($user_id,'onedrive'), $row['service_id'], $path);
+                        break;
+                    case 'dropbox':
+                        DropboxService::downloadFileById($this->getAccessToken($user_id,'dropbox'), $row['service_id'], $path);
+                        break;
+                    case 'googledrive':
+                        GoogleDriveService::downloadFileById($this->getAccessToken($user_id,'googledrive'), $row['service_id'], $path);
+                        break;
+                }
+            }
+        }
+
+    }
+
+    public function downloadRedundantFile($user_id, $path, $fragments_id, $service_hint)
+    {
+        // caut fragmentele si le descarc intr-un singur fisier
+        $get_storage_service_id_sql = "SELECT service, service_id FROM FRAGMENTS WHERE fragments_id = :fragments_id AND service = :service_hint";
+        $get_storage_service_id_stmt = DB::getConnection()->prepare($get_storage_service_id_sql);
+        $get_storage_service_id_stmt->execute([
+            'fragments_id' => $fragments_id,
+            'service_hint' => $service_hint
+        ]);
+
+        if($get_storage_service_id_stmt->rowCount() > 0)
+        {
+            $row = $get_storage_service_id_stmt->fetch(PDO::FETCH_ASSOC);
+            switch($row['service'])
+            {
+                case 'onedrive':
+                    OnedriveService::downloadFileById($this->getAccessToken($user_id,'onedrive'), $row['service_id'], $path);
+                    break;
+                case 'dropbox':
+                    DropboxService::downloadFileById($this->getAccessToken($user_id,'dropbox'), $row['service_id'], $path);
+                    break;
+                case 'googledrive':
+                    GoogleDriveService::downloadFileById($this->getAccessToken($user_id,'googledrive'), $row['service_id'], $path);
+                    break;
+            }
+        }
 
     }
 

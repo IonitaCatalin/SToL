@@ -22,7 +22,7 @@ const new_folder=document.getElementById('btn-new-folder');
 
 var selected_item_id = null; // folder sau fisier selectat
 
-function toggleAlert(message = null, error = true, disable = false)
+function toggleDownloadAlert(message = null, error = true, disable = false)
 {
     const alert = document.querySelector('.alert');
     const alertText = document.getElementById('alert-text');
@@ -100,7 +100,7 @@ function menu_file_download(event) {
 
             if(xhr.status == 200 && response.status == 'success')
             {
-                toggleAlert(response.message, false);
+                toggleDownloadAlert(response.message, false);
                 console.log(response.data.url);
                 const url = response.data.url;
                 const a = document.createElement('a');
@@ -108,10 +108,10 @@ function menu_file_download(event) {
                 a.href = url;
                 //a.download = "raspunsuri_subiecte_sesiune.pdf"; // numele este dat din php prin header-ul Content-Disposition: .. filename = ..
                 a.click();
-                //toggleAlert(null, null, true);
+                //toggleDownloadAlert(null, null, true);
             }
             else {
-                toggleAlert(response.message, true);
+                toggleDownloadAlert(response.message, true);
             }
         }
     }
@@ -165,9 +165,9 @@ function menu_item_rename(event) {
                     title.innerHTML = old_title    // Update the title
                     title.style.display = ""; 
                     if(xhr.status==409)
-                        toggleAlert(response.message,true,false);
+                        toggleDownloadAlert(response.message,true,false);
                     if(xhr.status==500)
-                        toggleAlert(response.message,true,false);
+                        toggleDownloadAlert(response.message,true,false);
                     console.log('NU am reusit sa redenumesc item-ul cu id ' + selected_item_id);
                 }
             }
@@ -236,11 +236,11 @@ function menu_general_new_folder() {
             else {
                 if(xhr.status==409)
                 {
-                    toggleAlert(response.message,true,false);
+                    toggleDownloadAlert(response.message,true,false);
                 }
                 if(xhr.status==500)
                 {
-                    toggleAlert(response.message,true,false);
+                    toggleDownloadAlert(response.message,true,false);
                 }
             }
         }

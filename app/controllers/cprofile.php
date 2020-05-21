@@ -242,7 +242,7 @@ class CProfile extends Controller {
 	{
 		try {
 			$this->model->invalidateService($user_id, $service);
-			$json = new JsonResponse('success', null, 'Serice succesfully unauthorized',200);
+			$json = new JsonResponse('success', null, 'Service succesfully unauthorized',200);
 			echo $json->response();
 		}
 		catch(PDOException $exception)

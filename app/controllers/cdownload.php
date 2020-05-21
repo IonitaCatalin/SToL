@@ -27,9 +27,12 @@ class CDownload extends Controller
 		$download_id = uniqid("", true);
 	    try
 	    {
-	        $this->model->createDownload($user_id, $file_id, $download_id);
+	        $redundant_service = $this->model->createDownload($user_id, $file_id, $download_id);
 	        $download_url = array('url' => 'http://'. $_SERVER['HTTP_HOST'].'/ProiectTW/api/download/'. $download_id);
-	        $json = new JsonResponse('success', $download_url, 'Download is starting. Please wait for collecting services fragments', 200);
+	        if($redundant_service === 'onedrive' || $redundant_service === 'dropbox' || $redundant_service === 'googledrive')
+	        	$json = new JsonResponse('success', $download_url, "Download is starting. Please wait for us to download the file from " . ucfirst($redundant_service), 200);
+	        else
+	        	$json = new JsonResponse('success', $download_url, 'Download is starting. Please wait for collecting services fragments', 200);
 	        echo $json->response();
 	    }
 	    catch(InvalidItemId $exception)
@@ -67,8 +70,24 @@ class CDownload extends Controller
 			$json=new JsonResponse('error', null, 'The file fragment from Googledrive is missing', 403);
 			echo $json->response();
 		}
+		catch(RedundantFileDeletedFromAllServicesException $exception)
+		{
+			$json=new JsonResponse('error', null, 'The redundant file was deleted from all services: '. $exception->getMessage(), 403);
+			echo $json->response();
+		}
+		catch(RedundantFileDownloadMissingAllAuthException $exception)
+		{
+			$json=new JsonResponse('error', null, 'Please authorize one of the following: '. $exception->getMessage(), 403);
+			echo $json->response();
+		}
+		catch(RedundantFileDownloadMissingServicesAuthException $exception)
+		{
+			$json=new JsonResponse('error', null, $exception->getMessage(), 403);
+			echo $json->response();
+		}
 	    catch(PDOException $exception)
 	    {
+	    	echo $exception;
 	        $json=new JsonResponse('error', null, 'Service temporarly unavailable', 500);
 	        echo $json->response();
 	    }
