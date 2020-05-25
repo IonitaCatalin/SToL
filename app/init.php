@@ -1,5 +1,9 @@
 <?php
+
+
 define( 'ROOT_PATH', dirname(dirname(__FILE__)) . '\\' );
+require_once ROOT_PATH.'\\vendor\\autoload.php';
+
 require_once 'core/Router.php';
 require_once 'core/App.php';
 require_once 'core/Controller.php';
@@ -23,6 +27,6 @@ require_once 'core/JsonResponse.php';
 require_once 'core/Exceptions/ApplicationExceptions.php';
 require_once 'core/AuthorizationHandler.php';
 
-require_once ROOT_PATH.'\\vendor\\autoload.php';
+
 
 ?>
