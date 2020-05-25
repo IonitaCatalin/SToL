@@ -136,20 +136,28 @@ function uploadSingleFile(file,index)
         method:'post',body:JSON.stringify(requestBody), headers:{
         'Content-Type': 'application/json',
         'Authorization':'Bearer ' + getCookieValue('jwt_token')}})
-        .then(response=>response.json()
-        .then(data=>{
-            currentTransferId=data.data.url.split("/")[6];
-            if(response.status=200) {
-                sendFileByChunks(file,0,data.data.chunk,data.data.url,index);
+        .then(function(response) {
+            elemStatus=document.getElementsByClassName('up-elem-status')[index];
+            if(response.status==409)
+            {
+                elemStatus.textContent='File names already taken in the current folder';
+                elemStatus.style.color='#FF0000'
             }
-            else if(response.status==409) {
-
-                //Nume deja luat
+            else if(response.status==500)
+            {
+                elemStatus.textContent='An unexpected error appeared';
+                elemStatus.style.color='#FF0000';
             }
-            else if(response.status==400) {
-                //Parent id nu e bun
-            }}));   
+            else if(response.status==200)
+            {
+                response.json().then(jsonResponse=>{
+                    currentTransferId=jsonResponse.data.url.split("/")[6];
+                    sendFileByChunks(file,0,jsonResponse.data.chunk,jsonResponse.data.url,index);
+                })
+            }
+        })
 }
+
 
 function sendFileByChunks(file,start,chunkSize,url,index)
 {
@@ -159,23 +167,37 @@ function sendFileByChunks(file,start,chunkSize,url,index)
         console.log("Start:"+start+"/"+"End:"+(start+chunkSize));
         fetch(url, {method: 'put', body: chunk})
         .then(res => {
-            console.log(res.text());
-            console.log(res.status);
+            elemStatus=document.getElementsByClassName('up-elem-status')[index];
             if(res.status==200) {
                 if(activeTransfer) {
                     sendFileByChunks(file,start+chunkSize,chunkSize,url,index);
                 }
-                else {
-                    console.log('Intrerupere tranfer');
-                }
             }
             else if(res.status==201) {
-                document.getElementsByClassName('up-elem-status')[index].textContent="Uploaded succesfully!";
-                document.getElementsByClassName('up-elem-status')[index].style.color='#094AB2'
+                elemStatus.textContent='Uploaded succesfully!';
+                elemStatus.style.color='#094AB2'
                 uploadedFilesCount++;
             }
-            else if(res.status==413) {
-                console.log('ccc');
+            else if(res.status==416) {
+                elemStatus.textContent='Chunk size sent is not supported by server instance';
+                elemStatus.style.color='#FF0000'
+            }
+            else if(res.status==403)
+            {
+                elemStatus.textContent='Uploading a file in redundancy mode requires at least two storage services';
+                elemStatus.style.color='#FF0000';
+            }
+            else if(res.status==400)
+            {
+                res.json().then(jsonResponse=>{
+                    elemStatus.textContent=res.message;
+                    elemStatus.style.color='#FF0000';
+                })
+            }
+            else if(res.status==413)
+            {
+                elemStatus.textContent='Insufficient storage';
+                elemStatus.style.color='#FF0000';
             }
            
         })

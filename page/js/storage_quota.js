@@ -1,6 +1,7 @@
 function initializeStorageBox()
 {
 	document.getElementById("btn-disconn").onclick = function() { window.location = "http://localhost/ProiectTW/page/login"; };
+	
 
 	let xhr = new XMLHttpRequest();
 	xhr.open('GET', 'http://localhost/ProiectTW/api/user/storage');

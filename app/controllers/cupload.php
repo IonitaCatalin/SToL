@@ -56,6 +56,7 @@ class CUpload extends Controller
                     }
                     catch(ItemNameTaken $exception)
                     {
+                        $this->model->deleteIncompleteUpload($upload_id,$fragments_id);
                         $json=new JsonResponse('error',null,'Item name is already taken',409);
                         echo $json->response();
                     }
@@ -75,16 +76,11 @@ class CUpload extends Controller
             $done=$this->model->appendChunks($upload_id,$chunk_size);
             if($done)
             {
-                //Inainte de acest raspuns cu 201 v-a venii logica de upload pentru diferite servicii,vei putea sa intrerupi download-ul numai cand se uploadeaza explicit catre server nu si catre servicii
-                //Dupa upload-ul pe servicii se va trimite ca si cod de success 201-Content Created
-                //Nu vom vrea sa stergem upload-ul curent decat la cererea clientului doar de pe server,de pe servicii nu se va putea in decursul upload-ului
-                //Propun ca inainte sa inceapa upload-ul pe servicii sa verificam inca o data existenta sesiune de upload in baza de date ca sa ne asiguram ca user-ul nu a intrerupt sesiunea intre timp astfel sa avem un fail-safe
                 $this->model->statusChangeToSplitting($upload_id);
                 try
                 {
                     $bytes=random_bytes(16);
                     $fragments_id=bin2hex($bytes);
-                    //$this->model->uploadFileFragmented($fragments_id,$upload_id,$item_id);
                     $this->model->uploadFileWithMode($fragments_id,$upload_id);
                     $this->model->completePublicUpload($upload_id);
                     $json=new JsonResponse('success',null,'Data file uploaded succesfully',201);
@@ -121,12 +117,11 @@ class CUpload extends Controller
                 catch(InvalidRedundancyException $exception)
                 {
                     $this->model->deleteIncompleteUpload($upload_id,$fragments_id);
-                    $json=new JsonResponse('error',null,'Using redundancy mode for a file requires at least two services',400);
+                    $json=new JsonResponse('error',null,'Using redundancy mode for a file requires at least two services',403);
                     echo $json->response();
                 } 
                 catch(Exception $exception)
                 {
-                    $this->model->deleteIncompleteUpload($upload_id,$fragments_id);
                     $json=new JsonResponse('error',null,'Something went wrong while processing the file',500);
                     echo $json->response();
                 } 
@@ -146,12 +141,12 @@ class CUpload extends Controller
         }
         catch(InvalidUploadId $exception)
         {
-            $json=new JsonResponse('error',null,'Invalid upload endpoint',400);
+            $json=new JsonResponse('error',null,'Invalid upload endpoint',404);
             echo $json->response();
         }
         catch(UnsupportedChunkSize $exception)
         {
-            $json=new JsonResponse('error',null,'Chunk size not supported by the server instance',413);
+            $json=new JsonResponse('error',null,'Chunk size not supported by the server instance',416);
             echo $json->response();
         }
     }

@@ -50,19 +50,18 @@
 			<nav>
 				<div class="navbar-buttons">
 					<button id="navbar-files">Files</button>
-					<button id="navbar-recent">Recent</button>
-					<button id="navbar-trash">Trash</button>
+					<!-- <button id="navbar-recent">Recent</button>
+					<button id="navbar-trash">Trash</button> -->
 					
 				</div>
 				<div class="navbar-collapsible">
 					<input type="checkbox" id="collapsible" class="toggle"/>
 					<label for="collapsible" class="col-toggle"><i class="ri-col ri-menu-line"></i></label>
 					<div class="collapsible-content">
-						<button class="col-btn"><i class="ri-col ri-file-line"></i></button>
+						<button class="col-btn" id="col-btn-logout"><i class="ri-col ri-logout-box-line"></i></button>
+						<!-- <button class="col-btn"><i class="ri-col ri-file-line"></i></button>
 						<button class="col-btn"><i class="ri-col ri-star-line"></i></button>
-						<button class="col-btn"><i class="ri-col ri-delete-bin-line"></i></button>
-						<button class="col-btn"><i class="ri-col ri-logout-box-line"></i></button>
-						
+						<button class="col-btn"><i class="ri-col ri-delete-bin-line"></i></button> -->
 					</div>
 				</div>
 				<div id="storage-info-box">
@@ -94,12 +93,12 @@
 				<div class="context-file-menu" style="display:none">
 					<button id="file_download_opt" class="contxt-option"><i class="ri-folder-add-line"></i>Download</button>
 					<button id="file_rename_opt" class="contxt-option"><i class="ri-text"></i>Rename</button>
-					<button id="file_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button>
+					<!-- <button id="file_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button> -->
 					<button id="file_remove_opt"class="contxt-option"><i class="ri-eraser-line"></i>Remove</button>
 				</div>
 				<div class="context-folder-menu" style="display:none">
 					<button id="folder_rename_opt" class="contxt-option"><i class="ri-text"></i>Rename</button>
-					<button id="folder_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button>
+					<!-- <button id="folder_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button> -->
 					<button id="folder_remove_opt"class="contxt-option"><i class="ri-eraser-line"></i>Remove</button>
 				</div>
 				<div class="main-container">	
