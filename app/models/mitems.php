@@ -636,6 +636,55 @@
                 return $check_item_stmt->fetch(PDO::FETCH_ASSOC);
             }
         }
+        public function searchByNameFromRoot($user_id,$search_name)
+        {
+        
+            $get_user_root_sql="SELECT FOLDERS.item_id FROM ITEMS JOIN FOLDERS ON ITEMS.ITEM_ID=FOLDERS.ITEM_ID WHERE FOLDERS.PARENT_ID IS NULL AND ITEMS.USER_ID=:user_id AND ITEMS.CONTENT_TYPE='folder'";
+            $get_user_root_stmt=DB::getConnection()->prepare($get_user_root_sql);
+            $get_user_root_stmt->execute([
+                'user_id'=>$user_id
+            ]);
+            $result_root=$get_user_root_stmt->fetch(PDO::FETCH_ASSOC);
+            $result_items=array();
+            $search_in=array();
+            //$search_in[0]=$result_root['item_id'];
+            array_push($search_in,$result_root['item_id']);
+            
+            for($iterator=0;$iterator<count($search_in);$iterator++)
+            {
+                
+                $get_folders_children_sql="SELECT * FROM FOLDERS WHERE parent_id=:parent_id";
+                $get_folders_children_stmt=DB::getConnection()->prepare($get_folders_children_sql);
+                $get_folders_children_stmt->execute([
+                    'parent_id'=>$search_in[$iterator]
+                ]);
+                $result_folders=$get_folders_children_stmt->fetchAll();
+                for($folders_iterator=0;$folders_iterator<count($result_folders);$folders_iterator++)
+                {
+                      $search_in[count($search_in)]=$result_folders[$folders_iterator]['item_id'];
+                      if(strpos($result_folders[$folders_iterator]['name'],$search_name)!==false)
+                      {
+                            array_push($result_items,['item_id'=>$result_folders[$folders_iterator]['item_id'],'parent_id'=>$result_folders[$folders_iterator]['parent_id'],'name'=>$result_folders[$folders_iterator]['name'],'content_type'=>'folder']);
+                      }
+                }
+                $get_files_children_sql="SELECT * FROM FILES WHERE FOLDER_ID=:folder_id";
+                $get_files_children_stmt=DB::getConnection()->prepare($get_files_children_sql);
+                $get_files_children_stmt->execute([
+                    'folder_id'=>$search_in[$iterator]
+                ]);
+                $result_files=$get_files_children_stmt->fetchAll();
+                for($files_iterator=0;$files_iterator<count($result_files);$files_iterator++)
+                {
+                      if(strpos($result_files[$files_iterator]['name'],$search_name)!==false)
+                      {
+                            array_push($result_items,['item_id'=>$result_files[$files_iterator]['item_id'],'parent_id'=>$search_in[$iterator],'name'=>$result_files[$files_iterator]['name'],'content_type'=>'file']);
+                      }
+                }
+            }
+            return $result_items;
+            
+        }
+
 
 
     }

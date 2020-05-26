@@ -222,6 +222,15 @@ class App
             $download_controller = new CDownload();
             $download_controller->downloadFile($download_id);
         });
+        
+        $router->addRoute('GET','/api/search/:search_name',function($search_name){
+            if($this->authorize->validateAuthorization())
+            {
+                $item_controller=new CItems();
+                $user_id=$this->authorize->getDecoded()['user_id'];
+                $item_controller->searchByName($user_id,$search_name);
+            }
+        });
 
         $router->run($this->method, $this->URI);
     }

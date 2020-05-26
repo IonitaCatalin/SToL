@@ -256,6 +256,21 @@
             }
         }
 
+        public function searchByName($user_id,$search_name)
+        {
+            try
+            {
+                $json=new JsonResponse('success',json_encode($this->model->searchByNameFromRoot($user_id,$search_name)),'Items with specified search criteria retrieved successfully!',200);
+                echo $json->response();
+
+            }
+            catch(PDOException $exception)
+            {
+                $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                echo $json->response();
+            }
+        }
+
 
 
     }
