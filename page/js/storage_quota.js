@@ -36,7 +36,7 @@ function renderStorageBox(data)
 		document.getElementById("gdrive_total").innerHTML = gdrive_data.total / 1073741824 + " GB";
 		let percentage = (gdrive_data.used * 100 / gdrive_data.total) + "%";
 		document.getElementById("quota_googledrive").style.width = percentage;
-		console.log(percentage);
+		//console.log(percentage);
 	} else {
 		document.getElementsByClassName("storage-text")[0].style.color = "lightgray";
 	}

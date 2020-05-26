@@ -50,6 +50,7 @@
 			<nav>
 				<div class="navbar-buttons">
 					<button id="navbar-files">Files</button>
+					<button id="navbar-favourites">Favourites</button>
 					<!-- <button id="navbar-recent">Recent</button>
 					<button id="navbar-trash">Trash</button> -->
 					
@@ -93,12 +94,12 @@
 				<div class="context-file-menu" style="display:none">
 					<button id="file_download_opt" class="contxt-option"><i class="ri-folder-add-line"></i>Download</button>
 					<button id="file_rename_opt" class="contxt-option"><i class="ri-text"></i>Rename</button>
-					<!-- <button id="file_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button> -->
+					<button id="file_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button>
 					<button id="file_remove_opt"class="contxt-option"><i class="ri-eraser-line"></i>Remove</button>
 				</div>
 				<div class="context-folder-menu" style="display:none">
 					<button id="folder_rename_opt" class="contxt-option"><i class="ri-text"></i>Rename</button>
-					<!-- <button id="folder_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button> -->
+					<button id="folder_add_fav_opt" class="contxt-option"><i class="ri-star-line"></i>Add to Favorites</button>
 					<button id="folder_remove_opt"class="contxt-option"><i class="ri-eraser-line"></i>Remove</button>
 				</div>
 				<div class="main-container">	
