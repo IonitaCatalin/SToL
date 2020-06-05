@@ -4,6 +4,7 @@ const folderContextMenu = document.querySelector('.context-folder-menu');
 const container = document.querySelector('.container-wrapper');
 const componentsContainer=document.querySelector('.main-container');
 const newFolderBtn=document.querySelector('#btn-upload');
+const new_folder=document.getElementById('btn-new-folder');
 
 const file_download_opt = document.getElementById('file_download_opt');
 const file_rename_opt = document.getElementById('file_rename_opt');
@@ -17,7 +18,6 @@ const folder_remove_opt = document.getElementById('folder_remove_opt');
 const general_new_folder_opt = document.getElementById('general_new_folder_opt');
 const general_refresh_opt = document.getElementById('general_refresh_opt');
 const general_upload_opt = document.getElementById('general_upload_opt');
-const new_folder=document.getElementById('btn-new-folder');
 
 
 var selected_item_id = null; // folder sau fisier selectat

@@ -29,7 +29,50 @@
 			<section>
 				<h2>Continuturi</h2>
 				<ol>
-					<li><a href="#desc">1. De facut</a></li>
+					<li>1. Privire de ansamblu</a></li>
+					<li>2. Login si register</li>
+						<ul>
+							<li>Login</li>
+							<li>Register</li>
+						</ul>
+					<li>3. Profile si Storage</li>
+						<ul>
+							<li>Informatii despre profile</li>
+							<li>Informatii despre storage</li>
+							<li>Modificare profile user</li>
+						</ul>
+					<li>4. Autorizare servicii</li>
+						<ul>
+							<li>Autorizarea unui serviciu</li>
+							<li>Deautorizarea unui serviciu</li>
+						</ul>
+					<li>5. Lucrul cu fisiere</li>
+						<ul>
+							<li>Crearea unui folder in alt folder</li>
+							<li>Crearea unui folder in root</li>
+							<li>Obtinere continut al unui folder</li>
+							<li>Obtinere fisiere din root</li>
+							<li>Redenumire fisiere sau foldere</li>
+							<li>Stergere fisiere sau foldere</li>
+							<li>Mutare fisier sau folder sub alt parinte</li>
+						</ul>
+					<li>6. Upload</li>
+						<ul>
+							<li>Crearea unei sesiuni de upload</li>
+							<li>Incarcarea unui fisier pe chunk-uri</li>
+							<li>Anularea unui upload</li>
+						</ul>
+					<li>7. Download</li>
+						<ul>
+							<li>Obtinerea unui link de download</li>
+							<li>Descarcarea fisierului</li>
+						</ul>
+					<li>8. Search and Favourites</li>
+						<ul>
+							<li>Cautare fisiere dupa nume</li>
+							<li>Adaugarea unui item la favorites</li>
+							<li>Eliminarea unui item din favorites</li>
+						</ul>
 
 				</ol>
 
@@ -183,6 +226,673 @@
 					</dd>
 				</dl>
 			</section>
+
+			<section>
+				<h3>Informatii despre profile</h3>
+				<h4>GET /api/user</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Ofera informatii despre un utilizator precum username-ul, email-ul, si daca a autorizat sau nu fiecare din serviciile: GoogleDrive, Onedrive si Dropbox.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/user</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/user \
+	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": "{\"username\":\"abcdef\",\"email\":\"abcdef@yahoo.com\",\"onedrive\":true,\"googledrive\":false,\"dropbox\":true}",
+    "message": "User retrieval succesfully"
+}</pre>
+						<div><b>username</b> <i>String</i> Username-ul contului.</div>
+						<div><b>email</b> <i>String</i> Emai-ul contului.</div>
+						<div><b>onedrive</b> <i>String</i> Daca serviciul Onedrive este autorizat pe cont.</div>
+						<div><b>googledrive</b> <i>String</i> Daca serviciul GoogleDrive este autorizat pe cont.</div>
+						<div><b>dropbox</b> <i>String</i> Daca serviciul Dropbox este autorizat pe cont.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu access token invalid: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Invalid access token"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section>
+				<h3>Informatii despre storage</h3>
+				<h4>GET /api/user/storage</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Ofera informatii despre daca un utilizator a autorizat sau nu unul din serviciile: GoogleDrive, Onedrive si Dropbox. Pentru serviciile autorizate se ofera informatii precum spatiul total de stocare si spatiul folosit.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/user/storage</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/user/storage \
+	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": "{\"googledrive\":{\"available\":false},\"onedrive\":{\"available\":true,\"total\":5368709120,\"used\":398083},\"dropbox\":{\"available\":true,\"total\":2147483648,\"used\":1102571}}",
+    "message": "User's storage data succesfully retrieved"
+}</pre>
+						<div><b>onedrive</b> <i>String</i> Daca serviciul Onedrive este autorizat pe cont.</div>
+						<div><b>googledrive</b> <i>String</i> Daca serviciul GoogleDrive este autorizat pe cont.</div>
+						<div><b>dropbox</b> <i>String</i> Daca serviciul Dropbox este autorizat pe cont.</div>
+						<div><b>total</b> <i>String</i> Spatiul total de stocare disponibil pe serviciul respectiv.</div>
+						<div><b>used</b> <i>String</i> Spatiul total folosit pe serviciul respectiv.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu access token invalid: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Invalid access token"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+			<section>
+				<h3>Modificare profile user</h3>
+				<h4>PATCH /api/user</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Permite modificarea profilului unui utilizator prin schimbarea username-ului sau parolei.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/user</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X PATCH http://localhost/ProiectTW/api/user \
+	--header "Authorization: Bearer &#60;access_token&#62;
+	--header "Content-Type: application/json" \
+	--data "{\"username\": \"NewName\",\"oldpassword\": \"abcdef\",\"newpassword\": \"q1w2e3r4\"}"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div><b>username</b> <i>String</i> Noul nume de utilizator dorit pentru cont.</div>
+						<div><b>oldpassword</b> <i>String</i> Parola veche folosita pentru verificarea identitatii.</div>
+						<div><b>newpassword</b> <i>String</i> Parola noua dorita a o inlocui pe cea veche.</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Data updated succesfully"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu parola veche gresita: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Given password is incorrect"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Username is taken</li>
+							<li>Given password is incorrect</li>
+							<li>Both old password and new password are needed to update user password field</li>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section>
+				<h3>Autorizarea unui serviciu</h3>
+				<h4>GET /api/user/authorize/:service</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Ofera un link spre a fi folosit pentru redirectare. Folosit pentru autorizare OAuth pentru unul din serviciile de stocare in cloud.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/user/authorize/:service</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/user/authorize/googledrive \
+	sau
+	GET http://localhost/ProiectTW/api/user/authorize/dropbox \
+	sau
+	GET http://localhost/ProiectTW/api/user/authorize/onedrive \
+	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": "https://www.dropbox.com/oauth2/authorize?response_type=code&client_id=yakh16kscg1cb6o&redirect_uri=http%3A%2F%2Flocalhost%2FProiectTW%2Fapi%2Fuser%2Fauthorize%2Fdropbox&state=c9526e3221d689b48c621d1babe0bb87",
+    "message": "Dropbox Authorization Link"
+}</pre>
+					<div><b>data</b> <i>String</i> Contine un URL care duce catre pagina pentru a confirma autorizarea serviciului Stol pe unul din servicii de stocare in cloud.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu access token invalid: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Invalid access token"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+
+			<section>
+				<h3>Deautorizarea unui serviciu</h3>
+				<h4>DELETE /api/user/deauthorize/:service</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Prin deautorizare, un serviciu nu va mai fi asociat contului deci nu va mai putea fi folosit pentru a incarca sau descarca fisiere.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/user/deauthorize/:service</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X DELETE http://localhost/ProiectTW/api/user/deauthorize/googledrive \
+	sau
+	DELETE http://localhost/ProiectTW/api/user/deauthorize/dropbox \
+	sau
+	DELETE http://localhost/ProiectTW/api/user/deauthorize/onedrive \
+	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Service succesfully unauthorized"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu access token invalid: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Invalid access token"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+
+			<section>
+				<h3>Crearea unui folder in alt folder</h3>
+				<h4>POST /api/items/:parent_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Permite crearea unui folder atunci cand se stie parintele acestuia.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/items/:parent_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/items/e86edca146bbefd773838a7e7955b521 \
+	--header "Authorization: Bearer &#60;access_token&#62;
+	--header "Content-Type: application/json" \
+	--data "{\"foldername\": \"Poze vacanta\"}"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div><b>foldername</b> <i>String</i> Numele noului folder creat.</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Folder item created succesfully"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu folosirea id-ului unui folder inexistent: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified reference parent id is invalid"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Folder name already taken in the respective container</li>
+							<li>Specified reference parent id is invalid</li>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section>
+				<h3>Crearea unui folder in root</h3>
+				<h4>POST /api/items</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Permite crearea unui folder in root atunci cand nu se cunoaste id-ul acestuia.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/items/:parent_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/items \
+	--header "Authorization: Bearer &#60;access_token&#62;
+	--header "Content-Type: application/json" \
+	--data "{\"foldername\": \"Folder teme\"}"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div><b>foldername</b> <i>String</i> Numele noului folder creat.</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Folder item created succesfully"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu folosirea unui nume de folder deja existent: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Folder name already taken in the respective container with specified id"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Folder name already taken in the respective container</li>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section>
+				<h3>Obtinere continut al unui folder</h3>
+				<h4>GET /api/items/:item_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Ofera o lista cu fisierele si folderele continute in directorul identificat prin id. Se ofera id-ul item-ului, numele si tipul acestuia fisier/folder.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/items/:item_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/items/3dc768efdc11f3282b8829de71fb6c7b \
+	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": "[{\"item_id\":\"d99afce554f4e11902e0b2e24b0dde5f\",\"name\":\"Tema1.pdf\",\"content_type\":\"file\"},{\"item_id\":\"76c12d74b316e100c3d7a838d36af91d\",\"name\":\"Tema2.pdf\",\"content_type\":\"file\"}]",
+    "message": "Item successfully retrieved"
+}</pre>
+						<div><b>item_id</b> <i>String</i> Id-ul item-ului.</div>
+						<div><b>name</b> <i>String</i> Numele item-ului.</div>
+						<div><b>content_type</b> <i>String</i> Daca este fisier sau folder.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu folosirea unui id gresit: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified reference item id is invalid"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+							<li>Specified reference item id is invalid</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section>
+				<h3>Obtinere fisiere din root</h3>
+				<h4>GET /api/items</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Ofera o lista cu fisierele si folderele continute in directorul root. Include informatii si despre folderul root in sine. Se ofera id-ul item-ului, numele si tipul acestuia fisier/folder.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/items</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/items \
+	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": "[{\"item_id\":\"e86edca146bbefd773838a7e7955b521\",\"name\":\"root\",\"content_type\":\"folder\"},{\"item_id\":\"3da7018c61bdb622880194f9f8290ab9\",\"name\":\"Poze vacanta\",\"content_type\":\"folder\"},{\"item_id\":\"3dc768efdc11f3282b8829de71fb6c7b\",\"name\":\"Folder teme\",\"content_type\":\"folder\"}]",
+    "message": "Items succesfully retrieved"
+}</pre>
+						<div><b>item_id</b> <i>String</i> Id-ul item-ului.</div>
+						<div><b>name</b> <i>String</i> Numele item-ului.</div>
+						<div><b>content_type</b> <i>String</i> Daca este fisier sau folder.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu folosirea unui id gresit: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified reference item id is invalid"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+							<li>Specified reference item id is invalid</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section>
+				<h3>Redenumire fisiere sau foldere</h3>
+				<h4>PATCH /api/items/:item_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Permite redenumirea unui fisier sau folder identificate prin ID.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/items/:item_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X PATCH http://localhost/ProiectTW/api/items/3da7018c61bdb622880194f9f8290ab9 \
+	--header "Authorization: Bearer &#60;access_token&#62;
+	--header "Content-Type: application/json" \
+	--data "{\"newname\": \"Poze vacanta(excursie)\"}"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div><b>newname</b> <i>String</i> Noul nume pentru folder sau fisier.</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Data updated successfully"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu folosirea unui nume de folder deja existent: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "New name for specified item is already taken"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>New name for specified item is already taken</li>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section>
+				<h3>Stergere fisiere sau foldere</h3>
+				<h4>DELETE /api/items/:item_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Permite stergerea unui fisier sau folder identificate prin ID. Pentru foldere, stergerea are loc recursiv, sterg toate fisierele din sub-arbore.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/items/:item_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X DELETE http://localhost/ProiectTW/api/items/76c12d74b316e100c3d7a838d36af91d \
+	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Items succesfully deleted"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu folosirea unui id de item inexistent: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified reference parent id is invalid"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Specified reference parent id is invalid</li>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section>
+				<h3>Mutare fisier sau folder sub alt parinte</h3>
+				<h4>PUT /api/items/:item_id/:new_parent_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Permite mutarea unui fisier sau folder identificate prin ID intr-un nou folder.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/items/:item_id/:new_parent_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X PUT http://localhost/ProiectTW/api/items/d99afce554f4e11902e0b2e24b0dde5f/e86edca146bbefd773838a7e7955b521 \
+	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Item succesfully moved"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu folosirea id-ului unui fisier in loc de folder drept parent_id: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified reference new parent id is invalid or not a folder"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Specified reference new parent id is invalid or not a folder</li>
+							<li>There is already an item with same name and type in target directory</li>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+
 		</article>
 
 		<footer>

@@ -60,7 +60,7 @@ class App
                 $profile_controller->getUserStorageData($user_id);
             }
         });
-
+        // modificare profile user
         $router->addRoute('PATCH','/api/user',function()
         {
             if($this->authorize->validateAuthorization())
@@ -70,7 +70,7 @@ class App
                 $profile_controller->changeUserData($user_id);
             }
         });
-
+        // deautorizarea unui serviciu anume
         $router->addRoute('DELETE', '/api/user/deauthorize/:service', function($service)
         {
             if($this->authorize->validateAuthorization())
@@ -81,7 +81,7 @@ class App
             }
         });
 
-
+        // autorizarea unui serviciu
         $router->addRoute('GET','/api/user/authorize/:service', function($service)
         {
             if($this->authorize->validateAuthorization())
@@ -93,13 +93,14 @@ class App
 
         });
 
+        // endpoint pe care este redirectat user-ul de catre serviciu
         $router->addRoute('GET', '/api/user/authorize/:service/:code', function($service,$code)
         {
 
             $global_array = $GLOBALS['array_of_query_string'];
             if(isset($global_array['code'])){
                 $code = $global_array['code'];
-                $user_id = $global_array['state'];                        // !!!! trebuie verificat  pt alte servicii
+                $user_id = $global_array['state'];
                 $profile_controller=new CProfile();
                 $profile_controller->authorizeServices($service, $code, $user_id);
                 header('Location: http://localhost/ProiectTW/page/profile');
@@ -173,7 +174,7 @@ class App
                 $items_controller->moveItem($this->authorize->getDecoded()['user_id'], $item_id, $new_parent_id);
             }
         });
-
+        // crearea unei sesiuni de upload
         $router->addRoute('POST','/api/upload/:parent_id',function($parent_id){
             if($this->authorize->validateAuthorization())
             {
@@ -181,11 +182,12 @@ class App
                 $upload_controller->createUpload($this->authorize->getDecoded()['user_id'],$parent_id,$this->max_upload_chunk);
             }
         });
+        // incarcare fisier pe chunk-uri
         $router->addRoute('PUT','/api/upload/:upload_id',function($upload_id){
             $upload_controller=new CUpload();
             $upload_controller->uploadFile($upload_id,$this->max_upload_chunk);
         });
-
+        // anularea unui upload
         $router->addRoute('DELETE','/api/upload/:upload_file',function($upload_id){
             $upload_controller=new CUpload();
             $upload_controller->deleteUpload($upload_id);
@@ -222,7 +224,7 @@ class App
             $download_controller = new CDownload();
             $download_controller->downloadFile($download_id);
         });
-        
+        // cautare in fisiere
         $router->addRoute('GET','/api/search/:search_name',function($search_name){
             if($this->authorize->validateAuthorization())
             {
