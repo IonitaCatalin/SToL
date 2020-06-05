@@ -1,9 +1,192 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<title></title>
-</head>
-<body>
-	<p>"...cu redactarea documentaţiilor aferente – precum manualul dezvoltatorului, în cazul dezvoltării unui API ori serviciu Web."</p>
-</body>
+<html lang="ro">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+		<title>Stol-Manualul Dezvoltatorului</title>
+		<link rel="stylesheet" href="resources/scholarly.css">
+		<base href="Manualul dezvolatorului.html">
+	</head>
+	<body prefix="schema: http://schema.org">
+
+		<!-- article -->
+		<article resource="#" typeof="schema:ScholarlyArticle">
+
+			<header>
+				<div class="banner">
+					<img role="presentation" src="resources/logo.png" width="220" height="50" alt="Stol logo" id="logo-stol">
+					<div class="status">Stol-Manualul Dezvoltatorului</div>
+				</div>
+				<h1 property="schema:name">Stol-Universal Storage Tool Manualul Dezvoltatorului</h1>
+				<p role="doc-subtitle" property="schema:alternateName">
+						The Future of Managing Cloud Storage
+				</p>
+			</header>
+			<meta property="schema:accessibilityFeature" content="alternativeText">
+			<meta property="schema:accessibilityHazard" content="noFlashingHazard">
+			<meta property="schema:accessMode" content="textual">
+
+			<section>
+				<h2>Continuturi</h2>
+				<ol>
+					<li><a href="#desc">1. De facut</a></li>
+
+				</ol>
+
+			</section>
+
+			<section>
+				<h2>STOL API v0.9</h2>
+				<p>API-ul STOL permite dezvoltatorilor sa lucreze cu fisiere in Stol, incluzand functionalitate avansata precum incarcarea de fisiere fragmentate, incarcarea de fisiere redundante sau cautare full-text. Manualul Dezvoltatorului Stol API este calea cea mai usoara de a incepe sa faceti apeluri catre API.</p>
+			</section>
+
+			<section>
+				<h3>Formate pentru Cereri si Raspunsuri</h3>
+				<p>In general, API-ul Stol foloseste cereri HTTP POST cu argumente JSON si raspunsuri JSON. Autentificarea cererilor se face via JWT Token folosind header-ul Authorization din request-uri.</p>
+
+				<section>
+					<h4>Endpoint-uri RPC</h4>
+					<p>Aceste endpoint-uri accepta argumente precum JSON in body-ul cererii si returneaza rezultate sub format JSON in body-ul raspunsului. Endpoint-urile RPC sunt la domeniul http://localhost/ProiectTW ¯\_(ツ)_/¯ .</p>
+				</section>
+
+				<section>
+					<h4>Endpoint-urile pentru Content-upload</h4>
+					<p>Aceste endpoint-uri accepta continut fisier in body-ul cererii. Argumentele lor sunt trimise inainte intr-o cerere diferita de upload, sub forma de JSON. Doar token-ul jwt este necesar in header-ul Authorization al cererii.</p>
+				</section>
+
+				<section>
+					<h4>Endpoint-urile pentru Content-download</h4>
+					<p>La fel ca endpoint-urile pentru upload, argumentele sunt transmise in body-ul unei cereri anterioare. Body-ul raspunsului contine continutul fisierului.</p>
+				</section>
+
+				<section>
+					<h4>Formate pentru cale</h4>
+					<p>Fiecare fisier si folder din Stol are de asemenea un ID (ex. "c9526e3221d689b48c621d1babe0bb87") care poate fi obtinut de la orice endpoint care returneaza metadate. Aceste ID-uri sunt case sensitive, deci ar trebui mereu stocate tinand cont de aceasta, si trebuie mereu comparate intr-o maniera case-sensitive.</p>
+				</section>
+			</section>
+
+			<section>
+				<h3>Autorizarea</h3>
+				<p>Stol suporta JWT pentru autorizarea cererilor API. Cererile autorizate catre API ar trebui sa foloseasca un header Authorization cu valoarea <code>Bearer &#60;TOKEN&#62;</code>, unde <code>&#60;TOKEN&#62;</code> este un token JWT obtinut prin flow-ul de login.</p>
+			</section>
+
+			<section>
+				<h3>Login</h3>
+				<h4>/api/user/login</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Permite unui utilizator sa intre in cont. De asemenea furnizeaza un acces token folosit pentru request-uri ulterioare.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/user/login</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Fara</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/user/login \
+	--header "Content-Type: application/json" \
+	--data "{\"username\": \"abcdef\",\"password\": \"abcdef\"}"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div><b>username</b> <i>String</i> Numele de cont folosit.</div>
+						<div><b>password</b> <i>String</i> Parola asociata contului folosit.</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": {
+        "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTdG9sX1VuaXZlcnNhbCIsImF1ZCI6IlN0b2xfVW5pdmVyc2FsIiwiaWF0IjpudWxsLCJuYmYiOm51bGwsImV4cCI6bnVsbCwiZGF0YSI6eyJ1c2VyX2lkIjoiYzk1MjZlMzIyMWQ2ODliNDhjNjIxZDFiYWJlMGJiODcifX0.lR4W2VWrjRX7C1TItN3RawYfSH-FQMdRV-Ryu7IsNuo"
+    },
+    "message": "User succesfully logged in, access token was provided"
+}</pre>
+						<div><b>access_token</b> <i>String</i> Token ce va fi folosit pentru autorizarea cererilor viitoare.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu parola incorecta: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Invalid credentials or user does not exist"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Invalid credentials or user does not exist</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+			<section>
+				<h3>Register</h3>
+				<h4>/api/user/register</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Permite unui utilizator sa isi creeze un cont.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/user/register</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Fara</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/user/register \
+	--header "Content-Type: application/json" \
+	--data "{\"email\": \"example@mail.com\",\"username\": \"David32\",\"password\": \"123456abcdef\"}"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div><b>email</b> <i>String</i> Email-ul asociat contului.</div>
+						<div><b>username</b> <i>String</i> Numele de cont.</div>
+						<div><b>password</b> <i>String</i> Parola asociata contului.</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "User account successfully created"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu nume prea scurt: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "The provided username is too short."
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>The email field cannot be empty.</li>
+							<li>The email is not valid.</li>
+							<li>The username field cannot be empty.</li>
+							<li>The password field cannot be empty.</li>
+							<li>The provided email is already in use.</li>
+							<li>The provided username is already in use.</li>
+							<li>The provided username is too short.</li>
+							<li>The provided password is too short.</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+		</article>
+
+		<footer>
+			
+		</footer>
+	</body>
 </html>
