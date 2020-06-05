@@ -107,7 +107,7 @@ class CDownload extends Controller
 		}
 		catch(InvalidDownloadId $exception)
 		{
-			$json=new JsonResponse('error', null, 'Specified file id is invalid',400);
+			$json=new JsonResponse('error', null, 'Specified download id is invalid',400);
             echo $json->response();
 		}
 		catch(PDOException $exception)

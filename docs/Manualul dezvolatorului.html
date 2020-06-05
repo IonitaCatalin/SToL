@@ -29,56 +29,56 @@
 			<section>
 				<h2>Continuturi</h2>
 				<ol>
-					<li>1. Privire de ansamblu</a></li>
-					<li>2. Login si register</li>
+					<li><a href="#overview">1. Privire de ansamblu</a></li>
+					<li><a href="#login">2. Login si register</a></li>
 						<ul>
-							<li>Login</li>
-							<li>Register</li>
+							<li><a href="#login">Login</a></li>
+							<li><a href="#register">Register</a></li>
 						</ul>
-					<li>3. Profile si Storage</li>
+					<li><a href="#info_prof">3. Profile si Storage</a></li>
 						<ul>
-							<li>Informatii despre profile</li>
-							<li>Informatii despre storage</li>
-							<li>Modificare profile user</li>
+							<li><a href="#info_prof">Informatii despre profile</a></li>
+							<li><a href="#info_stor">Informatii despre storage</a></li>
+							<li><a href="#updt_user">Modificare profile user</a></li>
 						</ul>
-					<li>4. Autorizare servicii</li>
+					<li><a href="#auth_serv">4. Servicii</a></li>
 						<ul>
-							<li>Autorizarea unui serviciu</li>
-							<li>Deautorizarea unui serviciu</li>
+							<li><a href="#auth_serv">Autorizarea unui serviciu</a></li>
+							<li><a href="#deauth_serv">Deautorizarea unui serviciu</a></li>
 						</ul>
-					<li>5. Lucrul cu fisiere</li>
+					<li><a href="#fld_to_fld">5. Lucrul cu fisiere</a></li>
 						<ul>
-							<li>Crearea unui folder in alt folder</li>
-							<li>Crearea unui folder in root</li>
-							<li>Obtinere continut al unui folder</li>
-							<li>Obtinere fisiere din root</li>
-							<li>Redenumire fisiere sau foldere</li>
-							<li>Stergere fisiere sau foldere</li>
-							<li>Mutare fisier sau folder sub alt parinte</li>
+							<li><a href="#fld_to_fld">Crearea unui folder in alt folder</a></li>
+							<li><a href="#fld_to_root">Crearea unui folder in root</a></li>
+							<li><a href="#get_fld">Obtinere continut al unui folder</a></li>
+							<li><a href="#get_root">Obtinere fisiere din root</a></li>
+							<li><a href="#rename">Redenumire fisiere sau foldere</a></li>
+							<li><a href="#delete_itm">Stergere fisiere sau foldere</a></li>
+							<li><a href="#move_itm">Mutare fisier sau folder sub alt parinte</a></li>
 						</ul>
-					<li>6. Upload</li>
+					<li><a href="#upld_create">6. Upload</a></li>
 						<ul>
-							<li>Crearea unei sesiuni de upload</li>
-							<li>Incarcarea unui fisier pe chunk-uri</li>
-							<li>Anularea unui upload</li>
+							<li><a href="#upld_create">Crearea unei sesiuni de upload</a></li>
+							<li><a href="#upld_file">Incarcarea unui fisier pe chunk-uri</a></li>
+							<li><a href="#upld_cancel">Anularea unui upload</a></li>
 						</ul>
-					<li>7. Download</li>
+					<li><a href="#dwnld_create">7. Download</a></li>
 						<ul>
-							<li>Obtinerea unui link de download</li>
-							<li>Descarcarea fisierului</li>
+							<li><a href="#dwnld_create">Crearea unei sesiuni de download</a></li>
+							<li><a href="#dwnld_file">Descarcarea fisierului</a></li>
 						</ul>
-					<li>8. Search and Favourites</li>
+					<li><a href="#search">8. Search and Favourites</a></li>
 						<ul>
-							<li>Cautare fisiere dupa nume</li>
-							<li>Adaugarea unui item la favorites</li>
-							<li>Eliminarea unui item din favorites</li>
+							<li><a href="#search">Cautare fisiere si foldere dupa nume</a></li>
+							<li><a href="#add_fav">Adaugarea unui item la favorites</a></li>
+							<li><a href="#rmv_fav">Eliminarea unui item din favorites</a></li>
 						</ul>
 
 				</ol>
 
 			</section>
 
-			<section>
+			<section id="overview">
 				<h2>STOL API v0.9</h2>
 				<p>API-ul STOL permite dezvoltatorilor sa lucreze cu fisiere in Stol, incluzand functionalitate avansata precum incarcarea de fisiere fragmentate, incarcarea de fisiere redundante sau cautare full-text. Manualul Dezvoltatorului Stol API este calea cea mai usoara de a incepe sa faceti apeluri catre API.</p>
 			</section>
@@ -113,7 +113,7 @@
 				<p>Stol suporta JWT pentru autorizarea cererilor API. Cererile autorizate catre API ar trebui sa foloseasca un header Authorization cu valoarea <code>Bearer &#60;TOKEN&#62;</code>, unde <code>&#60;TOKEN&#62;</code> este un token JWT obtinut prin flow-ul de login.</p>
 			</section>
 
-			<section>
+			<section id="login">
 				<h3>Login</h3>
 				<h4>/api/user/login</h4>
 				<dl>
@@ -168,7 +168,7 @@
 				</dl>
 			</section>
 
-			<section>
+			<section id="register">
 				<h3>Register</h3>
 				<h4>/api/user/register</h4>
 				<dl>
@@ -227,7 +227,7 @@
 				</dl>
 			</section>
 
-			<section>
+			<section id="info_prof">
 				<h3>Informatii despre profile</h3>
 				<h4>GET /api/user</h4>
 				<dl>
@@ -245,7 +245,7 @@
 					<dt>Exemplu</dt>
 					<dd>
 						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/user \
-	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
 					</dd>
 
 					<dt>Parametrii</dt>
@@ -284,7 +284,7 @@
 			</section>
 
 
-			<section>
+			<section id="info_stor">
 				<h3>Informatii despre storage</h3>
 				<h4>GET /api/user/storage</h4>
 				<dl>
@@ -302,7 +302,7 @@
 					<dt>Exemplu</dt>
 					<dd>
 						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/user/storage \
-	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
 					</dd>
 
 					<dt>Parametrii</dt>
@@ -340,7 +340,7 @@
 				</dl>
 			</section>
 
-			<section>
+			<section id="updt_user">
 				<h3>Modificare profile user</h3>
 				<h4>PATCH /api/user</h4>
 				<dl>
@@ -358,7 +358,7 @@
 					<dt>Exemplu</dt>
 					<dd>
 						<pre class="literal-block documentation__curl-example">curl -X PATCH http://localhost/ProiectTW/api/user \
-	--header "Authorization: Bearer &#60;access_token&#62;
+	--header "Authorization: Bearer &#60;access_token&#62;" \
 	--header "Content-Type: application/json" \
 	--data "{\"username\": \"NewName\",\"oldpassword\": \"abcdef\",\"newpassword\": \"q1w2e3r4\"}"</pre>
 					</dd>
@@ -398,7 +398,7 @@
 			</section>
 
 
-			<section>
+			<section id="auth_serv">
 				<h3>Autorizarea unui serviciu</h3>
 				<h4>GET /api/user/authorize/:service</h4>
 				<dl>
@@ -420,7 +420,7 @@
 	GET http://localhost/ProiectTW/api/user/authorize/dropbox \
 	sau
 	GET http://localhost/ProiectTW/api/user/authorize/onedrive \
-	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
 					</dd>
 
 					<dt>Parametrii</dt>
@@ -456,7 +456,7 @@
 
 
 
-			<section>
+			<section id="deauth_serv">
 				<h3>Deautorizarea unui serviciu</h3>
 				<h4>DELETE /api/user/deauthorize/:service</h4>
 				<dl>
@@ -478,7 +478,7 @@
 	DELETE http://localhost/ProiectTW/api/user/deauthorize/dropbox \
 	sau
 	DELETE http://localhost/ProiectTW/api/user/deauthorize/onedrive \
-	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
 					</dd>
 
 					<dt>Parametrii</dt>
@@ -512,7 +512,7 @@
 
 
 
-			<section>
+			<section id="fld_to_fld">
 				<h3>Crearea unui folder in alt folder</h3>
 				<h4>POST /api/items/:parent_id</h4>
 				<dl>
@@ -530,7 +530,7 @@
 					<dt>Exemplu</dt>
 					<dd>
 						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/items/e86edca146bbefd773838a7e7955b521 \
-	--header "Authorization: Bearer &#60;access_token&#62;
+	--header "Authorization: Bearer &#60;access_token&#62;" \
 	--header "Content-Type: application/json" \
 	--data "{\"foldername\": \"Poze vacanta\"}"</pre>
 					</dd>
@@ -567,7 +567,7 @@
 			</section>
 
 
-			<section>
+			<section id="fld_to_root">
 				<h3>Crearea unui folder in root</h3>
 				<h4>POST /api/items</h4>
 				<dl>
@@ -585,7 +585,7 @@
 					<dt>Exemplu</dt>
 					<dd>
 						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/items \
-	--header "Authorization: Bearer &#60;access_token&#62;
+	--header "Authorization: Bearer &#60;access_token&#62;" \
 	--header "Content-Type: application/json" \
 	--data "{\"foldername\": \"Folder teme\"}"</pre>
 					</dd>
@@ -621,7 +621,7 @@
 			</section>
 
 
-			<section>
+			<section id="get_fld">
 				<h3>Obtinere continut al unui folder</h3>
 				<h4>GET /api/items/:item_id</h4>
 				<dl>
@@ -639,7 +639,7 @@
 					<dt>Exemplu</dt>
 					<dd>
 						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/items/3dc768efdc11f3282b8829de71fb6c7b \
-	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
 					</dd>
 
 					<dt>Parametrii</dt>
@@ -677,7 +677,7 @@
 			</section>
 
 
-			<section>
+			<section id="get_root">
 				<h3>Obtinere fisiere din root</h3>
 				<h4>GET /api/items</h4>
 				<dl>
@@ -695,7 +695,7 @@
 					<dt>Exemplu</dt>
 					<dd>
 						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/items \
-	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
 					</dd>
 
 					<dt>Parametrii</dt>
@@ -733,7 +733,7 @@
 			</section>
 
 
-			<section>
+			<section id="rename">
 				<h3>Redenumire fisiere sau foldere</h3>
 				<h4>PATCH /api/items/:item_id</h4>
 				<dl>
@@ -751,7 +751,7 @@
 					<dt>Exemplu</dt>
 					<dd>
 						<pre class="literal-block documentation__curl-example">curl -X PATCH http://localhost/ProiectTW/api/items/3da7018c61bdb622880194f9f8290ab9 \
-	--header "Authorization: Bearer &#60;access_token&#62;
+	--header "Authorization: Bearer &#60;access_token&#62;" \
 	--header "Content-Type: application/json" \
 	--data "{\"newname\": \"Poze vacanta(excursie)\"}"</pre>
 					</dd>
@@ -787,7 +787,7 @@
 			</section>
 
 
-			<section>
+			<section id="delete_itm">
 				<h3>Stergere fisiere sau foldere</h3>
 				<h4>DELETE /api/items/:item_id</h4>
 				<dl>
@@ -805,7 +805,7 @@
 					<dt>Exemplu</dt>
 					<dd>
 						<pre class="literal-block documentation__curl-example">curl -X DELETE http://localhost/ProiectTW/api/items/76c12d74b316e100c3d7a838d36af91d \
-	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
 					</dd>
 
 					<dt>Parametrii</dt>
@@ -839,7 +839,7 @@
 			</section>
 
 
-			<section>
+			<section id="move_itm">
 				<h3>Mutare fisier sau folder sub alt parinte</h3>
 				<h4>PUT /api/items/:item_id/:new_parent_id</h4>
 				<dl>
@@ -857,7 +857,7 @@
 					<dt>Exemplu</dt>
 					<dd>
 						<pre class="literal-block documentation__curl-example">curl -X PUT http://localhost/ProiectTW/api/items/d99afce554f4e11902e0b2e24b0dde5f/e86edca146bbefd773838a7e7955b521 \
-	--header "Authorization: Bearer &#60;access_token&#62;</pre>
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
 					</dd>
 
 					<dt>Parametrii</dt>
@@ -884,6 +884,346 @@
 							<lh>Erori posibile:</lh>
 							<li>Specified reference new parent id is invalid or not a folder</li>
 							<li>There is already an item with same name and type in target directory</li>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+
+			<section id="upld_create">
+				<h3>Crearea unei sesiuni de upload</h3>
+				<h4>POST /api/upload/:parent_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Este apelata inainte de trimiterea propriu-zisa a fisierului. Va returna o adresa la care se poate incarca fisierul precum si dimensiunea primului chunk asteptat.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/upload/:parent_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/upload/e86edca146bbefd773838a7e7955b521 \
+	--header "Authorization: Bearer &#60;access_token&#62;" \
+	--header "Content-Type: application/json" \
+	--data "{\"filename\": \"Tema3.pdf\",\"filesize\": \"2731\",\"mode\": \"fragmented\"}"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div><b>filename</b> <i>String</i> Numele fisierului ce urmeaza a fi incarcat.</div>
+						<div><b>filesize</b> <i>String</i> Dimensiunea fisierului ce urmeaza a fi incarcat.</div>
+						<div><b>mode</b> <i>String</i> Modul in care va fi incarcat fisierul(redundant/fragmentat).</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": {
+        "url": "http://localhost/ProiectTW/api/upload/5eda89d8bc44f4.58624273",
+        "chunk": 10000000
+    },
+    "message": "Upload endpoint generated succesfully"
+}</pre>
+						<div><b>url</b> <i>String</i> Adresa la care va fi incarcat fisierul.</div>
+						<div><b>chunk</b> <i>String</i> Dimensiunea primului chunk din fisier asteptat de server.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu folosirea unui id invalid drept parent_id: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified parent id is invalid"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Specified parent id is invalid</li>
+							<li>Item name is already taken</li>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+
+			<section id="upld_file">
+				<h3>Incarcarea unui fisier pe chunk-uri</h3>
+				<h4>PUT /api/upload/:upload_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Pentru incarcarea pe chunk-uri a fisierului pentru care s-a creat anterior o sesiune de upload.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/upload/:upload_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Fara</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X PUT http://localhost/ProiectTW/api/upload/5eda89d8bc44f4.58624273 \
+	--data "&#60;file_chunk&#62;"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Data file uploaded succesfully"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu incercarea de a incarca un fisier in mod redundant cand nu sunt 2 servicii de stocare in cloud autorizate: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Using redundancy mode for a file requires at least two services"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Storage space insufficient to complete request</li>
+							<li>Upload could not be complete since there are no storage services linked</li>
+							<li>GoogleDrive service failed due to internal issues</li>
+							<li>Onedrive service failed due to internal issues</li>
+							<li>Dropbox service failed due to internal issues</li>
+							<li>Invalid upload endpoint</li>
+							<li>Chunk size not supported by the server instance</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section id="upld_cancel">
+				<h3>Anularea unui upload</h3>
+				<h4>DELETE /api/upload/:upload_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Apelata atunci cand se doreste anularea unui upload in progres. Invalideaza sesiunea de upload si sterge fragmentele deja incarcate.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/upload/:upload_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Fara</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X DELETE http://localhost/ProiectTW/api/upload/5eda89d8bc44f4.58624273</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Upload revoked successfully"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu anularea unui upload dupa ce fisierul a inceput a fi impartit si incarcat pe serviciile de stocare in cloud: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Deleting a file in the process of splitting to associated services is not permitted"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Invalid upload id supplied</li>
+							<li>Deleting a file in the process of splitting to associated services is not permitted</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+
+			<section id="dwnld_create">
+				<h3>Crearea unei sesiuni de download</h3>
+				<h4>POST /api/download/:file_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Este apelata inainte de primirea propriu-zisa a fisierului. Va returna o adresa de la care se poate prelua fisierul.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/download/:file_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/download/d99afce554f4e11902e0b2e24b0dde5f \
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": {
+        "url": "http://localhost/ProiectTW/api/download/5eda9ae4600e50.82295199"
+    },
+    "message": "Download is starting. Please wait for collecting services fragments"
+}</pre>
+						<div><b>url</b> <i>String</i> Adresa de la care va putea fi descarcat fisierul.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu incercarea de a descarca un fisier fragmentat atunci cand fragmentul de pe Onedrive a fost sters: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "The file fragment from OneDrive is missing"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>The provided file id is invalid</li>
+							<li>Retrieving the file requires OneDrive authorization</li>
+							<li>Retrieving the file requires Dropbox authorization</li>
+							<li>Retrieving the file requires Googledrive authorization</li>
+							<li>The file fragment from OneDrive is missing</li>
+							<li>The file fragment from Dropbox is missing</li>
+							<li>The file fragment from Googledrive is missing</li>
+							<li>The redundant file was deleted from all services: &#60;list&#62;</li>
+							<li>Please authorize one of the following: &#60;list&#62;</li>
+							<li>File was deleted from: &#60;list&#62;, please try to authorize: &#60;list&#62;</li>
+							<li>Service temporarly unavailable</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section id="dwnld_file">
+				<h3>Descarcarea fisierului</h3>
+				<h4>GET /api/download/:download_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Pentru descarcarea ca flux de octeti a fisierului pentru care s-a creat anterior o sesiune de download.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/download/:download_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Fara</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/download/5eda9ae4600e50.82295199</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">&#60;flux_octeti&#62; ce poate fi salvat intr-un fisier</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu incercarea de folosi o sesiune de download invalida: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified download id is invalid"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Specified download id is invalid</li>
+							<li>Service temporarly unavailable</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section id="search">
+				<h3>Cautare fisiere si foldere dupa nume</h3>
+				<h4>GET /api/search/:search_name</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Returneaza o lista de iteme care contin in nume parametrul dat. Pentru fiecare item se obtine id-ul sau, id-ul parintelui, numele si tipul continutului(fisiere sau folder)</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/search/:search_name</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/search/Tema \
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": "[{\"item_id\":\"d99afce554f4e11902e0b2e24b0dde5f\",\"parent_id\":\"e86edca146bbefd773838a7e7955b521\",\"name\":\"Tema1.pdf\",\"content_type\":\"file\"},{\"item_id\":\"787efc3002d4073d2d2ca025550a2c57\",\"parent_id\":\"e86edca146bbefd773838a7e7955b521\",\"name\":\"Tema2.pdf\",\"content_type\":\"file\"}]",
+    "message": "Items with specified search criteria retrieved successfully!"
+}</pre>
+						<div><b>item_id</b> <i>String</i> Id-ul unui item.</div>
+						<div><b>parent_id</b> <i>String</i> Id-ul parintelui item-ului.</div>
+						<div><b>name</b> <i>String</i> Numele item-ului.</div>
+						<div><b>content_type</b> <i>String</i> Daca este fisier sau folder.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu folosirea unui id invalid drept parent_id: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified parent id is invalid"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Service temporarly unavailable</li>
 							<li>Missing access token</li>
 							<li>Invalid access token</li>
 						</ul>

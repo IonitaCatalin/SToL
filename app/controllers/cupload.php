@@ -99,19 +99,19 @@ class CUpload extends Controller
                 catch(GoogledriveUploadFileException $exception)
                 {
                     $this->model->deleteIncompleteUpload($upload_id,$fragments_id);
-                    $json=new JsonResponse('error',null,'GoogleDrive service failed due to internat issues',400);
+                    $json=new JsonResponse('error',null,'GoogleDrive service failed due to internal issues',400);
                     echo $json->response();
                 }
                 catch(OneDriveUploadException $exception)
                 {
                     $this->model->deleteIncompleteUpload($upload_id,$fragments_id);
-                    $json=new JsonResponse('error',null,'Onedrive service failed due to internat issues',400);
+                    $json=new JsonResponse('error',null,'Onedrive service failed due to internal issues',400);
                     echo $json->response();
                 }
                 catch(DropboxUploadFileException $exception)
                 {
                     $this->model->deleteIncompleteUpload($upload_id,$fragments_id);
-                    $json=new JsonResponse('error',null,'Dropbox service failed due to internat issues',400);
+                    $json=new JsonResponse('error',null,'Dropbox service failed due to internal issues',400);
                     echo $json->response();
                 }
                 catch(InvalidRedundancyException $exception)
