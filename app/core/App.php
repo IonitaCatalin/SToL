@@ -40,6 +40,12 @@ class App
                 $page_controller=new CPage();
                 $page_controller->renderFiles();
         });
+
+        $router->addRoute('GET','/page/admin',function(){
+            $page_controller=new CPage();
+            $page_controller->renderAdmin();
+        });
+        
         // info despre profile
         $router->addRoute('GET', '/api/user', function()
         {

@@ -31,5 +31,11 @@
             $register_view=new VRegister();
             echo $register_view->renderView();
         }
+        public function renderAdmin()
+        {
+            $this->view('admin/vadmin');
+            $admin_view=new VAdmin();
+            echo $admin_view->renderView();
+        }
     }
 ?>
