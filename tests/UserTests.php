@@ -8,6 +8,7 @@
         public static $username;
         public static $password;
         public static $email;
+        public static $token;
         public static function setUpBeforeClass():void
         {
             $bytes=random_bytes(16);
@@ -91,7 +92,32 @@
                 CURLOPT_SSL_VERIFYPEER=>false
             ]);
             $result_array=json_decode(curl_exec($login_test_curl),true);
+            $token=$result_array['access_token'];
             $this->assertEquals(curl_getinfo($login_test_curl,CURLINFO_HTTP_CODE),200);
         }
+        public function testAPILoginWrongPassword():void
+        {
+            $login_test_curl=curl_init();
+            curl_setopt_array($login_test_curl,[
+                CURLOPT_RETURNTRANSFER=>1,
+                CURLOPT_URL=>USER_API_ENDPOINT.'/login',
+                CURLOPT_USERAGENT=>'Stol',
+                CURLOPT_POST=>1,
+                CURLOPT_HTTPHEADER => array('Content-Type:application/json'),
+                CURLOPT_POSTFIELDS=>json_encode([
+                    'username'=>self::$username,
+                    'password'=>'somethingrandom',
+                    'email'=>self::$email
+                ]),
+                CURLOPT_SSL_VERIFYPEER=>false
+            ]);
+            $result_array=json_decode(curl_exec($login_test_curl),true);
+            $this->assertEquals(curl_getinfo($login_test_curl,CURLINFO_HTTP_CODE),401);
+        }
+        public function testAPIChangeUserCredentials():void
+        {
+            $change_user_profile=curl_init();
+        }
+
     }
 ?>

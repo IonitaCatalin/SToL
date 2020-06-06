@@ -72,3 +72,17 @@ POST localhost/ProiectTW/api/uploadSession/asjdkasdl12313asd
 
 
 
+-------------------------------------------TESTS---------------------------------------------------------
+
+Testele vor fi rulate cu urmatoarea comanda intr-un utilitar de linie de comanda in prezenta modulului de composer phpunit
+
+Modulul phpunit insa si celelalte module necesare rularii sistemului pot fi instalate folosind comanda:composer.phar install
+
+./vendor/bin/phpunit ./tests/<Tests>.php
+
+Ex:./vendor/bin/phpunit --debug ./tests/UserTests.php
+
+
+
+
+
