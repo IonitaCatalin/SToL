@@ -19,7 +19,7 @@
 
 					<div class="alert" style="display:none">
 						  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-						  <p id="alert_text"></p>
+						  <p id="alert-text"></p>
 					</div>
 
 					<div class="generic_row">
@@ -35,46 +35,12 @@
 									<th>Email</th>
 									<th>No. of files</th>
 									<th>Onedrive</th>
-									<th>GDrive</th>
 									<th>Dropbox</th>
+									<th>GDrive</th>
 								</tr>
 							</thead>
-							<tbody>
-								<tr>
-									<td><input type="checkbox" value="name0" /></td>
-									<td>name0</td>
-									<td>name0@example.com</td>
-									<td>42</td>
-									<td>Yes</td>
-									<td>No</td>
-									<td>Yes</td>
-								</tr>
-								<tr>
-									<td><input type="checkbox" value="name1" /></td>
-									<td>name1</td>
-									<td>name1@example.com</td>
-									<td>1</td>
-									<td>No</td>
-									<td>No</td>
-									<td>No</td>
-								</tr>
-								<tr>
-									<td><input type="checkbox" value="name2" /></td>
-									<td>name2</td>
-									<td>name2@example.com</td>
-									<td>100</td>
-									<td>Yes</td>
-									<td>Yes</td>
-									<td>Yes</td>
-								</tr>
-								<tr><td><input type="checkbox" value="name3" /></td><td>name3</td><td>name3@example.com</td><td>100</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-								<tr><td><input type="checkbox" value="name4" /></td><td>name4</td><td>name4@example.com</td><td>100</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-								<tr><td><input type="checkbox" value="name5" /></td><td>name5</td><td>name5@example.com</td><td>100</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-								<tr><td><input type="checkbox" value="name6" /></td><td>name6</td><td>name6@example.com</td><td>100</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-								<tr><td><input type="checkbox" value="name7" /></td><td>name7</td><td>name7@example.com</td><td>100</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-								<tr><td><input type="checkbox" value="name8" /></td><td>name8</td><td>name8@example.com</td><td>100</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-								<tr><td><input type="checkbox" value="name9" /></td><td>name9</td><td>name9@example.com</td><td>100</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-								<tr><td><input type="checkbox" value="name10" /></td><td>name10</td><td>name10@example.com</td><td>100</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+							<tbody id="tableBody">
+
 							</tbody>
 						</table>
 					</div>

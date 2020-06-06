@@ -239,6 +239,31 @@ class App
                 $item_controller->searchByName($user_id,$search_name);
             }
         });
+        // construieste fisierul csv si returneaza adresa de unde se poate descarca
+        $router->addRoute('POST', '/api/admin/download_csv', function(){
+            if($this->authorize->validateAuthorization())
+            {
+                $admin_controller = new CAdmin();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $admin_controller->createCSVFileAndDownloadLink($user_id);
+            }
+        });
+        // pentru descarcarea fisierului csv
+        $router->addRoute('GET', '/api/admin/download_csv/:download_id', function($download_id)
+        {
+            $admin_controller = new CAdmin();
+            $admin_controller->downloadCSVFile($download_id);
+        });
+        // pentru obtinerea datelor despre utilizatori
+        $router->addRoute('GET', '/api/admin/users', function(){
+            if($this->authorize->validateAuthorization())
+            {
+                $admin_controller = new CAdmin();
+                $user_id = $this->authorize->getDecoded()["user_id"];
+                $admin_controller->getUsersData($user_id);
+            }
+        });
+
 
         $router->run($this->method, $this->URI);
     }

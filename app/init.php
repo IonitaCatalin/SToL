@@ -16,6 +16,7 @@ require_once 'controllers/cpage.php';
 require_once 'controllers/citems.php';
 require_once 'controllers/cupload.php';
 require_once 'controllers/cdownload.php';
+require_once 'controllers/cadmin.php';
 
 require_once 'core/Onedrive/Onedrive.php';
 require_once 'core/Onedrive/OnedriveException.php';
