@@ -6,9 +6,11 @@ class App
     private $raw_input;
     private $authorize;   
     private $max_upload_chunk=10000000;
+    private $admin_user_id;
 
     function __construct($inputs)
     {
+        $this->admin_user_id='c4c5df0d7ed360c14262fbc3a0f46fac';
         $this->authorize = new AuthorizationHandler();
         $this->URI =$this->checkKey('URI', $inputs);
         $this->method =$this->checkKey('method', $inputs);
@@ -243,9 +245,17 @@ class App
         $router->addRoute('POST', '/api/admin/download_csv', function(){
             if($this->authorize->validateAuthorization())
             {
-                $admin_controller = new CAdmin();
-                $user_id = $this->authorize->getDecoded()["user_id"];
-                $admin_controller->createCSVFileAndDownloadLink($user_id);
+                if($this->authorize->getDecoded()['user_id']==$this->admin_user_id)
+                {
+                    $admin_controller = new CAdmin();
+                    $user_id = $this->authorize->getDecoded()["user_id"];
+                    $admin_controller->createCSVFileAndDownloadLink($user_id);
+                }
+                else
+                {
+                    $json=new JsonResponse(409,null,'Provided authorization token does not belong to an administrator',409);
+                    echo $json->response();
+                }
             }
         });
         // pentru descarcarea fisierului csv
@@ -258,11 +268,21 @@ class App
         $router->addRoute('GET', '/api/admin/users', function(){
             if($this->authorize->validateAuthorization())
             {
-                $admin_controller = new CAdmin();
-                $user_id = $this->authorize->getDecoded()["user_id"];
-                $admin_controller->getUsersData($user_id);
+                if($this->authorize->getDecoded()['user_id']==$this->admin_user_id)
+                {
+                    $admin_controller = new CAdmin();
+                    $user_id = $this->authorize->getDecoded()["user_id"];
+                    $admin_controller->getUsersData($user_id);
+                }
+                else
+                {
+                    $json=new JsonResponse(409,null,'Provided authorization token does not belong to an administrator',409);
+                    echo $json->response();
+                }
             }
         });
+
+        
 
 
         $router->run($this->method, $this->URI);

@@ -92,7 +92,7 @@
                 CURLOPT_SSL_VERIFYPEER=>false
             ]);
             $result_array=json_decode(curl_exec($login_test_curl),true);
-            $token=$result_array['access_token'];
+            self::$token=$result_array['data']['access_token'];
             $this->assertEquals(curl_getinfo($login_test_curl,CURLINFO_HTTP_CODE),200);
         }
         public function testAPILoginWrongPassword():void
@@ -117,6 +117,19 @@
         public function testAPIChangeUserCredentials():void
         {
             $change_user_profile=curl_init();
+            curl_setopt_array($change_user_profile,[
+                CURLOPT_RETURNTRANSFER=>1,
+                CURLOPT_URL=>USER_API_ENDPOINT,
+                CURLOPT_USERAGENT=>'Stol',
+                CURLOPT_CUSTOMREQUEST=>'PATCH',
+                CURLOPT_POSTFIELDS=>json_encode([
+                    'username'=>self::$username,
+                    'password'=>'somethingrandom',
+                    'email'=>self::$email
+                ]),
+                CURLOPT_SSL_VERIFYPEER=>false
+            ]);
+
         }
 
     }

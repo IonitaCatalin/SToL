@@ -41,14 +41,17 @@ function fetchData()
 		if (xhr.readyState === 4)
 		{
 			const response = JSON.parse(xhr.responseText);
- 
 			if(response.status=='success' && xhr.status==200)
 			{
 				const users_data = JSON.parse(response.data);
 				renderTableRows(users_data);
 			}
 			else {
-				console.log('Nu am incarcat datele !!!');
+				if(xhr.status==409)
+				{
+					toggleAlert('Your are not authorize to use the following tools under your current rights',true,false);
+
+				}
 			}
 
 		}
@@ -101,6 +104,7 @@ function download_csv(users) {
 	xhr.setRequestHeader('Content-type', 'application/json');
 	xhr.setRequestHeader('Authorization', 'Bearer ' + getCookieValue('jwt_token'));
 	const params = { users: users }
+	console.log(params);
 	xhr.send(JSON.stringify(params));
 
 	xhr.onreadystatechange = function() {

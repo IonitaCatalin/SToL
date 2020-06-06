@@ -14,7 +14,6 @@ $query_string = parse_url($inputs['URI'], PHP_URL_QUERY);
 if(isset($query_string))
 {
 	parse_str($query_string, $array_of_query_string);
-	//print_r($array_of_query_string);
 	$inputs['URI'] = strtok($inputs['URI'],'?');
 	$inputs['URI'] = $inputs['URI'] . '/redirect';
 }

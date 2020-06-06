@@ -10,11 +10,26 @@ class MAdmin
 
 		// folosirea tabloului users pt a obtine si scrie datele in fisier
 		// users contine nume de utilizatori..
-		$content = "abcdef";
-
-
+		
 		// ----------------------
-		file_put_contents($path, implode(",", $users_array)); // scriu array-ul transformat in string
+		for($index=0;$index<count($users_array);$index++)
+		{
+			$get_files_sql="SELECT * FROM ACCOUNTS JOIN ITEMS ON ACCOUNTS.ID=ITEMS.USER_ID JOIN FILES ON FILES.ITEM_ID=ITEMS.ITEM_ID JOIN FRAGMENTS ON FRAGMENTS.FRAGMENTS_ID=FILES.FRAGMENTS_ID WHERE ACCOUNTS.USERNAME=:username";
+			$get_files_stmt=DB::getConnection()->prepare($get_files_sql);
+			$get_files_stmt->execute([
+				'username'=>$users_array[$index]
+			]);
+			$result_array=$get_files_stmt->fetchAll();
+			if(!is_null($result_array))
+			{
+				for($iterator=0;$iterator<count($result_array);$iterator++)
+				{
+					$csv_string="{$users_array[$index]};{$result_array[$iterator]['name']};{$result_array[$iterator]['item_id']};{$result_array[$iterator]['folder_id']}\n";
+					file_put_contents($path,$csv_string,FILE_APPEND);
+				}
+			}
+			
+		}
 	}
 
  

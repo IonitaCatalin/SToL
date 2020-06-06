@@ -58,7 +58,6 @@
                 return false;
             }
         }
-        
         public function getDecoded()
         {
             return $this->decoded;
