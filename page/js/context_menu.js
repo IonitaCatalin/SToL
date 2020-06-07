@@ -76,7 +76,7 @@ function setPosition(context, top, left) {
 };
 
 function hideMenus(event) {
-    if (container !== event.target && componentsContainer != event.target) return;
+    //if (container !== event.target && componentsContainer != event.target) return;
     toggleGeneralMenu('none');
     toggleFileMenu('none');
     toggleFolderMenu('none');
@@ -179,6 +179,41 @@ function menu_item_rename(event) {
     toggleFolderMenu('none');
 }
 
+// atat pt foldere cat si pt fisiere
+function menu_item_fav_add_remove(event)
+{
+    let xhr = new XMLHttpRequest();
+    if(favorited_items.has(selected_item_id)) {
+        //console.log('REMOVE FAVORITE file with id: ' + selected_item_id);
+        xhr.open('DELETE', 'http://localhost/ProiectTW/api/favorites/remove/' + selected_item_id);
+    } else {
+        //console.log('ADD TO FAVORITES file with id: ' + selected_item_id);
+        xhr.open('POST', 'http://localhost/ProiectTW/api/favorites/add/' + selected_item_id);
+    }
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + getCookieValue('jwt_token'));
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4)
+        {
+            //console.log(xhr.responseText);
+            const response = JSON.parse(xhr.responseText);
+            if(response.status=='success' && xhr.status==200) {
+                console.log('Am reusit cu succes sa adaug sau elimin de la favorite ' + selected_item_id);
+                loadFiles(folder_parents[folder_parents.length - 1]); // reafisez datele din folderul curent
+            }
+            else {
+                console.log('NU am reusit cu succes sa adaug sau elimin de la favorite ' + selected_item_id);
+            }
+        }
+    }
+
+    toggleFileMenu('none');
+    toggleFolderMenu('none');
+}
+
+
 // pt fisiere si foldere..
 function menu_item_remove(event) {
     console.log('Remove file with id: ' + selected_item_id);
@@ -213,7 +248,6 @@ function menu_item_remove(event) {
 function menu_general_new_folder() {
 
     let current_folder = folder_parents[folder_parents.length - 1];
-    console.log(folder_parents);
 
     let xhr = new XMLHttpRequest();
     xhr.open('POST', 'http://localhost/ProiectTW/api/items/' + current_folder);
@@ -229,7 +263,6 @@ function menu_general_new_folder() {
             const response = JSON.parse(xhr.responseText);
 
             if(response.status=='success' && xhr.status==201) {
-                // render data
                 console.log('Am creat un nou folder');
                 loadFiles(folder_parents[folder_parents.length - 1]); // reafisez datele din folderul curent
             }
@@ -270,11 +303,13 @@ function initializeGeneralMenu() {
 function initializeFileMenu() {
     file_download_opt.addEventListener('click', menu_file_download);
     file_rename_opt.addEventListener('click', menu_item_rename);
+    file_add_fav_opt.addEventListener('click', menu_item_fav_add_remove);
     file_remove_opt.addEventListener('click', menu_item_remove);
 }
 
 function initializeFolderMenu() {
     folder_rename_opt.addEventListener('click', menu_item_rename);
+    folder_add_fav_opt.addEventListener('click', menu_item_fav_add_remove);
     folder_remove_opt.addEventListener('click', menu_item_remove);
 }
 
@@ -290,6 +325,10 @@ function showFileMenu(event) {
     toggleSelectedItemHighlight('off'); // elimin highlight pt penultimul lucru selectat
     selected_item_id = this.id;
     toggleSelectedItemHighlight('on');
+    if(favorited_items.has(selected_item_id))
+        file_add_fav_opt.innerHTML = "Remove from Favorites";
+    else
+        file_add_fav_opt.innerHTML = "Add to Favorites";
     toggleFileMenu('show', event.pageY, event.pageX);
 }
 
@@ -298,6 +337,10 @@ function showFolderMenu(event) {
     toggleSelectedItemHighlight('off'); // elimin highlight pt penultimul lucru selectat
     selected_item_id = this.id;
     toggleSelectedItemHighlight('on');
+    if(favorited_items.has(selected_item_id))
+        folder_add_fav_opt.innerHTML = "Remove from Favorites";
+    else
+        folder_add_fav_opt.innerHTML = "Add to Favorites";
     toggleFolderMenu('show', event.pageY, event.pageX);
 }
 
@@ -327,6 +370,9 @@ function context_menu_apply_listeners() {
 
     container.addEventListener('click', hideMenus);
     container.addEventListener('contextmenu', showGeneralMenu);
+
+    filesButton.addEventListener('click', hideMenus);
+favoritesButton.addEventListener('click', hideMenus);
 
     var all_files = document.querySelectorAll('.file');
     all_files.forEach (

@@ -84,6 +84,7 @@
                         }
                         catch(PDOException $exception)
                         {
+                            echo $exception;
                             $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
                             echo $json->response();
                         }
@@ -271,7 +272,63 @@
             }
         }
 
+        public function getFavoritedItems($user_id)
+        {
+            try
+            {
+                $data_json=json_encode($this->model->getFavoritedItems($user_id));
+                $json=new JsonResponse('success',$data_json,'Favorited items successfully retrieved',200);
+                echo $json->response();
+            }
+            catch(PDOException $exception)
+            {
+                echo $exception;
+                $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                echo $json->response();
+            }
+        }
 
+        public function addToFavorites($user_id, $item_id)
+        {
+            try
+            {
+                $this->model->addToFavorites($user_id, $item_id);
+                $json=new JsonResponse('success',null,'Item added to favorites successfully',200);
+                echo $json->response();
+            }
+            catch(InvalidItemId $exception)
+            {
+                $json=new JsonResponse('error',null,'Specified item id is invalid',400);
+                echo $json->response();
+            }
+            catch(PDOException $exception)
+            {
+                echo $exception;
+                $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                echo $json->response();
+            }
+        }
+
+        public function removeFromFavorites($user_id, $item_id)
+        {
+            try
+            {
+                $this->model->removeFromFavorites($user_id, $item_id);
+                $json=new JsonResponse('success',null,'Item removed from favorites successfully',200);
+                echo $json->response();
+            }
+            catch(InvalidItemId $exception)
+            {
+                $json=new JsonResponse('error',null,'Specified item id is invalid',400);
+                echo $json->response();
+            }
+            catch(PDOException $exception)
+            {
+                echo $exception;
+                $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
+                echo $json->response();
+            }
+        }
 
     }
 ?>

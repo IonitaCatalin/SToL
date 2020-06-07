@@ -22,7 +22,7 @@
 			]);
 			$bytes=random_bytes(16);
 			$item_id=bin2hex($bytes);
-			$insert_item_sql="INSERT INTO ITEMS VALUES (:user_id,:item_id,'folder')";
+			$insert_item_sql="INSERT INTO ITEMS (user_id,item_id,content_type) VALUES (:user_id,:item_id,'folder')";
 			$insert_item_stmt=DB::getConnection()->prepare($insert_item_sql);
 			$insert_item_stmt->execute([
 				'user_id'=>$this->user_id,

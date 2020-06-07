@@ -1,8 +1,11 @@
 const backButton = document.querySelector('#btn-back');
 const searchBox = document.querySelector('#search-box');
+const filesButton = document.getElementById('navbar-files');
+const favoritesButton = document.getElementById('navbar-favourites');
 
 var folder_parents = new Array();
-
+//var loaded_items = new Array();
+var favorited_items = new Map();  // map item_id - content_type
 
 function getCookieValue(name) {
     var value = "; " + document.cookie;
@@ -36,10 +39,19 @@ function loadFiles(current_folder = '')
             if(response.status=='success' && xhr.status==200) {
                 console.log('Am incarcat datele pentru ' + current_folder);
                 if(current_folder == ''){  
-                    let root_data = items_data.shift();
+                    let root_data = items_data.shift(); // obtine prima pozitie
                     folder_parents.push(root_data.item_id);
                 }
-
+                // construiesc si un map cu itemele favorited, ma ajuta pentru meniul contextual
+                favorited_items.clear(); // reset
+                items_data.forEach (
+                    function(element)
+                    {
+                        if(element["favorited"]) {
+                            favorited_items.set(element["item_id"], element["content_type"]);   // map item_id - content_type
+                        }
+                    }
+                );
                 renderComponents(items_data);
             }
             else {
@@ -48,7 +60,7 @@ function loadFiles(current_folder = '')
 
         }
     }
-    
+
     // console.log(folder_parents);
     // console.log(folder_parents.length);
 }
@@ -98,6 +110,7 @@ function renderComponents(data)
     drag_n_drop_apply_listeners();   // e importanta ordinea executiei scripturilor
     context_menu_apply_listeners();     
 }
+
 function searchForFileByName(name)
 {
     let xhr = new XMLHttpRequest();
@@ -113,25 +126,51 @@ function searchForFileByName(name)
             const items_data = JSON.parse(response.data);
 
             if(response.status=='success' && xhr.status==200) {
-                // render data
                 renderComponents(items_data);
             }
-            else
-            {
-                console.log('Ceva nu a mers bine in plm');
+            else {
+                console.log('Nu s-au putut obtine rezultatele cautarii dupa nume');
             }
-
         }
     }
 }
 
-searchBox.addEventListener('keyup', (e) => {
-    const searchString = e.target.value;
-    if(searchString!=='')
-        searchForFileByName(searchString);
-});
+function loadFavoritedItems()
+{
+    console.log("LOADED favorites");
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'http://localhost/ProiectTW/api/favorites/get');
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + getCookieValue('jwt_token'));
+    xhr.send();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4)
+        {
+            const response = JSON.parse(xhr.responseText);
+            const items_data = JSON.parse(response.data);
+
+            if(response.status=='success' && xhr.status==200) {
+                renderComponents(items_data);
+            }
+            else {
+                console.log('Nu s-au putut obtine rezultatele cautarii dupa nume');
+            }
+        }
+    }
+}
+
+
 
 window.onload = function(){  
     loadFiles();
     initializeStorageBox();
+    filesButton.addEventListener('click', (e) => { loadFiles(); } );
+    favoritesButton.addEventListener('click', loadFavoritedItems);
+    searchBox.addEventListener('keyup', (e) => {
+        const searchString = e.target.value;
+        if(searchString!=='')
+            searchForFileByName(searchString);
+    });
 }

@@ -10,7 +10,7 @@ class App
 
     function __construct($inputs)
     {
-        $this->admin_user_id='c4c5df0d7ed360c14262fbc3a0f46fac';
+        $this->admin_user_id='d7a8679b93a68b11e03a08ce681758a8';
         $this->authorize = new AuthorizationHandler();
         $this->URI =$this->checkKey('URI', $inputs);
         $this->method =$this->checkKey('method', $inputs);
@@ -281,7 +281,7 @@ class App
                 }
             }
         });
-
+        // pentru a obtine lista de servicii si daca sunt allowed sau nu
         $router->addRoute('GET','/api/admin/services',function(){
             if($this->authorize->validateAuthorization())
             {
@@ -298,7 +298,7 @@ class App
                 }
             }
         });
-
+        // pentru a schimba statusul unui serviciu particular
         $router->addRoute('POST','/api/admin/services/:service',function($service){
             if($this->authorize->validateAuthorization())
             {
@@ -315,7 +315,33 @@ class App
                 }
             }
         });
-
+        // obtinere lista fisiere de la favorites
+        $router->addRoute('GET','/api/favorites/get',function(){
+            if($this->authorize->validateAuthorization())
+            {
+                $item_controller = new CItems();
+                $user_id = $this->authorize->getDecoded()['user_id'];
+                $item_controller->getFavoritedItems($user_id);
+            }
+        });
+        // adaugare fisier la favorites
+        $router->addRoute('POST','/api/favorites/add/:item_id',function($item_id){
+            if($this->authorize->validateAuthorization())
+            {
+                $item_controller = new CItems();
+                $user_id = $this->authorize->getDecoded()['user_id'];
+                $item_controller->addToFavorites($user_id, $item_id);
+            }
+        });
+        // eliminare fisier de la favorites
+        $router->addRoute('DELETE','/api/favorites/remove/:item_id',function($item_id){
+            if($this->authorize->validateAuthorization())
+            {
+                $item_controller = new CItems();
+                $user_id = $this->authorize->getDecoded()['user_id'];
+                $item_controller->removeFromFavorites($user_id, $item_id);
+            }
+        });
         $router->run($this->method, $this->URI);
     }
 }

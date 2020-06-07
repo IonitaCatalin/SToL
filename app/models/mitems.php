@@ -23,7 +23,7 @@
                 {
                     $bytes=random_bytes(16);
                     $folder_item_id=bin2hex($bytes);
-                    $insert_item_sql="INSERT INTO ITEMS VALUES(:user_id,:item_id,'folder')";
+                    $insert_item_sql="INSERT INTO ITEMS (user_id,item_id,content_type) VALUES(:user_id,:item_id,'folder')";
                     $insert_item_stmt=DB::getConnection()->prepare($insert_item_sql);
                     $insert_item_stmt->execute([
                         'user_id'=>$user_id,
@@ -69,7 +69,7 @@
                 {
                     $bytes=random_bytes(16);
                     $folder_item_id=bin2hex($bytes);
-                    $insert_item_sql="INSERT INTO ITEMS VALUES(:user_id,:item_id,'folder')";
+                    $insert_item_sql="INSERT INTO ITEMS (user_id,item_id,content_type) VALUES(:user_id,:item_id,'folder')";
                     $insert_item_stmt=DB::getConnection()->prepare($insert_item_sql);
                     $insert_item_stmt->execute([
                         'user_id'=>$user_id,
@@ -236,7 +236,7 @@
                 $result_array = array();
                 $count = 0;
 
-                $list_folders_sql = "SELECT flds.item_id, flds.name, itms.content_type FROM ITEMS itms JOIN FOLDERS flds ON itms.item_id = flds.item_id WHERE user_id=:user_id AND parent_id=:parent_id";
+                $list_folders_sql = "SELECT flds.item_id, flds.name, itms.content_type, itms.favorited FROM ITEMS itms JOIN FOLDERS flds ON itms.item_id = flds.item_id WHERE user_id=:user_id AND parent_id=:parent_id";
                 $list_folders_stmt = DB::getConnection()->prepare($list_folders_sql);
                 $list_folders_stmt->execute([
                     'user_id' => $user_id,
@@ -250,7 +250,7 @@
                     }
                 }
   
-                $list_files_sql = "SELECT fls.item_id, fls.name, itms.content_type FROM ITEMS itms JOIN FILES fls ON itms.item_id = fls.item_id WHERE user_id=:user_id AND folder_id=:parent_id";
+                $list_files_sql = "SELECT fls.item_id, fls.name, itms.content_type, itms.favorited FROM ITEMS itms JOIN FILES fls ON itms.item_id = fls.item_id WHERE user_id=:user_id AND folder_id=:parent_id";
                 $list_files_stmt = DB::getConnection()->prepare($list_files_sql);
                 $list_files_stmt->execute([
                     'user_id' => $user_id,
@@ -275,7 +275,7 @@
 
         public function getItemsListFromRoot($user_id)
         {
-            $get_root_sql = "SELECT flds.item_id, flds.name, itms.content_type FROM ITEMS itms JOIN FOLDERS flds ON itms.item_id = flds.item_id WHERE user_id=:user_id AND parent_id IS NULL";
+            $get_root_sql = "SELECT flds.item_id, flds.name, itms.content_type, itms.favorited FROM ITEMS itms JOIN FOLDERS flds ON itms.item_id = flds.item_id WHERE user_id=:user_id AND parent_id IS NULL";
             $get_root_stmt = DB::getConnection()->prepare($get_root_sql);
             $get_root_stmt->execute([
                 'user_id' => $user_id,
@@ -287,7 +287,7 @@
             $result_array[0] = $root_row;   //pun si root id in datele trimise, e util
             $count = 1;
 
-            $list_folders_sql = "SELECT flds.item_id, flds.name, itms.content_type FROM ITEMS itms JOIN FOLDERS flds ON itms.item_id = flds.item_id WHERE user_id=:user_id AND parent_id=:parent_id";
+            $list_folders_sql = "SELECT flds.item_id, flds.name, itms.content_type, itms.favorited FROM ITEMS itms JOIN FOLDERS flds ON itms.item_id = flds.item_id WHERE user_id=:user_id AND parent_id=:parent_id";
             $list_folders_stmt = DB::getConnection()->prepare($list_folders_sql);
             $list_folders_stmt->execute([
                 'user_id' => $user_id,
@@ -301,7 +301,7 @@
                 }
             }
 
-            $list_files_sql = "SELECT fls.item_id, fls.name, itms.content_type FROM ITEMS itms JOIN FILES fls ON itms.item_id = fls.item_id WHERE user_id=:user_id AND folder_id=:parent_id";
+            $list_files_sql = "SELECT fls.item_id, fls.name, itms.content_type, itms.favorited FROM ITEMS itms JOIN FILES fls ON itms.item_id = fls.item_id WHERE user_id=:user_id AND folder_id=:parent_id";
             $list_files_stmt = DB::getConnection()->prepare($list_files_sql);
             $list_files_stmt->execute([
                 'user_id' => $user_id,
@@ -685,7 +685,89 @@
             
         }
 
+        public function getFavoritedItems($user_id)
+        {
+            $result_array = array();
+            $count = 0;
 
+            $list_folders_sql = "SELECT flds.item_id, flds.name, itms.content_type, itms.favorited FROM ITEMS itms JOIN FOLDERS flds ON itms.item_id = flds.item_id WHERE user_id=:user_id AND favorited=TRUE";
+            $list_folders_stmt = DB::getConnection()->prepare($list_folders_sql);
+            $list_folders_stmt->execute([
+                'user_id' => $user_id
+            ]);
+            if($list_folders_stmt->rowCount()>0)
+            {
+                while($row = $list_folders_stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $result_array[$count] = $row;
+                    $count ++ ;
+                }
+            }
+
+            $list_files_sql = "SELECT fls.item_id, fls.name, itms.content_type, itms.favorited FROM ITEMS itms JOIN FILES fls ON itms.item_id = fls.item_id WHERE user_id=:user_id AND favorited=TRUE";
+            $list_files_stmt = DB::getConnection()->prepare($list_files_sql);
+            $list_files_stmt->execute([
+                'user_id' => $user_id
+            ]);
+            if($list_files_stmt->rowCount()>0)
+            {
+                while($row = $list_files_stmt->fetch(PDO::FETCH_ASSOC)) {
+                    $result_array[$count] = $row;
+                    $count ++ ;
+                }
+            }
+            return $result_array;
+        }
+
+
+        public function addToFavorites($user_id, $item_id)
+        {
+            // verific existenta item-ului
+            $search_item_exists_sql = "SELECT item_id FROM ITEMS WHERE user_id=:user_id AND item_id=:item_id";
+            $search_item_exists_stmt = DB::getConnection()->prepare($search_item_exists_sql);
+            $search_item_exists_stmt->execute([
+                'user_id' => $user_id,
+                'item_id' => $item_id
+            ]);
+            $search_item_exists_result = $search_item_exists_stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($search_item_exists_stmt->rowCount() == 0) {
+                throw new InvalidItemId();
+            }
+            else
+            {
+                $update_fav_sql="UPDATE ITEMS SET favorited=TRUE WHERE user_id=:user_id AND item_id=:item_id";
+                $update_fav_stmt=DB::getConnection()->prepare($update_fav_sql);
+                $update_fav_stmt->execute([
+                    'user_id' => $user_id,
+                    'item_id'=>$item_id,
+                ]);
+            }
+        }
+
+        public function removeFromFavorites($user_id, $item_id)
+        {
+            // verific existenta item-ului
+            $search_item_exists_sql = "SELECT item_id FROM ITEMS WHERE user_id=:user_id AND item_id=:item_id";
+            $search_item_exists_stmt = DB::getConnection()->prepare($search_item_exists_sql);
+            $search_item_exists_stmt->execute([
+                'user_id' => $user_id,
+                'item_id' => $item_id
+            ]);
+            $search_item_exists_result = $search_item_exists_stmt->fetch(PDO::FETCH_ASSOC);
+
+            if($search_item_exists_stmt->rowCount() == 0) {
+                throw new InvalidItemId();
+            }
+            else
+            {
+                $update_fav_sql="UPDATE ITEMS SET favorited=FALSE WHERE user_id=:user_id AND item_id=:item_id";
+                $update_fav_stmt=DB::getConnection()->prepare($update_fav_sql);
+                $update_fav_stmt->execute([
+                    'user_id' => $user_id,
+                    'item_id'=>$item_id,
+                ]);
+            }
+        }
 
     }
 ?>

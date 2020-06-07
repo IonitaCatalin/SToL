@@ -30,6 +30,9 @@ class MAdmin
 			}
 			
 		}
+		if(!file_exists($path)) {
+			file_put_contents($path,"Unfortunately there is no data",FILE_APPEND);
+		}
 	}
 
  
