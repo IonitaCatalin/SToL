@@ -67,9 +67,18 @@
 							<li><a href="#dwnld_create">Crearea unei sesiuni de download</a></li>
 							<li><a href="#dwnld_file">Descarcarea fisierului</a></li>
 						</ul>
-					<li><a href="#search">8. Search and Favourites</a></li>
+					<li><a href="#dwnlod_csv_create">8. Administrarea aplicatiei</a></li>
+						<ul>
+							<li><a href="#dwnlod_csv_create">Obtinere link download fisier CSV cu date despre o multime de utilizatori</a></li>
+							<li><a href="#dwnlod_csv">Descarcarea fisierului CSV</a></li>
+							<li><a href="#get_users">Obtinerea datelor despre utilizatori</a></li>
+							<li><a href="#get_services">Obtine lista de servicii si daca sunt allowed sau nu</a></li>
+							<li><a href="#chge_service">Schimba disponibilitatii unui serviciu particular</a></li>
+						</ul>
+					<li><a href="#search">9. Search and Favourites</a></li>
 						<ul>
 							<li><a href="#search">Cautare fisiere si foldere dupa nume</a></li>
+							<li><a href="#get_fav">Obtinere lista fisiere de la favorites</a></li>
 							<li><a href="#add_fav">Adaugarea unui item la favorites</a></li>
 							<li><a href="#rmv_fav">Eliminarea unui item din favorites</a></li>
 						</ul>
@@ -1175,6 +1184,286 @@
 			</section>
 
 
+
+			<section id="dwnlod_csv_create">
+				<h3>Obtinere link download fisier CSV cu date despre o multime de utilizatori</h3>
+				<h4>POST /api/admin/download_csv</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Este apelata inainte de primirea propriu-zisa a fisierului. Se va transmite un array cu o lista de nume de utilizatori. Va returna o adresa de la care se poate prelua fisierul.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/admin/download_csv</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token de Administrator</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/admin/download_csv \
+	--header "Authorization: Bearer &#60;access_token&#62;" \
+	--header "Content-Type: application/json" \
+	--data "{\"users\":\["\abcdef\",\"sysadmin\"\]}"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div><b>users</b> <i>String Array</i> Un array cu nume de utilizatori pentru care se doresc datele.</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": {
+        "url": "http://localhost/ProiectTW/api/admin/download_csv/5edd331ba1ceb7.78267792"
+    },
+    "message": "Download is starting."
+}</pre>
+						<div><b>url</b> <i>String</i> Adresa de la care va putea fi descarcat fisierul.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu incercarea de a accesa endpoint-ul de catre un user care nu este administrator: </div>
+						<pre class="literal-block">{
+    "status": 409,
+    "message": "Provided authorization token does not belong to an administrator"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Service temporarly unavailable</li>
+							<li>Provided authorization token does not belong to an administrator</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+
+			<section id="dwnlod_csv">
+				<h3>Descarcarea fisierului CSV</h3>
+				<h4>GET /api/admin/download_csv/:download_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Pentru descarcarea ca flux de octeti a fisierului CSV pentru care s-a creat anterior o sesiune de download.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/admin/download_csv/:download_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Fara</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/admin/download_csv/5edd331ba1ceb7.78267792</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">&#60;flux_octeti&#62; ce poate fi salvat intr-un fisier</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu incercarea de folosi o sesiune de download invalida: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified download id is invalid"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Specified download id is invalid</li>
+							<li>Service temporarly unavailable</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section id="get_users">
+				<h3>Obtinerea datelor despre utilizatori</h3>
+				<h4>GET /api/admin/users</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Ofera o lista cu date despre utilizatori. Pentru fiecare se primesc date precum username-ul, email-ul, numarul de fisiere, daca a autorizat GoogleDrive, Dropbox sau Onedrive.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/admin/users</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/admin/users \
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": "[{\"username\":\"abcdef\",\"email\":\"abcdef@yahoo.com\",\"number\":2,\"onedrive\":true,\"dropbox\":true,\"googledrive\":false},{\"username\":\"sysadmin\",\"email\":\"admin@admin.com\",\"number\":0,\"onedrive\":false,\"dropbox\":false,\"googledrive\":false}]",
+    "message": "Users successfully retrieved"
+}</pre>
+						<div><b>username</b> <i>String</i> Numele utilizatorului.</div>
+						<div><b>email</b> <i>String</i> Email-ul utilizatorului.</div>
+						<div><b>number</b> <i>String</i> Numarul de fisiere din cont.</div>
+						<div><b>onedrive</b> <i>String</i> Daca a autorizat serviciul Onedrive</div>
+						<div><b>googledrive</b> <i>String</i> Daca a autorizat serviciul GoogleDrive</div>
+						<div><b>dropbox</b> <i>String</i> Daca a autorizat serviciul Dropbox</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu incercarea de a accesa endpoint-ul de catre un user care nu este administrator: </div>
+						<pre class="literal-block">{
+    "status": 409,
+    "message": "Provided authorization token does not belong to an administrator"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
+							<li>Service temporarly unavailable</li>
+							<li>Provided authorization token does not belong to an administrator</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section id="get_services">
+				<h3>Obtinere lista de servicii si daca sunt allowed sau nu</h3>
+				<h4>GET /api/admin/services</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Ofera o lista cu serviciile GoogleDrive, Dropbox si Onedrive si pentru fiecare din acestea daca este permis sau nu.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/admin/services</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token de Administrator</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/admin/services \
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": {
+        "dropbox": true,
+        "googledrive": true,
+        "onedrive": true
+    },
+    "message": "Statuses for allowed services retrieved succesfully"
+}</pre>
+						<div><b>dropbox</b> <i>String</i> Daca a permis serviciul Dropbox</div>
+						<div><b>googledrive</b> <i>String</i> Daca a permis serviciul GoogleDrive</div>
+						<div><b>onedrive</b> <i>String</i> Daca a permis serviciul Onedrive</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu incercarea de a accesa endpoint-ul de catre un user care nu este administrator: </div>
+						<pre class="literal-block">{
+    "status": 409,
+    "message": "Provided authorization token does not belong to an administrator"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
+							<li>Service temporarly unavailable</li>
+							<li>Provided authorization token does not belong to an administrator</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+
+			<section id="chge_service">
+				<h3>Schimba disponibilitatii unui serviciu particular</h3>
+				<h4>POST /api/admin/services/:service</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Ofera o lista cu serviciile GoogleDrive, Dropbox si Onedrive si pentru fiecare din acestea daca este permis sau nu.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/admin/services/:service</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token de Administrator</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/admin/services/googledrive \
+	--header "Authorization: Bearer &#60;access_token&#62;" \
+	--header "Content-Type: application/json" \
+	--data "{\"allow\": \"false\"}"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div><b>allow</b> <i>String Array</i> Daca se permite sau nu serviciul specificat in url.</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Allow rule updated succesfully"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu incercarea de a accesa endpoint-ul de catre un user care nu este administrator: </div>
+						<pre class="literal-block">{
+    "status": 409,
+    "message": "Provided authorization token does not belong to an administrator"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
+							<li>Service temporarly unavailable</li>
+							<li>Provided authorization token does not belong to an administrator</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
 			<section id="search">
 				<h3>Cautare fisiere si foldere dupa nume</h3>
 				<h4>GET /api/search/:search_name</h4>
@@ -1216,14 +1505,123 @@
 
 					<dt>Erori</dt>
 					<dd>
-						<div>Exemplu folosirea unui id invalid drept parent_id: </div>
+						<div>Exemplu cand serviciul nu este disponibil: </div>
 						<pre class="literal-block">{
     "status": "error",
-    "message": "Specified parent id is invalid"
+    "message": "Service temporarly unavailable"
 }</pre>
 						<ul>
 							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
 							<li>Service temporarly unavailable</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+			<section id="get_fav">
+				<h3>Obtinere lista fisiere de la favorites</h3>
+				<h4>GET /api/favorites/get</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Ofera o lista cu fisierele si folderele marcate ca fiind favorite. Se ofera id-ul item-ului, numele si tipul acestuia fisier/folder.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/favorites/get</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X GET http://localhost/ProiectTW/api/favorites/get \
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "data": "[{\"item_id\":\"0777a4c473c76217a7bbae0348100b92\",\"name\":\"Poze Vacanta\",\"content_type\":\"folder\",\"favorited\":1},{\"item_id\":\"390877dc021d393f6e5aad5fab2a1762\",\"name\":\"Tema2.pdf\",\"content_type\":\"file\",\"favorited\":1}]",
+    "message": "Favorited items successfully retrieved"
+}</pre>
+						<div><b>item_id</b> <i>String</i> Id-ul item-ului.</div>
+						<div><b>name</b> <i>String</i> Numele item-ului.</div>
+						<div><b>content_type</b> <i>String</i> Daca este fisier sau folder.</div>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu cand serviciul nu este disponibil: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Service temporarly unavailable"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+							<li>Service temporarly unavailable</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
+
+
+
+			<section id="add_fav">
+				<h3>Adaugarea unui item la favorites</h3>
+				<h4>POST /api/favorites/add/:item_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Pentru utilizatorul curent adauga fisierul sau folderul specificat in url in lista de iteme favorite.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/favorites/add/:item_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X POST http://localhost/ProiectTW/api/favorites/add/390877dc021d393f6e5aad5fab2a1762 \
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Item added to favorites successfully"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu incercarea de a adauga la favorite un id de fisier inexistent: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified item id is invalid"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Specified item id is invalid</li>
 							<li>Missing access token</li>
 							<li>Invalid access token</li>
 						</ul>
@@ -1232,6 +1630,56 @@
 			</section>
 
 
+			<section id="rmv_fav">
+				<h3>Eliminarea unui item din favorites</h3>
+				<h4>DELETE /api/favorites/remove/:item_id</h4>
+				<dl>
+					<dt>Descriere</dt>
+					<dd><p>Pentru utilizatorul curent sterge fisierul sau folderul specificat in url din lista de iteme favorite.</p></dd>
+
+					<dt>Structura URL</dt>
+					<dd>
+						<pre class="literal-block">http://localhost/ProiectTW/api/favorites/remove/:item_id</pre>
+					</dd>
+
+					<dt>Autentificare</dt>
+					<dd>Da, folosind Access Token</dd>
+
+					<dt>Exemplu</dt>
+					<dd>
+						<pre class="literal-block documentation__curl-example">curl -X DELETE http://localhost/ProiectTW/api/favorites/remove/390877dc021d393f6e5aad5fab2a1762 \
+	--header "Authorization: Bearer &#60;access_token&#62;"</pre>
+					</dd>
+
+					<dt>Parametrii</dt>
+					<dd>
+						<div>Fara</div>
+					</dd>
+
+					<dt>Returneaza</dt>
+					<dd>
+						<pre class="literal-block">{
+    "status": "success",
+    "message": "Item removed from favorites successfully"
+}</pre>
+					</dd>
+
+					<dt>Erori</dt>
+					<dd>
+						<div>Exemplu incercarea de a sterge de la favorite un fisier inexistent: </div>
+						<pre class="literal-block">{
+    "status": "error",
+    "message": "Specified item id is invalid"
+}</pre>
+						<ul>
+							<lh>Erori posibile:</lh>
+							<li>Specified item id is invalid</li>
+							<li>Missing access token</li>
+							<li>Invalid access token</li>
+						</ul>
+					</dd>
+				</dl>
+			</section>
 
 		</article>
 

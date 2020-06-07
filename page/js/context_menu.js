@@ -372,7 +372,7 @@ function context_menu_apply_listeners() {
     container.addEventListener('contextmenu', showGeneralMenu);
 
     filesButton.addEventListener('click', hideMenus);
-favoritesButton.addEventListener('click', hideMenus);
+    favoritesButton.addEventListener('click', hideMenus);
 
     var all_files = document.querySelectorAll('.file');
     all_files.forEach (
