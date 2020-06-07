@@ -282,8 +282,39 @@ class App
             }
         });
 
-        
+        $router->addRoute('GET','/api/admin/services',function(){
+            if($this->authorize->validateAuthorization())
+            {
+                if($this->authorize->getDecoded()['user_id']==$this->admin_user_id)
+                {
+                     $admin_controller = new CAdmin();
+                     $admin_controller->getStatusForServices();
 
+                }
+                else
+                {
+                    $json=new JsonResponse(409,null,'Provided authorization token does not belong to an administrator',409);
+                    echo $json->response();
+                }
+            }
+        });
+
+        $router->addRoute('POST','/api/admin/services/:service',function($service){
+            if($this->authorize->validateAuthorization())
+            {
+                if($this->authorize->getDecoded()['user_id']==$this->admin_user_id)
+                {
+                     $admin_controller = new CAdmin();
+                     $user_id = $this->authorize->getDecoded()["user_id"];
+                     $admin_controller->updateAllowFor($service);
+                }
+                else
+                {
+                    $json=new JsonResponse(409,null,'Provided authorization token does not belong to an administrator',409);
+                    echo $json->response();
+                }
+            }
+        });
 
         $router->run($this->method, $this->URI);
     }

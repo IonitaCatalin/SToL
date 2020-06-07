@@ -138,6 +138,60 @@ class MAdmin
 
 		return $result;
 	}
+	public function getStatus()
+	{
+		$get_services="SELECT * FROM ALLOWED";
+		$get_services=DB::getConnection()->prepare($get_services);
+		$get_services->execute();
+		$result_array=$get_services->fetchAll();
+		$return_array=array();
+		for($iterator=0;$iterator<count($result_array);$iterator++)
+		{
+			if($result_array[$iterator]['allowed']==1)
+				$return_array[$result_array[$iterator]['service']]=true;
+			else 
+				$return_array[$result_array[$iterator]['service']]=false;
+			
+		}
+		return $return_array;
+	}
+	public function updateServiceAllow($service,$value)
+	{
+		$update_service_sql="UPDATE ALLOWED SET allowed=:value WHERE service=:service";
+		$update_service_stmt=DB::getConnection()->prepare($update_service_sql);
+		switch($service)
+		{
+			case 'onedrive':
+			{
+				$bool_value= ($value)?1:0;
+				$update_service_stmt->execute([
+					'service'=>'onedrive',
+					'value'=>$bool_value
+				]);
+				break;
+			}
+			case 'dropbox':
+				{
+					$bool_value= ($value)?1:0;
+					$update_service_stmt->execute([
+						'service'=>'dropbox',
+						'value'=>$bool_value
+					]);
+					break;
+				}
+			case 'googledrive':
+			{
+				$bool_value= ($value)?1:0;
+				$update_service_stmt->execute([
+					'service'=>'googledrive',
+					'value'=>$bool_value
+					]);
+				break;
+			}
+		}
+		
+
+	}
 
 
 }

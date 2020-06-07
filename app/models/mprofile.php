@@ -1,7 +1,18 @@
 <?php
 
 	class MProfile {
-
+		public function isServiceAllowed($service)
+		{
+			$get_service_sql="SELECT allowed FROM ALLOWED WHERE service=:service";
+			$get_service_stmt=DB::getConnection()->prepare($get_service_sql);
+			$get_service_stmt->execute([
+				'service'=>$service
+			]);
+			$result_array=$get_service_stmt->fetch(PDO::FETCH_ASSOC);
+			if($result_array['allowed']==1)
+				return true;
+			else return false;
+		}
 		public function insertAuthToken($data, $id, $service)
 		{
 			array_key_exists('expires_in', $data) ? $expires = $data['expires_in'] : $expires = null; // pt dropbox nu expira, trebuie revocate

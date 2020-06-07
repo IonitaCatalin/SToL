@@ -16,21 +16,45 @@ class CProfile extends Controller {
 		{
 			case 'onedrive':
 			{
-				$json = new JsonResponse('success', OneDriveService::authorizationRedirectURL($user_id), 'Onedrive Authorization Link', 200);
-				echo $json->response();
+				if($this->model->isServiceAllowed($service))
+				{
+					$json = new JsonResponse('success', OneDriveService::authorizationRedirectURL($user_id), 'Onedrive Authorization Link', 200);
+					echo $json->response();
+				}
+				else
+				{
+					$json = new JsonResponse('error', null, 'Onedrive service has been disabled by the adminstrator', 200);
+					echo $json->response();
+				}
 				break;
 
 			}
 			case 'googledrive':
 			{
-				$json = new JsonResponse('success', GoogleDriveService::authorizationRedirectURL($user_id), 'GoogleDrive Authorization Link', 200);
-				echo $json->response();
+				if($this->model->isServiceAllowed($service))
+				{
+					$json = new JsonResponse('success', GoogleDriveService::authorizationRedirectURL($user_id), 'GoogleDrive Authorization Link', 200);
+					echo $json->response();
+				}
+				else
+				{
+					$json = new JsonResponse('error', null, 'GoogleDrive service has been disabled by the adminstrator', 200);
+					echo $json->response();
+				}
 				break;
 			}
 			case 'dropbox':
 			{
-				$json = new JsonResponse('success', DropboxService::authorizationRedirectURL($user_id), 'Dropbox Authorization Link', 200);
-				echo $json->response();
+				if($this->model->isServiceAllowed($service))
+				{
+					$json = new JsonResponse('success', DropboxService::authorizationRedirectURL($user_id), 'Dropbox Authorization Link', 200);
+					echo $json->response();
+				}
+				else
+				{
+					$json = new JsonResponse('error', null, 'Dropbox service has been disabled by the adminstrator', 200);
+					echo $json->response();
+				}
 				break;
 			}	
 		}

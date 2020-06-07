@@ -9,7 +9,23 @@ class CAdmin extends Controller
 		$this->model=$this->model('madmin');
 	}
 
-
+	public function getStatusForServices()
+	{
+		try
+		{
+			$allowed=$this->model->getStatus();
+			$json=new JsonResponse('success',$allowed,"Statuses for allowed services retrieved succesfully",200);
+			echo $json->response();
+		}
+		catch(PDOException $exception)
+		{
+			$json=new JsonResponse('error', null, 'Service temporarly unavailable', 500);
+			echo $json->response();
+		}
+		// $get_services='SELECT * FROM ALLOWED';
+		// $json=new JsonResponse('success',["onedrive"=>$GLOBALS['allowed_onedrive'],"googledrive"=>$GLOBALS['allowed_googledrive'],"dropbox"=>$GLOBALS['allowed_dropbox']],"Statuses for allowed services retrieved succesfully",200);
+		// echo $json->response();
+	}
     public function createCSVFileAndDownloadLink($user_id)
     {
         $content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
@@ -92,6 +108,30 @@ class CAdmin extends Controller
             $json=new JsonResponse('error',null,'Service temporarly unavailable',500);
             echo $json->response();
         }
+	}
+	public function updateAllowFor($service)
+	{
+		$content_type = isset($_SERVER['CONTENT_TYPE']) ? $_SERVER['CONTENT_TYPE'] : '';
+        if (stripos($content_type, 'application/json') === false) {
+            $json=new JsonResponse('error',null,'Only application/json content-type allowed',415);
+            echo $json->response();
+        }
+        else 
+        {
+			$post_data=file_get_contents('php://input');
+			$post_array=json_decode($post_data,true);
+			if(isset($post_array['allow']))
+			{
+				$this->model->updateServiceAllow($service,$post_array['allow']);
+				$json=new JsonResponse('success',null,'Allow rule updated succesfully',200);
+				echo $json->response();
+			}
+			else
+			{
+				$json=new JsonResponse('error',null,'Malformed request,JSON data object could not be parsed',400);
+                echo $json->response();
+			}
+		}
 	}
 }
 

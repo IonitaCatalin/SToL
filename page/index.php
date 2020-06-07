@@ -16,7 +16,7 @@ $inputs['raw_input'] = file_get_contents('php://input');
 
 //POST data
 parse_str($inputs['raw_input'] , $post);
-echo '<br>'.$script_name;
+//echo '<br>'.$script_name;
 //Merge all
 $inputs = array_merge($inputs,$post);
 
