@@ -28,7 +28,7 @@
 					<input type="text" id="search-box" placeholder="Search...">
 				</div>
 			</div>
-			<div class="backdrop">
+			<div class="backdrop" style="display:none">
 				<div class="upload-modal" role="dialog">
 					<p>Select or Drag any files to upload</p>
 					<div id="modal-storage">

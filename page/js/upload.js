@@ -24,6 +24,7 @@ function toggleModal(disable = false)
     if(disable == true) {
         backdrop.style.opacity="1";
         backdrop.style.visibility='visible';
+        backdrop.style.display='block';
         modal.style.opacity='1';
         modal.style.visibility='visible';
         
