@@ -254,7 +254,7 @@ td, th {
 	padding: 0
 }
 
-@font-face {
+/*@font-face {
 	font-family: Roboto;
 	font-weight: 300;
 	font-style: normal;
@@ -300,7 +300,7 @@ td, th {
 	font-style: normal;
 	src: url(../fonts/Roboto-Mono-700/Roboto-Mono-700.eot);
 	src: url(../fonts/Roboto-Mono-700/Roboto-Mono-700.eot?#iefix) format('embedded-opentype'), local('Roboto Mono Bold'), local('Roboto-Mono-700'), url(../fonts/Roboto-Mono-700/Roboto-Mono-700.woff2) format('woff2'), url(../fonts/Roboto-Mono-700/Roboto-Mono-700.woff) format('woff'), url(../fonts/Roboto-Mono-700/Roboto-Mono-700.ttf) format('truetype'), url(../fonts/Roboto-Mono-700/Roboto-Mono-700.svg#RobotoMono) format('svg')
-}
+}*/
 
 body {
 	max-width: 21cm;
