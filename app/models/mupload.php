@@ -621,7 +621,7 @@
                         return true;
                     }
                     else return false;    
-                }+
+                }
             }
             else
             {

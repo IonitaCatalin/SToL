@@ -398,35 +398,7 @@
             $delete_item_sql = "DELETE FROM items WHERE item_id=:item_id";
             $delete_item_stmt = DB::getConnection()->prepare($delete_item_sql);
             $delete_item_stmt->execute(['item_id' => $item_id]);
-            // //echo "Deleted $item_id from items.";
-
-            // $services_ids_sql = "SELECT onedrive_id, dropbox_id, googledrive_id FROM FRAGMENTS WHERE file_id=:item_id";
-            // $services_ids_stmt = DB::getConnection()->prepare($services_ids_sql);
-            // $services_ids_stmt->execute(['item_id' => $item_id]);
-
-            // // !!!! de tratat situatia cand fisierul e stocat redundant sau nu e stocat simplu(fara tabela fragments sau redundant)
-            // if($services_ids_stmt->rowCount()>0)
-            // {
-            //     $row = $services_ids_stmt->fetch(PDO::FETCH_ASSOC);
-            //     if($row['onedrive_id'] != ''){
-            //         //echo "Deleted file $item_id fragment from Onedrive.";
-            //         // OneDriveService::deleteFileById($row['onedrive_id']);
-            //     }
-            //     if($row['googledrive_id'] != ''){
-            //         //echo "Deleted file $item_id fragment from Googledrive.";
-            //         // GoogleDriveService::deleteFileById($row['googledrive_id']);
-            //     }
-            //     if($row['dropbox_id'] != ''){
-            //         //echo "Deleted file $item_id fragment from Dropbox.";
-            //         // DropboxService::deleteFileById($row['dropbox_id']);
-            //     }
-                
-            // }
-
-            // $delete_fragment_sql = "DELETE FROM `fragments` WHERE `file_id`=:item_id";
-            // $delete_fragment_stmt = DB::getConnection()->prepare($delete_fragment_sql);
-            // $delete_fragment_stmt->execute(['item_id' => $item_id]);
-            //echo "Deleted $item_id from fragments.";
+            
         }
 
         public function getAccessToken($user_id,$service)

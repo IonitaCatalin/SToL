@@ -37,5 +37,6 @@
             $admin_view=new VAdmin();
             echo $admin_view->renderView();
         }
+        public function renderGhid
     }
 ?>
