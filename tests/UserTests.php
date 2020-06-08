@@ -92,6 +92,7 @@
                 CURLOPT_SSL_VERIFYPEER=>false
             ]);
             $result_array=json_decode(curl_exec($login_test_curl),true);
+            $this->assertNotNull($result_array);    
             self::$token=$result_array['data']['access_token'];
             $this->assertEquals(curl_getinfo($login_test_curl,CURLINFO_HTTP_CODE),200);
         }
@@ -112,6 +113,7 @@
                 CURLOPT_SSL_VERIFYPEER=>false
             ]);
             $result_array=json_decode(curl_exec($login_test_curl),true);
+            $this->assertNotNull($result_array);
             $this->assertEquals(curl_getinfo($login_test_curl,CURLINFO_HTTP_CODE),401);
         }
         public function testAPIChangeUserCredentials():void
@@ -122,14 +124,13 @@
                 CURLOPT_URL=>USER_API_ENDPOINT,
                 CURLOPT_USERAGENT=>'Stol',
                 CURLOPT_CUSTOMREQUEST=>'PATCH',
+                CURLOPT_HTTPHEADER => array("Authorization: Bearer ".self::$token,'Content-Type:application/json'),
                 CURLOPT_POSTFIELDS=>json_encode([
-                    'username'=>self::$username,
-                    'password'=>'somethingrandom',
-                    'email'=>self::$email
-                ]),
-                CURLOPT_SSL_VERIFYPEER=>false
-            ]);
-
+                    'username'=>self::$username.uniqid('',true),
+            ]),
+            CURLOPT_SSL_VERIFYPEER=>false]);
+            $result_array=json_decode(curl_exec($change_user_profile),true);
+            $this->assertEquals(curl_getinfo($change_user_profile,CURLINFO_HTTP_CODE),200);
         }
 
     }

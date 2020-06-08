@@ -28,6 +28,4 @@ require_once 'core/JsonResponse.php';
 require_once 'core/Exceptions/ApplicationExceptions.php';
 require_once 'core/AuthorizationHandler.php';
 
-
-
 ?>
