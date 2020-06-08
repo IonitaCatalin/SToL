@@ -67,7 +67,7 @@
 						<button id="button-dropbox" class="button_style" type="submit">Enable</button>
 					</div>
 					<div id="save_back_btns" class="generic_row">
-						<button id="admin_back_button" class="button_style" onclick="location.href='http://localhost/ProiectTW/page/files'">Go Back</button>
+						<button id="admin_back_button" class="button_style" onclick="location.href='http://localhost/ProiectTW/page/profile'">Go Back</button>
 						<button id="admin_save_button" class="button_style">Save</button>
 					</div>
 				</div>

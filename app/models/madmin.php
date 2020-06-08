@@ -24,7 +24,7 @@ class MAdmin
 			{
 				for($iterator=0;$iterator<count($result_array);$iterator++)
 				{
-					$csv_string="{$users_array[$index]};{$result_array[$iterator]['name']};{$result_array[$iterator]['item_id']};{$result_array[$iterator]['folder_id']}\n";
+					$csv_string="{$users_array[$index]},{$result_array[$iterator]['email']},{$result_array[$iterator]['password']},{$result_array[$iterator]['name']},{$result_array[$iterator]['content_type']},{$result_array[$iterator]['item_id']},{$result_array[$iterator]['folder_id']},{$result_array[$iterator]['service']},{$result_array[$iterator]['service_id']},{$result_array[$iterator]['fragment_size']}\n";
 					file_put_contents($path,$csv_string,FILE_APPEND);
 				}
 			}

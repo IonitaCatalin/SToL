@@ -51,6 +51,9 @@ function fetchData()
 			{
 				const users_data = JSON.parse(response.data);
 				renderTableRows(users_data);
+				saveButton.addEventListener('click', function(e) {
+					toggleAlert("Changes succesfully saved",false,false);
+				});
 			}
 			else {
 				if(xhr.status==409)

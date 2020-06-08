@@ -156,7 +156,7 @@ a:link {
 	color: black;
 }
 
-#cancel_changes_button, #save_changes_button {
+#cancel_changes_button, #save_changes_button, #admin_button {
 	margin-top: 9px;
     border: none;
     outline: none;
@@ -170,7 +170,7 @@ a:link {
 
 }
 
-#cancel_changes_button:hover, #save_changes_button:hover{
+#cancel_changes_button:hover, #save_changes_button:hover, #admin_button:hover{
 	transform: translateY(-5px);
     cursor: pointer;
     background: #99c2ff;

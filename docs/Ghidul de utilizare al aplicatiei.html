@@ -57,6 +57,13 @@
 							<li><a href="#auth-deauth">5.4 Adaugare sau eliminare Servicii</a></li>
 						</ol>
 					</li>
+					<li><a href="#admin">6. Pagina de administrare a aplicatie</a>
+						<ol>
+							<li><a href="#admin-overview">6.1 Privire de ansamblu</a></li>
+							<li><a href="#users_table_csv">6.2 Date despre utilizatori si export in format CSV</a></li>
+							<li><a href="#enabling_services">6.3 Dezactivarea sau permiterea unor servicii</a></li>
+						</ol>
+					</li>
 				</ol>
 
 			</section>
@@ -69,10 +76,10 @@
 					  &amp;
 					  <a href="#refAutor2">Ionita Mihail Catalin</a>
 					</dd>
-					<dt>License</dt>
+	<!-- 				<dt>License</dt>
 					<dd>
 						<a href="http://creativecommons.org/licenses/by/4.0/">de completat</a>
-					</dd>
+					</dd> -->
 				</dl>
 			</div>
 
@@ -365,7 +372,7 @@
 						<!-- Utilizatorul isi poate schimba fotografia de profil din click stanga pe avatar si select o noua fotografie din computerul propriu -->
 					</p>
 					<figure typeof="sa:image">
-						<img src="resources/profile_view_information_guide.png" alt="ceva">
+						<img src="resources/profile_view_information_guide.png" alt="informatii despre profil">
 						<figcaption>Captura de ecran a spatiului rezervat pentru detalii cont.</figcaption>
 					</figure>
 				</section>
@@ -382,7 +389,7 @@
 						</ul>
 					</p>
 					<figure typeof="sa:image">
-						<img src="resources/change_name_password_guide.png" alt="ceva">
+						<img src="resources/change_name_password_guide.png" alt="fereastra ce permite schimbarea username si password">
 						<figcaption>Captura de ecran a spatiului rezervat pentru schimbarea datelor de cont.</figcaption>
 					</figure>
 				</section>
@@ -401,11 +408,64 @@
 					</ol>
 					Pentru a revoca accesul la un serviciu din contul curent, se va folosi butonul "Unauthorize" in dreptul numelui serviciului dorit.
 					<figure typeof="sa:image">
-						<img src="resources/services_authentication_guide.png" alt="ceva">
+						<img src="resources/services_authentication_guide.png" alt="autorizarea serviciilor">
 						<figcaption>Captura de ecran a spatiului rezervat pentru conectarea sau renuntarea la servicii.</figcaption>
 					</figure>
 				</section>
 
+			</section>
+
+
+			<section id="admin">
+				<h2>6. Pagina de administrare a aplicatie</h2>
+
+				<section id="admin-overview">
+					<h3>6.1 Privire de ansamblu</h3>
+					<p>
+						Pagina de administrarea a aplicatiei permite administratorului sa vizualizeze informatii despre utilizatori precum numele, adresa de email, numarul de fisiere precum si ce servicii au autorizat. Administratorul poate de asemenea activa sau dezactiva global anumite servicii.
+					</p>
+					<figure typeof="sa:image">
+						<img src="resources/admin_page_guide.png" alt="Admin page window">
+						<figcaption>Captura de ecran a paginii de administrare a aplicatiei.</figcaption>
+					</figure>
+					<p>
+						Principalele componente ale paginii de administrare a aplicatiei sunt:
+						<ul>
+							<li>Tabelul cu date despre utilizatori</li>
+							<li>Butonul pentru export date csv</li>
+							<li>Panoul pentru activare/dezactivare servicii</li>
+						</ul>
+					</p>
+				</section>
+
+				<section id="users_table_csv">
+					<h3>6.2 Date despre utilizatori si export in format CSV</h3>
+					<p>
+						Tabelul din partea superioara a ferestrei permite administratorului sa vizualizeze informatii despre utilizatori precum numele, adresa de email, numarul de fisiere precum si ce servicii au autorizat.
+					</p>
+					<figure typeof="sa:image">
+						<img src="resources/users_table_guide.png" alt="tabela cu utilizatori">
+						<figcaption>Captura de ecran a tabelei cu utilizatori.</figcaption>
+					</figure>
+					<p>
+						De asemenea butonul Export va porni descarcarea unui fisier in format cu CSV cu date despre utilizatori precum numele, email, numele fisierelor, id-uri, id-urile folderului care-l contine, pe ce serviciu e stocat, id-ul de acolo precum si dimensiunea fisierului.
+					</p>
+				</section>
+
+				<section id="enabling_services">
+					<h3>6.3 Dezactivarea sau permiterea unor servicii</h3>
+					<p>
+						In partea inferioara a ferestrei, administratorul poate sa vada ce servicii de stocare in cloud sunt permise si poate, eventual, sa le interzica.
+					</p>
+					<figure typeof="sa:image">
+						<img src="resources/enable_disable_services.png" alt="tabela cu utilizatori">
+						<figcaption>Captura de ecran a zonei rezervate permiterii sau interzicerii unor servicii de stocare in cloud.</figcaption>
+					</figure>
+					<p>
+						Butonul Save va salva modificarile realizate.<br>
+						Butonul Back va duce administratorul pe pagina anterioara.
+					</p>
+				</section>
 			</section>
 
 			<!-- sectiunea pt autori -->
@@ -419,11 +479,11 @@
 							<a href="https://github.com/GeorgicaMarius"><span property="schema:name">Georgica Marius</span></a>
 						</span>
 						<a href="#refFii" property="sa:roleAffiliation" resource="https://www.info.uaic.ro/">UAIC FII</a>
-						<ul>
+<!-- 						<ul>
 							<li property="schema:roleContactPoint" typeof="schema:ContactPoint">
 								<a href="mailto:ce@deUnde.com" property="schema:email">example@mail.com</a>
 							</li>
-						</ul>
+						</ul> -->
 					</li>
 					<li typeof="sa:ContributorRole" property="schema:author" id="refAutor2">
 						<span property="schema:author" typeof="schema:Person" resource="https://github.com/IonitaCatalin">
@@ -433,11 +493,11 @@
 							<a href="https://github.com/IonitaCatalin"><span property="schema:name">Ionita Mihail Catalin</span></a>
 						</span>
 						<a href="#refFii" property="sa:roleAffiliation" resource="https://www.info.uaic.ro/">UAIC FII</a>
-						<ul>
+<!-- 						<ul>
 							<li property="schema:roleContactPoint" typeof="schema:ContactPoint">
 								<a href="mailto:ce@deUnde.com" property="schema:email">example@mail.com</a>
 							</li>
-						</ul>
+						</ul> -->
 					</li>
 				</ul>
 			</section>
@@ -475,9 +535,22 @@
 			<section>
 				<h2>References</h2>
 				<ol>
+					<li typeof="schema:WebPage" role="doc-biblioentry" resource="https://www.flaticon.com/" property="schema:citation" id="sursa-img-file"> 
+						<cite property="schema:name">
+							<a href="https://www.flaticon.com/free-icon/file_716961">File Icon</a>
+						</cite>, by 
+						<span property="schema:author" typeof="schema:Organization">
+							<span property="schema:name">DinosoftLabs</span>
+						</span>; published in <time property="schema:datePublished" datatype="xsd:gYear" datetime="2019">2019</time>
+						<span property="schema:potentialAction" typeof="schema:ReadAction">
+							<meta property="schema:actionStatus" content="CompletedActionStatus">
+								(accessed on
+							<time property="schema:endTime" datatype="xsd:date" datetime="2019-03-03">02 Mar 2020</time>)
+						</span>.
+					</li>
 					<li typeof="schema:WebPage" role="doc-biblioentry" resource="https://www.flaticon.com/" property="schema:citation" id="sursa-img-folder"> 
 						<cite property="schema:name">
-							<a href="https://www.flaticon.com/free-icon/folder_716784?term=folder&page=5&position=73">File Icons</a>
+							<a href="https://www.flaticon.com/free-icon/folder_716784?term=folder&page=5&position=73">Folder Icon</a>
 						</cite>, by 
 						<span property="schema:author" typeof="schema:Organization">
 							<span property="schema:name">DinosoftLabs</span>
@@ -486,6 +559,41 @@
 							<meta property="schema:actionStatus" content="CompletedActionStatus">
 								(accessed on
 							<time property="schema:endTime" datatype="xsd:date" datetime="2019-03-03">03 Mar 2020</time>)
+						</span>.
+					</li>
+					<li typeof="schema:WebPage" role="doc-biblioentry" resource="https://remixicon.com/" property="schema:citation"> 
+						<cite property="schema:name">
+							<a href="https://remixicon.com/">REMIX ICON</a>
+						</cite>, by 
+						<span property="schema:author" typeof="schema:Organization">
+							<span property="schema:name">Jimmy Cheung and Wendy Gao</span>
+						</span>	<span property="schema:potentialAction" typeof="schema:ReadAction">
+							<meta property="schema:actionStatus" content="CompletedActionStatus">
+								(accessed on
+							<time property="schema:endTime" datatype="xsd:date" datetime="2019-03-03">05 Mar 2020</time>)
+						</span>.
+					</li>
+					<li typeof="schema:WebPage" role="doc-biblioentry" resource="https://github.com/" property="schema:citation"> 
+						<cite property="schema:name">
+							<a href="https://github.com/firebase/php-jwt">PHP JWT</a>
+						</cite> published in <time property="schema:datePublished" datatype="xsd:gYear" datetime="2020">25 Mar 2020</time>
+						<span property="schema:potentialAction" typeof="schema:ReadAction">
+							<meta property="schema:actionStatus" content="CompletedActionStatus">
+								(accessed on
+							<time property="schema:endTime" datatype="xsd:date" datetime="2019-03-03">17 Apr 2020</time>)
+						</span>.
+					</li>
+					<li typeof="schema:WebPage" role="doc-biblioentry" resource="https://phpunit.de/" property="schema:citation"> 
+						<cite property="schema:name">
+							<a href="https://phpunit.de/getting-started/phpunit-9.html">PHP Unit</a>
+						</cite>, by 
+						<span property="schema:author" typeof="schema:Organization">
+							<span property="schema:name">Sebastian Bergmann</span>
+						</span>; published in <time property="schema:datePublished" datatype="xsd:gYear" datetime="2020">7 Feb 2020</time>
+						<span property="schema:potentialAction" typeof="schema:ReadAction">
+							<meta property="schema:actionStatus" content="CompletedActionStatus">
+								(accessed on
+							<time property="schema:endTime" datatype="xsd:date" datetime="2019-03-03">3 May 2020</time>)
 						</span>.
 					</li>
 				</ol>

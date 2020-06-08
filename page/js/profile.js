@@ -135,6 +135,9 @@ function fetchUserData()
                 email.innerHTML = '';
                 username.appendChild(document.createTextNode(user_data.username));
                 email.appendChild(document.createTextNode(user_data.email));
+                if(user_data.admin) {
+                    document.querySelector('#admin_button').style.display = 'inline-block';
+                }
 
                 if(user_data.onedrive == true)
                 {

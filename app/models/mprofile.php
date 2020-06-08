@@ -86,7 +86,7 @@
 				return false;
 		}
 
-		public function getUserDataArray($user_id)
+		public function getUserDataArray($user_id,$admin)
 		{
 			$result_array = array();
 			$get_query = "SELECT username, email FROM accounts WHERE id = :user_id";
@@ -103,6 +103,7 @@
 			$result_array['onedrive'] = $onedrive_status;
 			$result_array['googledrive'] = $google_status;
 			$result_array['dropbox'] = $dropbox_status;
+			$result_array['admin'] = $admin;
 			return $result_array;
 		}
 

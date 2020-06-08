@@ -73,6 +73,7 @@
 					</div>
 					<div class="generic_row">
 						<button id="cancel_changes_button" onclick="location.href='http://localhost/ProiectTW/page/files'">Go Back</button>
+						<button id="admin_button" style="display:none" onclick="location.href='http://localhost/ProiectTW/page/admin'">Admin</button>
 						<button id="save_changes_button">Save</button>
 					</div>
 				</div>

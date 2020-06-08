@@ -165,11 +165,11 @@ class CProfile extends Controller {
 
 	}
 
-	public function getUser($user_id)
+	public function getUser($user_id,$admin)
 	{	
 		try
 		{
-			$data_json=json_encode($this->model->getUserDataArray($user_id));
+			$data_json=json_encode($this->model->getUserDataArray($user_id,$admin));
 			$json=new JsonResponse('success',$data_json,'User retrieval succesfully',200);
 			echo $json->response();
 

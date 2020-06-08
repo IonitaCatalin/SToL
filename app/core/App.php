@@ -55,7 +55,10 @@ class App
             {
                 $profile_controller = new CProfile();
                 $user_id = $this->authorize->getDecoded()["user_id"];
-                $profile_controller->getUser($user_id);
+                if($user_id==$this->admin_user_id)
+                    $profile_controller->getUser($user_id, true);
+                else
+                    $profile_controller->getUser($user_id, false);
             }
         });
         // info despre storage

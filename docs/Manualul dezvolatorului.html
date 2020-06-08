@@ -29,24 +29,25 @@
 			<section>
 				<h2>Continuturi</h2>
 				<ol>
-					<li><a href="#overview">1. Privire de ansamblu</a></li>
-					<li><a href="#login">2. Login si register</a></li>
+					<li><a href="#architecture">1. Arhitectura Aplicatiei</a></li>
+					<li><a href="#overview">2. Privire de ansamblu asupra API-ului</a></li>
+					<li><a href="#login">3. Login si register</a></li>
 						<ul>
 							<li><a href="#login">Login</a></li>
 							<li><a href="#register">Register</a></li>
 						</ul>
-					<li><a href="#info_prof">3. Profile si Storage</a></li>
+					<li><a href="#info_prof">4. Profile si Storage</a></li>
 						<ul>
 							<li><a href="#info_prof">Informatii despre profile</a></li>
 							<li><a href="#info_stor">Informatii despre storage</a></li>
 							<li><a href="#updt_user">Modificare profile user</a></li>
 						</ul>
-					<li><a href="#auth_serv">4. Servicii</a></li>
+					<li><a href="#auth_serv">5. Servicii</a></li>
 						<ul>
 							<li><a href="#auth_serv">Autorizarea unui serviciu</a></li>
 							<li><a href="#deauth_serv">Deautorizarea unui serviciu</a></li>
 						</ul>
-					<li><a href="#fld_to_fld">5. Lucrul cu fisiere</a></li>
+					<li><a href="#fld_to_fld">6. Lucrul cu fisiere</a></li>
 						<ul>
 							<li><a href="#fld_to_fld">Crearea unui folder in alt folder</a></li>
 							<li><a href="#fld_to_root">Crearea unui folder in root</a></li>
@@ -56,18 +57,18 @@
 							<li><a href="#delete_itm">Stergere fisiere sau foldere</a></li>
 							<li><a href="#move_itm">Mutare fisier sau folder sub alt parinte</a></li>
 						</ul>
-					<li><a href="#upld_create">6. Upload</a></li>
+					<li><a href="#upld_create">7. Upload</a></li>
 						<ul>
 							<li><a href="#upld_create">Crearea unei sesiuni de upload</a></li>
 							<li><a href="#upld_file">Incarcarea unui fisier pe chunk-uri</a></li>
 							<li><a href="#upld_cancel">Anularea unui upload</a></li>
 						</ul>
-					<li><a href="#dwnld_create">7. Download</a></li>
+					<li><a href="#dwnld_create">8. Download</a></li>
 						<ul>
 							<li><a href="#dwnld_create">Crearea unei sesiuni de download</a></li>
 							<li><a href="#dwnld_file">Descarcarea fisierului</a></li>
 						</ul>
-					<li><a href="#dwnlod_csv_create">8. Administrarea aplicatiei</a></li>
+					<li><a href="#dwnlod_csv_create">9. Administrarea aplicatiei</a></li>
 						<ul>
 							<li><a href="#dwnlod_csv_create">Obtinere link download fisier CSV cu date despre o multime de utilizatori</a></li>
 							<li><a href="#dwnlod_csv">Descarcarea fisierului CSV</a></li>
@@ -75,7 +76,7 @@
 							<li><a href="#get_services">Obtine lista de servicii si daca sunt allowed sau nu</a></li>
 							<li><a href="#chge_service">Schimba disponibilitatii unui serviciu particular</a></li>
 						</ul>
-					<li><a href="#search">9. Search and Favourites</a></li>
+					<li><a href="#search">10. Search and Favourites</a></li>
 						<ul>
 							<li><a href="#search">Cautare fisiere si foldere dupa nume</a></li>
 							<li><a href="#get_fav">Obtinere lista fisiere de la favorites</a></li>
@@ -84,6 +85,50 @@
 						</ul>
 
 				</ol>
+
+			</section>
+
+			<section id="architecture">
+				<h2>Arhitectura Aplicatiei</h2>
+				<p>In dezvoltarea aplicatiei am folosit software design-ul MVC(Model-View-Controller) deoarece este util in dezvoltarea aplicatiei noastre complexe prin "separation of concerns" intre front-end si back-end.</p>
+				<ul>
+				<li>Modelele reprezinta logica de business: au rolul de a interactiona cu baza de date, de a obtine datele dorite si a face procesari.</li>
+				<li>View-urile au rolul de a oferi interfata catre utilizator reprezentate prin sabloane completate ulterior prin apeluri Ajax.</li>
+				<li>Controller-ele au responsabilitatea de a oferi coordonarea intre view-uri si modele intrucat decid ce view-uri sa afiseze si cu ce date.</li>
+				</ul>
+				<figure typeof="sa:image">
+					<a href="file:///C:/xampp/htdocs/ProiectTW/docs/resources/classes_diagram.png">
+						<img src="resources/classes_diagram.png" alt="profile usecase">
+					</a>
+					<figcaption>Diagrama de clase pentru aplicatie(click pentru a mari)</figcaption>
+				</figure>
+
+
+				<p>Diagrama de Use Case pentru Administrarea Profilului prezinta functionalitatile sistemului in vederea managerierii profilului.</p>
+				<ul>
+					<li>Utilizatorul poate sa se inregistreze, sa se autentifice, sa ceara autorizarea sau deautorizarea serviciilor de stocare in cloud precum GoogleDrive, Onedrive si Dropbox, sau sa isi schimbe datele de profil precum numele sau parola</li>
+					<li>Serviciul: primeste si confirma inregistrarea sau autentificarea, primeste cereri pe care le indeplineste doar daca sunt autorizate si este responsabil de comunicarea cu servicii externe in vederea autorizarii serviciilor de stocare in cloud</li>
+				</ul>
+				<figure typeof="sa:image">
+					<a href="file:///C:/xampp/htdocs/ProiectTW/docs/resources/usecase_profile.png">
+						<img src="resources/usecase_profile.png" alt="profile usecase">
+					</a>
+					<figcaption>Diagrama UseCase pentru administrarea profilului(click pentru a mari)</figcaption>
+				</figure>
+
+
+				<p>Diagrama de Use Case pentru Managementul fisierelor prezinta functionalitat sistemului in vederea lucrului cu fisiere</p>
+				<ul>
+					<li>Utilizatorul vrea sa administreze fisierele prin creare de foldere, stergere de fisiere, redenumire sau mutare in alte foldere. De asemenea vrea sa incarce fisiere in mod fragmentat sau redundant. Ulterior va vrea sa descarce fisierele din contul sau.</li>
+					<li>Sistemul va accepta si trata cereri autentificate pentru crearea de foldere, stergere, redenumire sau mutare de fisiere. De asemenea se va folosi de servicii externe pentru a incarca fisierele fragmentat sau redundant, ori pentru a le descarca si recompune.</li>
+					<li>Serviciile externe GoogleDrive, Onedrive si Dropbox pot primi si stoca fisiere sau, la cerere, le pot oferi spre descarcare.</li>
+				</ul>
+				<figure typeof="sa:image">
+					<a href="file:///C:/xampp/htdocs/ProiectTW/docs/resources/usecase_filesystem.png">
+						<img src="resources/usecase_filesystem.png" alt="profile usecase">
+					</a>
+					<figcaption>Diagrama UseCase pentru managementul fisierelor(click pentru a mari)</figcaption>
+				</figure>
 
 			</section>
 
