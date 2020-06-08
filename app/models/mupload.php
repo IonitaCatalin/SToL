@@ -246,7 +246,7 @@
             // ---- Test zone
 
             // $filesize = 627827;
-            // echo "Fisierul are dimensiunea: $filesize ----";
+            // echo "Fisierul are dimensiungetSea: $filesize ----";
 
             // $available_services["onedrive"] = true;
             // $available_services["dropbox"] = false;
@@ -621,7 +621,7 @@
                         return true;
                     }
                     else return false;    
-                }
+                }+
             }
             else
             {

@@ -282,10 +282,6 @@ article h1 {
 .hovered {
 	background-color: lightblue;
 	border: 1px dashed;
-	padding-top: -1px;
-	padding-right: -1px;
-	padding-bottom: -1px;
-	padding-left: -1px;
 }
 
 .invisible {
@@ -302,7 +298,7 @@ article h1 {
 	height:100vh;
 	width:100vw;
 	z-index:200;
-	transition:all 0.2 ease-in;
+	transition:all 0.2s ease-in;
 }
 
 .upload-modal {

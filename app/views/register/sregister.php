@@ -40,7 +40,7 @@
             <!-- <button class="btn btn-back" id="back_button" type="button" onclick="location.href='login';">Back</button>
             <input class="btn btn-register" id="register_button" type="submit" name="submit_register" value="Register" /> -->
             <button class="btn btn-back" id="back_button" type="button" onclick="location.href='login';">Back</button>
-            <button class="btn btn-register" id="register_button" />Register</button>
+            <button class="btn btn-register" id="register_button" >Register</button>
 
         <!-- </form> -->
 
