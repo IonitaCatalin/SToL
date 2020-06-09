@@ -4,5 +4,5 @@ Pe baza unui API REST ori GraphQL propriu, sa se realizeze un instrument care ab
 via servicii disponibile “in nori” precum Dropbox, Google Drive, Microsoft OneDrive si altele. Proiectul va recurge la minim 3. Evident, se va oferi suport si pentru recompunerea resurselor si preluarea sigura si eficienta a acestora. 
 Autentificarea si autorizarea vor recurge la OAuth
 
-Videoclip de prezentare:https://youtu.be/GZijPvAJU4g
+Videoclip de prezentare:https://youtu.be/oF0JNwb_qoo
 
