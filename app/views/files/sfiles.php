@@ -60,9 +60,9 @@
 					<label for="collapsible" class="col-toggle"><i class="ri-col ri-menu-line"></i></label>
 					<div class="collapsible-content">
 						<button class="col-btn" id="col-btn-logout"><i class="ri-col ri-logout-box-line"></i></button>
-						<!-- <button class="col-btn"><i class="ri-col ri-file-line"></i></button>
-						<button class="col-btn"><i class="ri-col ri-star-line"></i></button>
-						<button class="col-btn"><i class="ri-col ri-delete-bin-line"></i></button> -->
+						<!-- <button class="col-btn"><i class="ri-col ri-file-line"></i></button> -->
+						<button class="col-btn" id="col-btn-favourites"><i class="ri-col ri-star-line"></i></button>
+						<!-- <button class="col-btn"><i class="ri-col ri-delete-bin-line"></i></button> -->
 					</div>
 				</div>
 				<div id="storage-info-box">

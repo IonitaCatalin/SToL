@@ -2,6 +2,7 @@ const backButton = document.querySelector('#btn-back');
 const searchBox = document.querySelector('#search-box');
 const filesButton = document.getElementById('navbar-files');
 const favoritesButton = document.getElementById('navbar-favourites');
+const favoritesButtonReduced=document.getElementById('col-btn-favourites');
 
 var folder_parents = new Array();
 //var loaded_items = new Array();
@@ -168,6 +169,7 @@ window.onload = function(){
     initializeStorageBox();
     filesButton.addEventListener('click', (e) => { loadFiles(); } );
     favoritesButton.addEventListener('click', loadFavoritedItems);
+    favoritesButtonReduced.addEventListener('click',loadFavoritedItems);
     searchBox.addEventListener('keyup', (e) => {
         const searchString = e.target.value;
         if(searchString!=='')

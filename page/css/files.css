@@ -652,7 +652,7 @@ article h1 {
 		top:89%;
 		left:87%;
 		border-radius: 50%;
-		line-height: 70px;
+		line-height: 80px;
 		opacity:0.8;
 		width: 80px; 
 		height:80px;
@@ -668,7 +668,7 @@ article h1 {
 		opacity:0.8;
 		width: 80px; 
 		height:80px;
-		line-height: 70px;
+		line-height: 80px;
 		border:none;
 		outline:none;
 		text-align: center;
@@ -686,7 +686,7 @@ article h1 {
 		position:absolute;
 		grid-gap:30px;
 		z-index:12;
-		top:77%;
+		top:62%;
 		left:87%;
 		outline:none;
 	}
