@@ -46,6 +46,7 @@ uploadFilesButton.onclick=function()
 {
     uploadedFilesCount=0;
     activeTransfer=true;
+    console.log(files);
     for(i=0;i<files.length;i++)
     {
         document.getElementsByClassName('up-elem-status')[i].textContent="Uploading.Please wait";
@@ -90,6 +91,7 @@ chooseFilesButton.onclick=function()
     }
 }
 dropArea.onclick=function(){
+
     fileSelector.click();
     fileSelector.onchange=function(event){
         files=Array.from(fileSelector.files);
@@ -115,7 +117,7 @@ dropArea.addEventListener('drop',handleDrop,false);
 function handleDrop(e)
 {
     let dt=e.dataTransfer;
-    let files=dt.files;
+    files=Array.from(dt.files);
     handleFiles(files);
 }
 
