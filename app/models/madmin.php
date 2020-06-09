@@ -14,7 +14,7 @@ class MAdmin
 		// ----------------------
 		for($index=0;$index<count($users_array);$index++)
 		{
-			$get_files_sql="SELECT * FROM ACCOUNTS JOIN ITEMS ON ACCOUNTS.ID=ITEMS.USER_ID JOIN FILES ON FILES.ITEM_ID=ITEMS.ITEM_ID JOIN FRAGMENTS ON FRAGMENTS.FRAGMENTS_ID=FILES.FRAGMENTS_ID WHERE ACCOUNTS.USERNAME=:username";
+			$get_files_sql="SELECT DISTINCT * FROM ACCOUNTS LEFT JOIN ITEMS ON ACCOUNTS.ID=ITEMS.USER_ID LEFT JOIN FILES ON FILES.ITEM_ID=ITEMS.ITEM_ID LEFT JOIN FRAGMENTS ON FRAGMENTS.FRAGMENTS_ID=FILES.FRAGMENTS_ID WHERE ACCOUNTS.USERNAME=:username";
 			$get_files_stmt=DB::getConnection()->prepare($get_files_sql);
 			$get_files_stmt->execute([
 				'username'=>$users_array[$index]
@@ -24,7 +24,7 @@ class MAdmin
 			{
 				for($iterator=0;$iterator<count($result_array);$iterator++)
 				{
-					$csv_string="{$users_array[$index]},{$result_array[$iterator]['email']},{$result_array[$iterator]['password']},{$result_array[$iterator]['name']},{$result_array[$iterator]['content_type']},{$result_array[$iterator]['item_id']},{$result_array[$iterator]['folder_id']},{$result_array[$iterator]['service']},{$result_array[$iterator]['service_id']},{$result_array[$iterator]['fragment_size']}\n";
+					$csv_string="{$users_array[$index]},{$result_array[$iterator]['email']},{$result_array[$iterator]['password']},{$result_array[$iterator]['name']},{$result_array[$iterator]['item_id']},{$result_array[$iterator]['folder_id']},{$result_array[$iterator]['service']},{$result_array[$iterator]['service_id']},{$result_array[$iterator]['fragment_size']}\n";
 					file_put_contents($path,$csv_string,FILE_APPEND);
 				}
 			}
