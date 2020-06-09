@@ -37,5 +37,17 @@
             $admin_view=new VAdmin();
             echo $admin_view->renderView();
         }
+        public function renderGuide()
+        {
+            $this->view('guide/vguide');
+            $guide_view=new VGuide();
+            echo $guide_view->renderGuide();
+        }
+        public function renderManual()
+        {
+            $this->view('manual/vmanual');
+            $guide_view=new VManual();
+            echo $guide_view->renderManual();
+        }
     }
 ?>

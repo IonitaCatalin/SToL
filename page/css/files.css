@@ -652,7 +652,7 @@ article h1 {
 		top:89%;
 		left:87%;
 		border-radius: 50%;
-		line-height: 80px;
+		line-height: 70px;
 		opacity:0.8;
 		width: 80px; 
 		height:80px;
@@ -668,6 +668,7 @@ article h1 {
 		opacity:0.8;
 		width: 80px; 
 		height:80px;
+		line-height: 70px;
 		border:none;
 		outline:none;
 		text-align: center;

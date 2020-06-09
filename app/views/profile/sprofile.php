@@ -76,6 +76,10 @@
 						<button id="admin_button" style="display:none" onclick="location.href='http://localhost/ProiectTW/page/admin'">Admin</button>
 						<button id="save_changes_button">Save</button>
 					</div>
+					<p>Informatii generale de uz pentru utilizatori	</p>
+					<a href="http://localhost/ProiectTW/page/guide">Manual dezvoltatorului</a>
+					<a href="http://localhost/ProiectTW/page/manual">Ghidul aplicatiei</a>
+					<a href="#">Filmul de prezentare</a>
 				</div>
 
 			</article>

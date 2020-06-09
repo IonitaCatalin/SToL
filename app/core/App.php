@@ -10,7 +10,7 @@ class App
 
     function __construct($inputs)
     {
-        $this->admin_user_id='d7a8679b93a68b11e03a08ce681758a8';
+        $this->admin_user_id='876659090558b3882410d5aae480fafd';
         $this->authorize = new AuthorizationHandler();
         $this->URI =$this->checkKey('URI', $inputs);
         $this->method =$this->checkKey('method', $inputs);
@@ -31,6 +31,16 @@ class App
         $router->addRoute('GET','/page/register',function(){
                 $pageController=new CPage();
                 $pageController->renderRegister(); 
+        });
+
+        $router->addRoute('GET','/page/manual',function(){
+            $pageController=new CPage();
+            $pageController->renderManual(); 
+        });
+
+        $router->addRoute('GET','/page/guide',function(){
+            $pageController=new CPage();
+            $pageController->renderGuide(); 
         });
 
         $router->addRoute('GET','/page/profile',function(){
