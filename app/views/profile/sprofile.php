@@ -79,7 +79,7 @@
 					<p>Informatii generale de uz pentru utilizatori	</p>
 					<a href="http://localhost/ProiectTW/page/guide">Manual dezvoltatorului</a>
 					<a href="http://localhost/ProiectTW/page/manual">Ghidul aplicatiei</a>
-					<a href="#">Filmul de prezentare</a>
+					<a href="https://youtu.be/oF0JNwb_qoo">Filmul de prezentare</a>
 				</div>
 
 			</article>
